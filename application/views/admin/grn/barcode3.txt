@@ -1,0 +1,12 @@
+Company,ProductCode,ProductName,Price
+
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950
+Avinda Auto Engineering (pvt) Ltd,100003,MOBIL GOLD 4L,13950

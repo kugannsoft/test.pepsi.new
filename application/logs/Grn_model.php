@@ -1,0 +1,246 @@
+<?php
+
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Grn_model extends CI_Model {
+
+    public function __construct() {
+        parent::__construct();
+    }
+
+    public function index() {
+        
+    }
+
+    public function loadsupplierjson($query) {
+        $q = $this->db->select('SupCode AS id,SupName AS text')->from('supplier')->like('SupName', $query, 'after')->get()->result();
+        return json_encode($q);
+    }
+
+    public function loadproductjson($query,$sup,$supCode) {
+        if($sup!=0){
+            $query1 =$this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice')
+                    ->from('product')
+                    ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                    ->where('product.Prd_Supplier', $supCode)
+                    ->like("CONCAT(' ',product.ProductCode,product.Prd_Description)", $query ,'left')
+                    ->limit(50)->get();
+     
+        }else{
+            $query1 =$this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice')
+                    ->from('product')
+                    ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                    ->like("CONCAT(' ',product.ProductCode,product.Prd_Description)", $query ,'left')
+                    ->limit(50)->get();
+        }
+
+        if ($query1->num_rows() > 0) {
+            foreach ($query1->result_array() as $row) {
+                $new_row['label'] = htmlentities(stripslashes($row['Prd_Description']." = Rs.".$row['ProductPrice']));
+                $new_row['value'] = htmlentities(stripslashes($row['ProductCode']));
+                $row_set[] = $new_row; //build an array
+            }
+            echo json_encode($row_set); //format the array into json data
+        }
+       
+    }
+    public function loadpricelevel() {
+        return $this->db->select()->from('pricelevel')->where('IsActive', 1)->get()->result();
+    }
+    public function loadlocations() {
+        return $this->db->select()->from('location')->get()->result();
+    }
+    
+    public function saveGrn($grnHed,$post,$grnNo,$totalDisPrecent,$grnCredit) {        
+        $product_codeArr = json_decode($post['product_code']);
+        $unitArr = json_decode($post['unit_type']);
+        $freeQtyArr = json_decode($post['freeQty']);
+        $serial_noArr = json_decode($post['serial_no']);
+        $qtyArr = json_decode($post['qty']);
+        $sell_priceArr = json_decode($post['unit_price']);
+        $cost_priceArr = json_decode($post['cost_price']);
+        $pro_discountArr = json_decode($post['pro_discount']);
+        $pro_discount_precentArr = json_decode($post['discount_precent']);
+        $caseCostArr = json_decode($post['case_cost']);
+        $upcArr = json_decode($post['upc']);
+        $total_netArr = json_decode($post['total_net']);
+        $price_levelArr = json_decode($post['price_level']);
+        $totalAmountArr = json_decode($post['pro_total']);
+        $isSerialArr = json_decode($post['isSerial']);
+        $location = $post['location'];
+//        $this->db->trans_begin();
+        $this->db->trans_start();
+        for ($i = 0; $i < count($product_codeArr); $i++) {
+            $totalGrnQty = ($qtyArr[$i]+$freeQtyArr[$i]);
+            $qtyPrice = $total_netArr[$i]/$qtyArr[$i];
+            $grnDtl = array(
+                'AppNo' => '1',
+                'GRN_No' => $grnNo,
+                'GRN_PONo' => '',
+                'GRN_Date' => $post['grnDate'],
+                'GRN_LineNo' => $i,
+                'GRN_Product' => $product_codeArr[$i],
+                'GRN_UPC' => $upcArr[$i],
+                'GRN_UPCType' => $unitArr[$i],
+                'GRN_Qty' => $qtyArr[$i],
+                'GRN_TotalQty' => $totalGrnQty,
+                'GRN_FreeQty' => $freeQtyArr[$i],
+                'GRN_OrderQty' => 0,
+                'GRN_BalanceQty' => 0,
+                'GRN_ReturnQty' => 0,
+                'GRN_CaseCost' => $caseCostArr[$i],
+                'GRN_UnitCost' => $cost_priceArr[$i],
+                'GRN_QtyPrice' => $qtyPrice,
+                'GRN_PriceLevel' => $price_levelArr[$i],
+                'GRN_Selling' => $sell_priceArr[$i],
+                'GRN_DisAmount' => $pro_discountArr[$i],
+                'GRN_DisPersantage' => $pro_discount_precentArr[$i],
+                'GRN_Amount' => $totalAmountArr[$i],
+                'GRN_NetAmount' => $total_netArr[$i],
+                'IsSerial' => $isSerialArr[$i],
+                'SerialNo' => $serial_noArr[$i],
+                'CostCode' => $sell_priceArr[$i]);
+            $this->db->insert('goodsreceivenotedtl', $grnDtl);
+            
+            //update serial stock
+            $ps = $this->db->select('ProductCode')->from('productserialstock')->where(array('ProductCode'=> $product_codeArr[$i],'SerialNo'=>$serial_noArr[$i],'Location'=>$location))->get();
+            if($ps->num_rows()>0){
+                $isPro = $this->db->select('InvProductCode')->from('invoicedtl')->where(array('InvProductCode'=> $product_codeArr[$i],'InvSerialNo'=>$serial_noArr[$i],'InvLocation'=>$location))->get();
+                if($isPro->num_rows()==0){
+                    $this->db->update('productserialstock',array('Quantity'=>$qtyArr[$i]),array('ProductCode'=> $product_codeArr[$i],'SerialNo'=>$serial_noArr[$i],'Location'=> $location));
+                }
+            }else{
+                if($isSerialArr[$i]==1){
+                    $this->db->insert('productserialstock', array('ProductCode'=> $product_codeArr[$i],'Location'=> $location,'SerialNo'=>$serial_noArr[$i],'Quantity'=>$qtyArr[$i],'GrnNo'=>$grnNo));
+                }
+            }
+        
+            //update product price
+            $pp = $this->db->select('ProductCode')->from('productprice')->where(array('ProductCode'=> $product_codeArr[$i],'PL_No'=>$price_levelArr[$i]))->get();
+            if($pp->num_rows()>0){
+                $this->db->update('productprice',array('ProductPrice'=>$sell_priceArr[$i]),array('ProductCode'=> $product_codeArr[$i],'PL_No'=>$price_levelArr[$i]));
+            }else{
+                $this->db->insert('productprice', array('ProductCode'=> $product_codeArr[$i],'PL_No'=> $price_levelArr[$i],'ProductPrice'=>$sell_priceArr[$i]));
+            }
+            
+            //update product cost
+            $isUpdate=0;
+            $isCostUpdate = $this->db->select('Value')->from('systemoptions')->where('ID', 'M001')->get();// get system option
+            foreach ($isCostUpdate->result_array() as $row) {
+                $isUpdate = $row['Value'];
+            } 
+            
+            if($isUpdate==1){
+                if($totalDisPrecent>0){
+                    $cost = $qtyPrice - ($qtyPrice*$totalDisPrecent/100);// - by total grn discount precnt
+                    $this->db->update('product',array('Prd_CostPrice'=>$cost),array('ProductCode'=> $product_codeArr[$i]));
+                }else{
+                    $this->db->update('product',array('Prd_CostPrice'=>$qtyPrice),array('ProductCode'=> $product_codeArr[$i]));
+                }
+            }
+            
+            //update price stock
+            $this->db->query("CALL SPT_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$totalGrnQty','$price_levelArr[$i]','$cost_priceArr[$i]','$sell_priceArr[$i]','$location')");
+            
+             //update product stock
+            $this->db->query("CALL SPT_UPDATE_PRO_STOCK('$product_codeArr[$i]','$totalGrnQty',0,'$location')");
+        }
+        
+        $supCode = $post['supcode'];
+        $totalNet = $post['total_net_amount'];
+        //update supplier outstanding
+        if($supCode!=''){
+                        $isSup = $this->db->select('SupCode')->from('supplieroustanding')->where('SupCode',$supCode)->get();
+        if($isSup->num_rows()>0){
+            $this->db->query("CALL SPT_UPDATE_SUPOUTSTAND('$supCode','$totalNet')");
+        }else{
+            //$this->db->insert('supplieroustanding', array('SupCode'=> $supCode,'SupTotalInvAmount'=> $totalNet,'SupOustandingAmount'=>$totalNet,'SupSettlementAmount'=>0,'OpenOustanding'=>0,'OustandingDueAmount'=>0));
+        }
+        }
+        $this->db->insert('creditgrndetails', $grnCredit);
+        $this->db->insert('goodsreceivenotehed', $grnHed);
+        $this->update_max_code('Goods Received Note');
+
+        $this->db->trans_complete();
+       return $this->db->trans_status();
+    }
+    
+    public function get_max_code($form)
+    {
+        $query = $this->db->select('*')->where('FormName',$form)->get('codegenerate');
+        foreach ($query->result_array() as $row) {
+           $code= $row['CodeLimit'];
+           $input = $row['AutoNumber'];
+           $string= $row['FormCode'];
+           $code_len = $row['FCLength'];
+           $item_ref = $string . str_pad(($input+1), $code_len, $code, STR_PAD_LEFT);
+        } 
+        return $item_ref;
+    }
+    
+    public function update_max_code($form)
+    {
+        $query = $this->db->select('*')->where('FormName',$form)->get('codegenerate');
+        foreach ($query->result_array() as $row) {
+           $input = $row['AutoNumber'];
+        } 
+        $this->db->update('codegenerate',array('AutoNumber'=>($input+1)),array('FormName'=>($form)));
+    }
+    
+    public function get_data_by_where($table, $data) {
+        $query = $this->db->get_where($table, $data)->row_array();
+        return $query;
+    }
+    
+    public function getActiveGrns($table, $q,$location) {
+        $this->db->select('GRN_No');
+        $this->db->like('GRN_No', $q)->where('GRN_IsCancel', 0)->where('GRN_Location', $location)->order_by('GRN_No', 'DESC');
+        
+        $query = $this->db->get($table);
+        if ($query->num_rows() > 0) {
+            foreach ($query->result_array() as $row) {
+                $new_row['label'] = htmlentities(stripslashes($row['GRN_No']));
+                $new_row['value'] = htmlentities(stripslashes($row['GRN_No']));
+                $row_set[] = $new_row; //build an array
+            }
+            echo json_encode($row_set); //format the array into json data
+        }
+    }
+
+    public function loadGrnById($inv) {
+        return $this->db->select('goodsreceivenotedtl.*,product.Prd_Description,goodsreceivenotehed.GRN_Amount AS GRN_totalAmount,goodsreceivenotehed.GRN_NetAmount AS totalNet, goodsreceivenotehed.GRN_DisAmount As TotalDiscount,goodsreceivenotehed.GRN_SupCode')->from('goodsreceivenotedtl')
+                        ->where('goodsreceivenotedtl.GRN_No', $inv)
+                        ->join('goodsreceivenotehed', 'goodsreceivenotehed.GRN_No = goodsreceivenotedtl.GRN_No')
+                        ->join('product', 'product.ProductCode = goodsreceivenotedtl.GRN_Product')
+                        ->get()->result();
+    }
+    
+       public function cancelGrn($cancelNo,$location,$canDate,$grnNo,$remark,$user,$supplier) {
+        $this->db->trans_start();
+        $this->db->query("CALL SPT_CANCEL_GRN('$canDate','$grnNo','$user','$remark','$supplier','$cancelNo','$location')");
+        
+        $query = $this->db->get_where('goodsreceivenotedtl',array('GRN_No'=>$grnNo));
+        if ($query->num_rows() > 0) {
+            foreach ($query->result_array() as $row) {
+                $product_codeArr=$row['GRN_Product'];
+                $qtyArr=$row['GRN_Qty'];
+                $price_levelArr=$row['GRN_PriceLevel'];
+                $cost_priceArr=$row['GRN_UnitCost'];
+                $sell_priceArr=$row['GRN_Selling'];
+//                $location=$row[''];
+                $serial_noArr=$row['SerialNo'];
+                $freeQtyArr=$row['GRN_FreeQty'];
+                
+               $this->db->query("CALL SPP_UPDATE_PRICE_STOCK('$product_codeArr','$qtyArr','$price_levelArr','$cost_priceArr','$sell_priceArr','$location','$serial_noArr','$freeQtyArr','0','0')");
+            //update product previous cost
+                $this->db->update('product',array('Prd_CostPrice'=>$cost_priceArr),array('ProductCode'=> $product_codeArr));
+            //update product stock
+            //$this->db->query("CALL SPT_UPDATE_PRO_STOCK('$product_codeArr','$totalGrnQty',0,'$location')");
+            }
+        }
+        
+        $this->update_max_code('CancelGRN');
+        $this->db->trans_complete();
+       return $this->db->trans_status();
+    }
+}
