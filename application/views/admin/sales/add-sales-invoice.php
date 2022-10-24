@@ -15,7 +15,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-success container-fluid">
-                    <div class="row" style="background: #D0D0D0;"><br>
+                    <div class="row" style="background: #5fbfba;"><br>
                         <style>
                             .form-group {margin-bottom: 5px;}
                         </style>
@@ -42,7 +42,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Price Level</label>  
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-7">
                                         <select tabindex="7" class="form-control" id="priceLevel"> 
                                          <?php foreach ($plv as $pl) { ?>
                                         <option value="<?php echo $pl->PL_No; ?>" <?php if ($pl->PL_No == 1) {echo 'selected';}?>><?php echo $pl->PriceLevel; ?></option>
@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">CO Number </label>
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-7">
                                         <input type="text" name="po_number" class="form-control" id="po_number" placeholder="Customer Order" value="<?php echo $customerOder;?>">
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Invoice Type</label>  
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-7">
                                         <select tabindex="7" class="form-control" id="invType"> 
                                             <option value="1">General Invoice</option>
                                             <option value="2">Tax Invoice</option>
@@ -130,7 +130,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </div> 
                                 <div class="form-group">
                                     <div class="col-sm-4"><input type="text" tabindex="8" class="form-control" required="required"  name="shippingLabel" id="shippingLabel"  placeholder="Shipping" value="Shipping"></div>  
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-7">
                                      <input type="number" step="50" tabindex="8" onfocus="this.select();"  class="form-control" required="required"  name="shipping" id="shipping" placeholder="Shipping charges" value="0">
                                      <input type="hidden" tabindex="1" class="form-control" required="required"  name="soNo" id="soNo" placeholder="Transport charges">
                                         <select style="display: none;" tabindex="3" disabled class="form-control" id="location">
@@ -360,6 +360,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     </div>
                                 </div>
                                         <div class="form-group">
+                                            <label for="additional" class="col-sm-4 control-label">Warranty Period</label>
+                                            <div class="col-sm-7">
+                                                <select class="form-control" required="required"  name="warrantytype" id="warrantytype" placeholder="">
+                                                    <option value="">-Select a Warranty Period-</option>
+                                                    <?php foreach ($warrantytype as $trns) { ?>
+                                                        <option value="<?php echo $trns->id; ?>" ><?php echo $trns->type; ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
                                             <label for="product" class="col-sm-7 control-label">Product Wise Discount<span class="required">*</span></label>
                                             <div class="col-sm-3"><input tabindex="15" type="radio" checked required="required" class="prd_icheck"  name="discount_type" id="productWise" value="1"></div>
                                         </div>
@@ -401,15 +412,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Product Code</th>
-                                            <th>Product Name</th>
-                                            <th>Unit Cost</th>
+                                            <th>Code</th>
+                                            <th>Product</th>
+                                            <th>Cost</th>
                                             <th>Quantity</th>
-                                            <th>Unit Price</th>
+                                            <th>Price</th>
                                             <th>Discount (%)</th>
-                                            <th>Total Net Amount</th>
+                                            <th>Total Amount</th>
                                             <th>Serial</th>
-                                            <th>Sale by</th>
+                                            <th>warranty</th>
+                                            <th>Sale person</th>
                                             <th>##</th>
                                             <th>##</th>
                                         </tr>

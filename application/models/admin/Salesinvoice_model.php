@@ -132,6 +132,7 @@ class Salesinvoice_model extends CI_Model {
         $proNbtArr = json_decode($_POST['proNbt']);
         $proNameArr = json_decode($_POST['proName']);
         $salesPersonArr = json_decode($_POST['salePerson']);
+        $warrantytypeArr = json_decode($_POST['warrantytype']);
         $location = $post['location'];
         $customerPonumber = $post['po_number'];
         $mchange = $post['mchange'];
@@ -179,7 +180,8 @@ class Salesinvoice_model extends CI_Model {
                     'SalesTotalAmount' => $totalAmountArr[$i],
                     'SalesInvNetAmount' => $total_netArr[$i],
                     'SalesPerson' => $salesPersonArr[$i],
-                    'WarrantyMonth'=>$WarrantyMonth,
+                    'SalesPerson' => $salesPersonArr[$i],
+                    'WarrantyMonthNew'=>$warrantytypeArr[$i],
                     'SellingPriceORG'=>$orgSell_priceArr[$i]
                 );
             $this->db->insert('salesinvoicedtl', $grnDtl);
@@ -486,6 +488,7 @@ class Salesinvoice_model extends CI_Model {
         $proNbtArr = json_decode($_POST['proNbt']);
         $proNameArr = json_decode($_POST['proName']);
         $salesPersonArr = json_decode($_POST['salePerson']);
+        $warrantytypeArr = json_decode($_POST['warrantytype']);
         $location = $post['location'];
         $isRawMat =0;
         $totalCost = 0;
@@ -594,6 +597,7 @@ class Salesinvoice_model extends CI_Model {
                     'SalesTotalAmount' => $totalAmountArr[$i],
                     'SalesInvNetAmount' => $total_netArr[$i],
                     'SalesPerson' => $salesPersonArr[$i],
+                    'WarrantyMonthNew' => $warrantytypeArr[$i],
                     'WarrantyMonth'=>$WarrantyMonth,
                     'SellingPriceORG'=>$orgSell_priceArr[$i]
                 );

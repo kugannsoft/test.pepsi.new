@@ -477,7 +477,13 @@ class Salesinvoice extends Admin_Controller {
             $this->data['invSales']= $this->db->select('salespersons.RepName')
                 ->from('salesinvoicedtl')->join('salespersons', 'salesinvoicedtl.SalesPerson = salespersons.RepID', 'left')->where('salesinvoicedtl.SalesInvNo',$invNo)->get()->row();   
 
-             $this->data['invDtl']=$this->db->select('salesinvoicedtl.*,product.*')->from('salesinvoicedtl')->join('product', 'salesinvoicedtl.SalesProductCode = product.ProductCode', 'LEFT')->where('salesinvoicedtl.SalesInvNo', $invNo)->order_by('salesinvoicedtl.SalesInvLineNo','ASC')->get()->result();
+             $this->data['invDtl']=$this->db->select('salesinvoicedtl.*,product.*,warranty_typs.*')
+                 ->from('salesinvoicedtl')
+                 ->join('product', 'salesinvoicedtl.SalesProductCode = product.ProductCode', 'LEFT')
+                 ->join('warranty_typs', 'salesinvoicedtl.WarrantyMonthNew = warranty_typs.id', 'LEFT')
+                 ->where('salesinvoicedtl.SalesInvNo', $invNo)
+                 ->order_by('salesinvoicedtl.SalesInvLineNo','ASC')
+                 ->get()->result();
              //invoice cancel
              $this->data['invCancel']=$this->db->select('cancelsalesinvoice.*,users.first_name,users.last_name')->from('cancelsalesinvoice')->join('users', 'cancelsalesinvoice.CancelUser = users.id', 'INNER')->where('cancelsalesinvoice.SalesInvoiceNo', $invNo)->order_by('CancelDate','DESC')->get()->row();
 
@@ -552,9 +558,15 @@ class Salesinvoice extends Admin_Controller {
             $this->data['invVehi']= $this->db->select('vehicledetail.ChassisNo,vehicledetail.contactName,make.make,model.model')->from('vehicledetail')->join('make','make.make_id=vehicledetail.Make','left')->join('model','model.model_id=vehicledetail.Model','left')->where('CusCode',$cusCode)->where('vehicledetail.RegNo',$regNo)->get()->row();
 
             $this->data['invSales']= $this->db->select('salespersons.RepName')
-                ->from('salesinvoicedtl')->join('salespersons', 'salesinvoicedtl.SalesPerson = salespersons.RepID', 'left')->where('salesinvoicedtl.SalesInvNo',$invNo)->get()->row();   
+                ->from('salesinvoicedtl')->join('salespersons', 'salesinvoicedtl.SalesPerson = salespersons.RepID', 'left')->where('salesinvoicedtl.SalesInvNo',$invNo)->get()->row();
 
-             $this->data['invDtl']=$this->db->select('salesinvoicedtl.*,product.*')->from('salesinvoicedtl')->join('product', 'salesinvoicedtl.SalesProductCode = product.ProductCode', 'LEFT')->where('salesinvoicedtl.SalesInvNo', $invNo)->order_by('salesinvoicedtl.SalesInvLineNo','ASC')->get()->result();
+                $this->data['invDtl']=$this->db->select('salesinvoicedtl.*,product.*,warranty_typs.*')
+                    ->from('salesinvoicedtl')
+                    ->join('product', 'salesinvoicedtl.SalesProductCode = product.ProductCode', 'LEFT')
+                    ->join('warranty_typs', 'salesinvoicedtl.WarrantyMonthNew = warranty_typs.id', 'LEFT')
+                    ->where('salesinvoicedtl.SalesInvNo', $invNo)
+                    ->order_by('salesinvoicedtl.SalesInvLineNo','ASC')
+                    ->get()->result();
              //invoice cancel
              $this->data['invCancel']=$this->db->select('cancelsalesinvoice.*,users.first_name,users.last_name')->from('cancelsalesinvoice')->join('users', 'cancelsalesinvoice.CancelUser = users.id', 'INNER')->where('cancelsalesinvoice.SalesInvoiceNo', $invNo)->order_by('CancelDate','DESC')->get()->row();
 
@@ -2722,6 +2734,7 @@ $arr[] =null;
         $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
         $this->data['plv'] = $this->Job_model->loadpricelevel();
         $this->data['location'] = $this->db->select()->from('location')->get()->result();
+        $this->data['warrantytype'] = $this->db->select()->from('warranty_typs')->get()->result();
         $this->data['salesperson'] = $this->db->select()->from('salespersons')->get()->result();
         $this->data['bank_acc']=$this->db->select('bank_account.*,bank.BankName')->from('bank_account')->join('bank','BankCode=acc_bank')->get()->result();
         $this->data['bank'] = $this->db->select()->from('bank')->get()->result();

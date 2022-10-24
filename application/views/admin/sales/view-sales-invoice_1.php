@@ -80,7 +80,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
           <input type="hidden" name="inv" id="inv" value="<?php echo $invNo;?>">
         <div class="row" id="printArea" align="center" style='margin:5px;'>
                                 <!-- load comapny common header -->
-    <?php// $this->load->view('admin/_templates/company_header.php',true); ?>
+    <?php // $this->load->view('admin/_templates/company_header.php',true); ?>
             <table style="border-collapse:collapse;width:730px;font-family: Arial, Helvetica, sans-serif;" border="0"  align="center">
             <tr style="text-align:left;font-size:15px;">
       <td colspan="2"> <?php if($invHed->SalesInvType==2){?> Vat Reg No: <?php   echo  $invCus->DocNo; } ?></td>
@@ -248,7 +248,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <tr style="line-height:20px; border-bottom:1px solid #000000; border-top:1px solid #000000; border-left:1px solid #000000; border-right:1px solid #000000;">
                           <td style="border-right:1px solid #000000;"><?php echo $invdata->SalesProductCode;?></td>
                           <td style="border-right:1px solid #000000;"><?php echo $invdata->SalesProductName."<br>".$invdata->SalesSerialNo;?></td>
-                          <td style="border-right:1px solid #000000;"><?php echo number_format(($invdata->WarrantyMonth),0)?>&nbsp; Month</td>
+                          <td style="border-right:1px solid #000000;"><?php echo $invdata->type;?></td>
                           <td style="border-right:1px solid #000000; text-align:center;"><?php echo number_format(($invdata->SalesQty),0)?></td>
                           <td style="border-right:1px solid #000000; text-align:right;" class='text-right'><?php echo number_format(($invdata->SalesUnitPrice),2)?></td>
                           <td style="border-right:1px solid #000000; text-align:right;" class='text-right'><?php echo number_format(($invdata->SalesInvNetAmount),2)?></td>

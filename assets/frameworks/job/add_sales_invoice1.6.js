@@ -1136,6 +1136,8 @@ var vatSellingPrice = 0;
         var case1 = $("#mUnit option:selected").val();
         var salesperson = $("#salesperson option:selected").val();
         var salespname = $("#salesperson option:selected").html();
+        var warranty = $("#warrantytype option:selected").val();
+        var warrantytype = $("#warrantytype option:selected").html();
         // vatSellingPrice = parseFloat($("#proVatPrice").val());
         vatSellingPrice = sellingPrice;
 
@@ -1143,6 +1145,12 @@ var vatSellingPrice = 0;
             salespname='';
         }else{
             salespname=salespname;
+        }
+
+        if (warranty=='') {
+            warrantytype='';
+        } else {
+            warrantytype=warrantytype;
         }
         newSerialQty = parseFloat($("#serialQty").val());
 
@@ -1240,7 +1248,20 @@ var vatSellingPrice = 0;
                         $("#serialQty").val(serialQty);
                     }
 
-                    $("#tbl_item tbody").append("<tr serial_batch='0'  ri=" + i + " id=" + i + " isZero='"+isSellZero+"' proCode='" + itemCode + "' uc='" + unit + "' qty='" + qty + "' unit_price='" + sellingPrice + "'  vatunit_price='" + vatSellingPrice + "'  org_unit_price='" + orgSellingPrice + "' upc='" + upc + "' caseCost='" + casecost + "' isSerial='" + is_serail + "' serial='" + serialNo + "' discount_percent='" + discount_precent + "' cPrice='" + costPrice + "' pL='" + priceLevel + "' fQ='" + freeQty + "' nonDisTotalNet='" + totalNet2 + "' netAmount='" + totalNet + "' proDiscount='" + product_discount + "' proName='" + prdName + "'  isvat='"+isNewVat+"' isnbt='"+isNewNbt+"' nbtRatio='"+newNbtRatio+"' proVat='"+proVat+"' proNbt='"+proNbt+"'  salesPerson='"+salesperson+"'  isbatchSerial='0'><td class='text-center'>" + i + "</td><td class='text-left'>" + itemCode + "</td><td>" + prdName + "</td><td>" + unit + "</td><td class='qty" + i + "'>" + accounting.formatNumber(qty) + "</td><td class='text-right'>" + accounting.formatNumber(sellingPrice) + "</td><td class='text-center'>" + discount_precent + "</td><td class='text-right' >" + accounting.formatMoney(totalNet) + "</td><td>" + serialNo + "</td><td>"+salespname+"</td><td><i class='glyphicon glyphicon-edit edit btn btn-info btn-xs'></i></td><td class='rem" + i + "'><a href='#' class='remove btn btn-xs btn-danger'><i class='fa fa-remove'></i></a></td></tr>");
+                    $("#tbl_item tbody").append("<tr serial_batch='0'  ri=" + i + " id=" + i + " isZero='"+isSellZero+"' proCode='" + itemCode + "' uc='" + unit + "' qty='" + qty + "' unit_price='" + sellingPrice + "'  vatunit_price='" + vatSellingPrice + "'  org_unit_price='" + orgSellingPrice + "' upc='" + upc + "' caseCost='" + casecost + "' isSerial='" + is_serail + "' serial='" + serialNo + "' discount_percent='" + discount_precent + "' cPrice='" + costPrice + "' pL='" + priceLevel + "' fQ='" + freeQty + "' nonDisTotalNet='" + totalNet2 + "' netAmount='" + totalNet + "' proDiscount='" + product_discount + "' proName='" + prdName + "'  isvat='"+isNewVat+"' isnbt='"+isNewNbt+"' nbtRatio='"+newNbtRatio+"' proVat='"+proVat+"' proNbt='"+proNbt+"'  salesPerson='"+salesperson+"'  isbatchSerial='0' warranty='"+warranty+"'>" +
+                        "<td class='text-center'>" + i + "</td>" +
+                        "<td class='text-left'>" + itemCode + "</td>" +
+                        "<td>" + prdName + "</td><td>" + unit + "</td>" +
+                        "<td class='qty" + i + "'>" + accounting.formatNumber(qty) + "</td>" +
+                        "<td class='text-right'>" + accounting.formatNumber(sellingPrice) + "</td>" +
+                        "<td class='text-center'>" + discount_precent + "</td>" +
+                        "<td class='text-right' >" + accounting.formatMoney(totalNet) + "</td>" +
+                        "<td>" + serialNo + "</td>" +
+                        "<td>" + warrantytype + "</td>" +
+                        "<td>" + salespname + "</td>" +
+                        "<td><i class='glyphicon glyphicon-edit edit btn btn-info btn-xs'></i></td>" +
+                        "<td class='rem" + i + "'><a href='#' class='remove btn btn-xs btn-danger'><i class='fa fa-remove'></i></a></td>" +
+                        "</tr>");
                     clear_gem_data();
                     // if (is_serail != 1) {
                     //     clear_gem_data();
@@ -1348,6 +1369,7 @@ var vatSellingPrice = 0;
         var isSerial = $(this).parent().parent().attr('isSerial');
         var serialNo = $(this).parent().parent().attr('serialNo');
         var salesPerson = $(this).parent().parent().attr('salesPerson');
+        var warranty = $(this).parent().parent().attr('warranty');
         var pricelevel = $(this).parent().parent().attr('pL');
         var totalPrice = parseFloat($(this).parent().parent().attr('nonDisTotalNet'));
         var isvat = $(this).parent().parent().attr('isvat');
@@ -1382,6 +1404,7 @@ var vatSellingPrice = 0;
             // $("#estPrice").val(estPrice);
             $("#unitcost").val(costprice);
             $("#salesperson").val(salesPerson);
+            $("#warrantytype").val(warranty);
             // $("#disPercent").val(disPrecent);
             
             $("input[name='isZero']:checked").val();
@@ -1515,6 +1538,7 @@ var action=0;
         var proVat =  new Array();
         var proNbt = new Array();
         var salePerson = new Array();
+        var warrantytype = new Array();
 
         var ccRef = new Array();
         var ccAmount = new Array();
@@ -1587,6 +1611,7 @@ var action=0;
             proVat.push($(this).attr('proVat'));
             proNbt.push($(this).attr('proNbt'));
             salePerson.push($(this).attr('salesperson'));
+            warrantytype.push($(this).attr('warranty'));
         });
 
         var sendProduct_code = JSON.stringify(product_code);
@@ -1612,6 +1637,7 @@ var action=0;
         var proVatArr = JSON.stringify(proVat);
         var proNbtArr = JSON.stringify(proNbt);
         var salePersonArr = JSON.stringify(salePerson);
+        var warrantytypeArr = JSON.stringify(warrantytype);
 
         var r = confirm("Do you want to save this invoice.?");
         if (r == true) {
@@ -1635,7 +1661,7 @@ var action=0;
                         discount_precent: sendDiscount_precent, pro_discount: sendPro_discount, total_net: sendTotal_net, unit_type: sendUnit_type, price_level: sendPrice_level, upc: sendUpc,
                         case_cost: sendCaseCost, freeQty: sendFree_qty, cost_price: sendCost_price, pro_total: sendPro_total, isSerial: sendIsSerial, proName: sendPro_name,isVat:isVatArr,isNbt:isNbtArr,nbtRatio:nbtRatioArr,proVat:proVatArr,proNbt:proNbtArr,salePerson:salePersonArr, total_cost: totalCost, totalProDiscount: totalProWiseDiscount, totalGrnDiscount: totalGrnDiscount,
                         grnDate: grnDate, invUser: invUser, total_amount: total_amount, total_discount: total_discount, total_net_amount: totalNetAmount, location: location, supcode: supcode, maxSerialQty: maxSerialQty, serialAutoGen: serialAutoGen,nbtRatioRate: nbtRatioRate,isTotalVat:isTotalVat,isTotalNbt:isTotalNbt,totalVat:finalVat,totalNbt:finalNbt,bankacc:bankacc,bank_amount:bank_amount,cashAmount:cashAmount,creditAmount:creditAmount,chequeAmount:chequeAmount,cardAmount:cardAmount,advance_amount:advance_amount,advance_pay_no:advance_payment_no,return_payment_no:return_payment_no,return_amount:return_amount,
-                    ccAmount: ccAmountArr, ccRef: ccRefArr, ccType: ccTypeArr, ccName: ccNameArr,chequeNo:chequeNo,bank: bank, chequeReference: chequeReference, chequeRecivedDate: chequeReciveDate, chequeDate: chequeDate, mchange: mchange},
+                    ccAmount: ccAmountArr, ccRef: ccRefArr, ccType: ccTypeArr, ccName: ccNameArr,chequeNo:chequeNo,bank: bank, chequeReference: chequeReference, chequeRecivedDate: chequeReciveDate, chequeDate: chequeDate, mchange: mchange, warrantytype:warrantytypeArr},
                     success: function(data) {
                         var resultData = JSON.parse(data);
                         var feedback = resultData['fb'];
@@ -1918,6 +1944,7 @@ var finalNbt=0;
         $("#disPercent").val(0);
         $("#disAmount").val(0);
         $("#salesperson").val('');
+        $("#warrantytype").val('');
         $("#upm").html('');
         $("#proStock").html('');
         $("#productName").html('');
@@ -2043,7 +2070,19 @@ function strPad(input, length, string, code) {
                 
                 serialnoarr.push(resultData.si_dtl[i].ProductCode);
 
-                $("#tbl_item tbody").append("<tr ri=" + i + " id=" + i + " proCode='" + resultData.si_dtl[i].ProductCode + "' uc='" + resultData.si_dtl[i].SalesCaseOrUnit + "' qty='" + resultData.si_dtl[i].SalesQty + "' vatunit_price='" + resultData.si_dtl[i].SalesUnitPrice + "'  org_unit_price='" + resultData.si_dtl[i].SalesUnitPrice + "' unit_price='" + resultData.si_dtl[i].SalesUnitPrice + "' upc='" + resultData.si_dtl[i].SalesUnitPerCase + "' caseCost='" + (resultData.si_dtl[i].SalesCostPrice*resultData.si_dtl[i].SalesQty) + "' isSerial='" + resultData.si_dtl[i].SalesSerialNo + "' serial='" + resultData.si_dtl[i].SalesSerialNo + "' discount_percent='" + resultData.si_dtl[i].SalesDisPercentage + "' cPrice='" + resultData.si_dtl[i].SalesCostPrice + "' pL='" + resultData.si_dtl[i].SalesPriceLevel + "' fQ='" + resultData.si_dtl[i].SalesFreeQty + "' nonDisTotalNet='" + resultData.si_dtl[i].SalesTotalAmount + "' netAmount='" + resultData.si_dtl[i].SalesInvNetAmount + "' proDiscount='" + resultData.si_dtl[i].SalesDisValue + "' proName='" + resultData.si_dtl[i].SalesProductName  + "'   isvat='"+resultData.si_dtl[i].SalesIsVat+"' isnbt='"+resultData.si_dtl[i].SalesIsNbt+"' nbtRatio='"+resultData.si_dtl[i].SalesNbtRatio+"' proVat='"+resultData.si_dtl[i].SalesVatAmount+"' proNbt='"+resultData.si_dtl[i].SalesNbtAmount+"'  salesPerson='"+resultData.si_dtl[i].SalesPerson+"' ><td class='text-center'>" + (i+1) + "</td><td class='text-left'>" + resultData.si_dtl[i].ProductCode + "</td><td>" + resultData.si_dtl[i].SalesProductName + "</td><td>" + resultData.si_dtl[i].SalesCaseOrUnit + "</td><td class='qty" + i + "'>" + accounting.formatNumber(resultData.si_dtl[i].SalesQty) + "</td><td class='text-right'>" + accounting.formatNumber(resultData.si_dtl[i].SalesUnitPrice) + "</td><td class='text-center'>" + resultData.si_dtl[i].SalesDisPercentage + "</td><td class='text-right' >" + accounting.formatMoney(resultData.si_dtl[i].SalesInvNetAmount) + "</td><td class='text-right' >" + (resultData.si_dtl[i].SalesSerialNo) + "</td><td></td><td><i class='glyphicon glyphicon-edit edit btn btn-info btn-xs'></i></td><td class='rem" + i + "'><a href='#' class='remove btn btn-xs btn-danger'><i class='fa fa-remove'></i></a></td></tr>");
+                $("#tbl_item tbody").append("<tr ri=" + i + " id=" + i + " proCode='" + resultData.si_dtl[i].ProductCode + "' uc='" + resultData.si_dtl[i].SalesCaseOrUnit + "' qty='" + resultData.si_dtl[i].SalesQty + "' vatunit_price='" + resultData.si_dtl[i].SalesUnitPrice + "'  org_unit_price='" + resultData.si_dtl[i].SalesUnitPrice + "' unit_price='" + resultData.si_dtl[i].SalesUnitPrice + "' upc='" + resultData.si_dtl[i].SalesUnitPerCase + "' caseCost='" + (resultData.si_dtl[i].SalesCostPrice*resultData.si_dtl[i].SalesQty) + "' isSerial='" + resultData.si_dtl[i].SalesSerialNo + "' serial='" + resultData.si_dtl[i].SalesSerialNo + "' discount_percent='" + resultData.si_dtl[i].SalesDisPercentage + "' cPrice='" + resultData.si_dtl[i].SalesCostPrice + "' pL='" + resultData.si_dtl[i].SalesPriceLevel + "' fQ='" + resultData.si_dtl[i].SalesFreeQty + "' nonDisTotalNet='" + resultData.si_dtl[i].SalesTotalAmount + "' netAmount='" + resultData.si_dtl[i].SalesInvNetAmount + "' proDiscount='" + resultData.si_dtl[i].SalesDisValue + "' proName='" + resultData.si_dtl[i].SalesProductName  + "'   isvat='"+resultData.si_dtl[i].SalesIsVat+"' isnbt='"+resultData.si_dtl[i].SalesIsNbt+"' nbtRatio='"+resultData.si_dtl[i].SalesNbtRatio+"' proVat='"+resultData.si_dtl[i].SalesVatAmount+"' proNbt='"+resultData.si_dtl[i].SalesNbtAmount+"'  salesPerson='"+resultData.si_dtl[i].SalesPerson+"' warranty='"+resultData.si_dtl[i].WarrantyMonthNew+"'>" +
+                    "<td class='text-center'>" + (i+1) + "</td>" +
+                    "<td class='text-left'>" + resultData.si_dtl[i].ProductCode + "</td>" +
+                    "<td>" + resultData.si_dtl[i].SalesProductName + "</td>" +
+                    "<td>" + resultData.si_dtl[i].SalesCaseOrUnit + "</td>" +
+                    "<td class='qty" + i + "'>" + accounting.formatNumber(resultData.si_dtl[i].SalesQty) + "</td>" +
+                    "<td class='text-right'>" + accounting.formatNumber(resultData.si_dtl[i].SalesUnitPrice) + "</td>" +
+                    "<td class='text-center'>" + resultData.si_dtl[i].SalesDisPercentage + "</td>" +
+                    "<td class='text-right' >" + accounting.formatMoney(resultData.si_dtl[i].SalesInvNetAmount) + "</td>" +
+                    "<td class='text-right' >" + (resultData.si_dtl[i].SalesSerialNo) + "</td>" +
+                    "<td></td>" +
+                    "<td></td>" +
+                    "<td><i class='glyphicon glyphicon-edit edit btn btn-info btn-xs'></i></td><td class='rem" + i + "'><a href='#' class='remove btn btn-xs btn-danger'><i class='fa fa-remove'></i></a></td></tr>");
                 totalProWiseDiscount += parseFloat(resultData.si_dtl[i].SalesDisValue);
             }
         
