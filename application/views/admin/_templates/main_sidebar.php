@@ -331,7 +331,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </ul>
                 </li>
             <?php } ?>
-            <?php if ($_SESSION['location'] == 1) { ?>
+            <?php if (empty($_SESSION['location']) || $_SESSION['location'] == 1) { ?>
             <?php if (in_array("M7", $blockView) || $blockView == null) { ?>
             <li class="treeview <?= active_link_controller('master') ?>">
                 <a href="#">
@@ -835,7 +835,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </ul>
             </li>
             <?php } ?>
-            <?php if ($_SESSION['location'] == 1) { ?>
+            <?php if (empty($_SESSION['location']) || $_SESSION['location'] == 1) { ?>
             <?php if (in_array("M9", $blockView) || $blockView == null) { ?>
             <li class="treeview <?= active_link_controller('grn') ?>">
                 <a href="#">
@@ -882,7 +882,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </ul>
             </li>
             <?php } ?>
-            <?php if ($_SESSION['location'] == 1) { ?>
+            <?php if (empty($_SESSION['location']) || $_SESSION['location'] == 1) { ?>
             <?php if (in_array("M11", $blockView) || $blockView == null) { ?>
             <li class="treeview <?= active_link_controller('purchase') ?>">
                 <a href="#">
