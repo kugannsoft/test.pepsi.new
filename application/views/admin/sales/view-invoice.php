@@ -40,14 +40,15 @@
                             <?php } ?>
                             <!--div class="col-sm-1"><a href="<?php echo base_url('admin/Salesinvoice/print_invoice_pdf/').base64_encode($invNo); ?>" target="blank_" class="btn btn-primary btn-sm">Pdf</a></div-->
                             <?php if (in_array("SM45", $blockEdit) || $blockEdit == null) { ?>
-                            <div class="col-sm-1"><?php if($invHed->IsCancel==0){?>
-                              <a href="<?php echo base_url('admin/Salesinvoice/job_invoice?type=inv&id=').base64_encode($invNo); ?>" target="blank_" class="btn btn-info btn-sm">Edit</a>
-                                <?php } ?>
-                            </div>
+<!--                            <div class="col-sm-1">--><?php //if($invHed->IsCancel==0){?>
+<!--                              <a href="--><?php //echo base_url('admin/Salesinvoice/job_invoice?type=inv&id=').base64_encode($invNo); ?><!--" target="blank_" class="btn btn-info btn-sm">Edit</a>-->
+<!--                                --><?php //} ?>
+<!--                            </div>-->
                             <?php } ?>
                             <?php if (in_array("SM45", $blockDelete) || $blockDelete == null) { ?>
-                            <div class="col-sm-2"><?php if($invHed->IsCancel==0){?>
-                            <button type="button" <?php echo $disabled;?>  id="btnCancel" class="btn btn-danger btn-sm btn-block">Invoice Cancel</button><?php } ?></div>
+                            <div class="col-sm-2"><?php if($invHed->IsCancel==0 && $invHed->IsPayment==1){?>
+                            <button disabled="disabled" type="button" <?php echo $disabled;?>  id="btnCancel" class="btn btn-danger btn-sm btn-block">Invoice Cancel</button>
+                                <?php } else { ?>  <button  type="button" <?php echo $disabled;?>  id="btnCancel" class="btn btn-danger btn-sm btn-block">Invoice Cancel</button> <?php } ?></div>
                             <?php } ?>
                             <?php if (in_array("SM102", $blockDelete) || $blockDelete == null) { ?>
                              <div class="col-sm-3"><?php if($invHed->IsCancel==0 && $invHed->IsPayment==1){?>
@@ -98,13 +99,13 @@
         <td> &nbsp;</td>
         <td style="text-align:left;border-left: 1px solid #000;border-top:1px solid #000;border-right: 1px solid #000;">&nbsp;&nbsp;INVOICE NO.</td>
         <td style="border-top: 1px solid #000;"></td>
-        <td colspan="2" style="text-align:left;border-right: 1px solid #000;border-top: 1px solid #000;">&nbsp;&nbsp;ESTIMATE NO.</td>
+        <td colspan="2" style="text-align:left;border-right: 1px solid #000;border-top: 1px solid #000;">&nbsp;&nbsp;JOB NO.</td>
     </tr>
     <tr style="text-align:left;font-size:12px;">
         <td> &nbsp;</td>
         <td style="padding-top:0px;font-size:11px;text-align:right;border-left: 1px solid #000;border-bottom: 1px solid #000;border-right: 1px solid #000;"><?php echo $invHed->JobInvNo ?>&nbsp;&nbsp;</td>
         <td style="border-bottom: 1px solid #000;"></td>
-        <td colspan="2" style="font-size:11px;text-align:right;border-right: 1px solid #000;border-bottom: 1px solid #000;"><?php echo $invHed->JobEstimateNo; ?>&nbsp;&nbsp;</td>
+        <td colspan="2" style="font-size:11px;text-align:right;border-right: 1px solid #000;border-bottom: 1px solid #000;"><?php echo $invHed->jobcardNo; ?>&nbsp;&nbsp;</td>
     </tr>
     <tr style="text-align:left;font-size:12px;">
         <td> &nbsp;</td>
@@ -119,7 +120,7 @@
         <td colspan="2" style="font-size:11px;text-align:right;border-right: 1px solid #000;border-bottom: 1px solid #000;"><?php  echo $invCus->CusCode;?>&nbsp;&nbsp;</td>
     </tr>
     <tr style="text-align:left;font-size:12px;">
-        <td style="text-align:left;font-size:13px;" colspan="2"></td><td></td><td style="text-align:left;font-size:13px;border-left: 1px solid #000;border-right: 1px solid #000;border-right: 1px solid #000;">&nbsp;&nbsp;INSURER </td><td></td><td colspan="2" style="border-right: 1px solid #000;">&nbsp;&nbsp;ISSUED BY</td>
+        <td style="text-align:left;font-size:13px;" colspan="2"></td><td></td><td style="text-align:left;font-size:13px;border-left: 1px solid #000;border-right: 1px solid #000;border-right: 1px solid #000;">&nbsp;&nbsp;START DATE </td><td></td><td colspan="2" style="border-right: 1px solid #000;">&nbsp;&nbsp;ISSUED BY</td>
     </tr>
     <tr style="text-align:left;font-size:12px;">
         <td style="text-align:left;font-size:13px;" colspan="2"></td><td></td><td style="text-align:right;font-size:11px;border-left: 1px solid #000;border-bottom: 1px solid #000;border-right: 1px solid #000;"><?php if($invHed->InvoiceType==1){?><?php echo $invHed->VComName; }?>&nbsp;&nbsp;</td><td style="border-bottom: 1px solid #000;"></td><td colspan="2" style="font-size:11px;text-align:right;border-right: 1px solid #000;border-bottom: 1px solid #000;"><?php  echo $invHed->first_name." ".$invHed->last_name[0];?>&nbsp;&nbsp;</td>
@@ -132,18 +133,18 @@
             } ?>
         </table>
         <table  class="tblhead"  style="margin-top:3px;font-size:12px;border-collapse:collapse;width:590px;font-family: Arial, Helvetica, sans-serif;" >
-  <tr style=" border: 1px solid black;">
-    <td  style="border: 1px solid black;width: 150px;">REG. NO. <br> &nbsp;&nbsp; <span style="text-align: center;font-size:11px;"><?php echo $invHed->regNo;?></span></td>
-    <td  style="border: 1px solid black;width: 150px;">CHASSIS NO. <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;"><?php if(isset($invVehi)){ echo $invVehi->ChassisNo;}?></span></td>
-    <td  style="border: 1px solid black;width: 150px;">MAKE <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;"><?php if(isset($invVehi)){ echo $invVehi->make;} ?></span></td>
-    <td  style="border: 1px solid black;width: 150px;">MODEL <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;"><?php  if(isset($invVehi)){ echo $invVehi->model;}?></span></td>
-  </tr>
-  <tr style=" border: 1px solid black;">
-    <td  style="border: 1px solid black;width: 150px;">MILEAGE OUT<br> &nbsp;&nbsp; <span style="text-align: center;font-size:11px;"><?php if($invjob){echo ml_to_km($invjob->OdoOut,$invjob->OdoOutUnit);}?> KM</span></td>
-    <td  style="border: 1px solid black;width: 150px;">LAST SERVICE DATE. <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;"><?php if(isset($invjob)){ echo $last_job;}?></span></td>
-    <td  style="border: 1px solid black;width: 150px;">NEXT SERVICE <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;"><?php if(isset($invjob)){ echo nextodo($invjob->OdoOut,$invjob->OdoOutUnit,$invjob->NextService);} ?> KM</span></td>
-    <td  style="border: 1px solid black;width: 150px;">JOB NO. <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;"><?php echo $invHed->jobcardNo ?></span></td>
-  </tr>
+<!--  <tr style=" border: 1px solid black;">-->
+<!--    <td  style="border: 1px solid black;width: 150px;">REG. NO. <br> &nbsp;&nbsp; <span style="text-align: center;font-size:11px;">--><?php //echo $invHed->regNo;?><!--</span></td>-->
+<!--    <td  style="border: 1px solid black;width: 150px;">CHASSIS NO. <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;">--><?php //if(isset($invVehi)){ echo $invVehi->ChassisNo;}?><!--</span></td>-->
+<!--    <td  style="border: 1px solid black;width: 150px;">MAKE <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;">--><?php //if(isset($invVehi)){ echo $invVehi->make;} ?><!--</span></td>-->
+<!--    <td  style="border: 1px solid black;width: 150px;">MODEL <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;">--><?php // if(isset($invVehi)){ echo $invVehi->model;}?><!--</span></td>-->
+<!--  </tr>-->
+<!--  <tr style=" border: 1px solid black;">-->
+<!--    <td  style="border: 1px solid black;width: 150px;">MILEAGE OUT<br> &nbsp;&nbsp; <span style="text-align: center;font-size:11px;">--><?php //if($invjob){echo ml_to_km($invjob->OdoOut,$invjob->OdoOutUnit);}?><!-- KM</span></td>-->
+<!--    <td  style="border: 1px solid black;width: 150px;">LAST SERVICE DATE. <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;">--><?php //if(isset($invjob)){ echo $last_job;}?><!--</span></td>-->
+<!--    <td  style="border: 1px solid black;width: 150px;">NEXT SERVICE <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;">--><?php //if(isset($invjob)){ echo nextodo($invjob->OdoOut,$invjob->OdoOutUnit,$invjob->NextService);} ?><!-- KM</span></td>-->
+<!--    <td  style="border: 1px solid black;width: 150px;">JOB NO. <br> &nbsp;&nbsp;<span style="text-align: center;font-size:11px;">--><?php //echo $invHed->jobcardNo ?><!--</span></td>-->
+<!--  </tr>-->
 <?php 
   function ml_to_km($odo,$odounit){
     $km=0;
@@ -188,7 +189,7 @@ return $km;
                                        <?php  foreach ($invdata AS $inv) { ?>
                                 <tr>
                                   <td style="border-bottom:1px dotted #e4dbdb;"><?php echo $i?></td>
-                                  <td colspan="2"  style="border-bottom:1px dotted #e4dbdb;"><?php echo $inv->JobDescription?></td>
+                                  <td colspan="2"  style="border-bottom:1px dotted #e4dbdb;"><?php echo $inv->JobDescription?> <br> <?php echo $inv->SalesSerialNo ?></td>
                                   <td class='text-right'  style="border-bottom:1px dotted #e4dbdb;"><?php echo number_format($inv->JobQty,2)?></td>
                                   <td class='text-right'  style="border-bottom:1px dotted #e4dbdb;"><?php echo number_format($inv->JobPrice,2)?></td>
                                   <td class='text-right' colspan="2"  style="border-bottom:1px dotted #e4dbdb;"><?php echo number_format($inv->JobTotalAmount,2)?></td>
@@ -1473,6 +1474,7 @@ function cancelInvoice(invoice, remark) {
             if (data == 1) {
                 $.notify("Invoice canceled successfully.", "success");
                 $("#btnCancel").attr('disabled', true);
+                location.reload();
             } else if (data == 2) {
                 $.notify("Error. Customer has done payment for this invoice. If you want to cancel this invoice please cancel the payment", "danger");
                 $("#btnCancel").attr('disabled', false);
@@ -1503,6 +1505,7 @@ function cancelJobPayment(invoice, remark) {
             if (data == 1) {
                 $.notify("Payment canceled successfully.", "success");
                 $("#btnCancel").attr('disabled', true);
+                location.reload();
             } else if (data == 2) {
                 $.notify("Error. Customer has done payment for this invoice. If you want to cancel this invoice please cancel the payment", "danger");
                 $("#btnCancel").attr('disabled', false);

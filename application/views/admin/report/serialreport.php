@@ -17,6 +17,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <form id="filterform">
                                 <div class="row">
                            
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="transfer" class="control-label">
+                                            <input class="rpt_icheck" type="checkbox" name="transfer" value="transfer">
+                                            Transfer
+                                        </label>
+                                    </div>
+
+                                </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                     <select class="form-control" name="productsearch" id="productsearch">
@@ -49,12 +58,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                          <input type="hidden" name="route_ar" id="route_ar">
                                      </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                      <div class="form-group">
                                     <button type="submit" class="btn btn-flat btn-success">Show</button>
                                      </div>
                                 </div>
-                               <div class="col-md-2">
+                               <div class="col-md-1">
                                 <div class="form-group">
                                 <button onclick="printdiv()" class="btn btn-flat btn-default">Print</button>
                                 </div>

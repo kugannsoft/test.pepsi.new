@@ -40,14 +40,14 @@ class Mrn extends Admin_Controller {
             $this->data['mrnNo'] ='';
             $this->data['estNo'] ='';
         }
-        
 
+        $currentLocation = $_SESSION['location'];
         $this->page_title->push(('Parts Request Note'));
         $this->breadcrumbs->unshift(1, 'Parts Request Note', 'admin/mrn/add_mrn');
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['plv'] = $this->Mrn_model->loadpricelevel();
-        $this->data['location'] = $this->Mrn_model->loadlocations();
+        $this->data['location'] = $this->db->select()->from('location')->where('location_id !=', $currentLocation)->get()->result();
          $this->data['brand'] = $this->db->select('*')->from('productbrand')->get()->result();
         $this->data['quality'] = $this->db->select('*')->from('productquality')->get()->result();
         $this->template->admin_render('admin/mrn/add-mrn', $this->data);
@@ -93,8 +93,10 @@ class Mrn extends Admin_Controller {
             $this->data['sup'] = $sup;
             $this->data['invNo'] = $invNo;
 
-            $this->data['invHed']= $this->db->select('materialrequestnotehed.*,users.first_name')
-                ->from('materialrequestnotehed')->join('users','materialrequestnotehed.MrnOutUser=users.id','left')
+            $this->data['invHed']= $this->db->select('materialrequestnotehed.*,users.first_name,location.location')
+                ->from('materialrequestnotehed')
+                ->join('location', 'location.location_id=materialrequestnotehed.ToLocation','INNER')
+                ->join('users','materialrequestnotehed.MrnOutUser=users.id','left')
                 ->where('MrnNo',$invNo)->get()->row();
 
             $cusCode =  $this->db->select('ToCustomer')->from('materialrequestnotehed')->where('MrnNo',$invNo)->get()->row()->ToCustomer;
@@ -116,8 +118,9 @@ class Mrn extends Admin_Controller {
 
     public function loadallmrns() {
         $this->load->library('Datatables');
-        $this->datatables->select('materialrequestnotehed.*');
+        $this->datatables->select('materialrequestnotehed.*,location.location');
         $this->datatables->from('materialrequestnotehed');
+        $this->datatables->join('location', 'location.location_id=materialrequestnotehed.ToLocation','INNER');
         echo $this->datatables->generate();
         die();
     }

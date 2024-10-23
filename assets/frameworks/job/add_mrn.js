@@ -946,10 +946,12 @@ $("#serialNo").autocomplete({
             } else if ((location_from) == '0' || (location_from) == '') {
                 $.notify("Please Select a request from location.", "warning");
                 return false;
-            } else if (((jobNo) == '0' || (jobNo) == '') && cusCode=='' ) {
-                $.notify("Please Select a job no.", "warning");
-                return false;
-            }  else {
+            }
+            // else if (((jobNo) == '0' || (jobNo) == '') && cusCode=='' ) {
+            //     $.notify("Please Select a job no.", "warning");
+            //     return false;
+            // }
+            else {
                 $("#saveItems").attr('disabled', true);
 //            return false;
                 $.ajax({

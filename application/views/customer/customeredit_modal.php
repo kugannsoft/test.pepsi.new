@@ -19,7 +19,7 @@
                                 <?php } ?>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" style="display:none;">
                             <select name="vehicleCompany" id="vehicleCompany" class="form-control">
                                 <option value="">Select a company</option>
                                 <?php foreach ($vehicle_company as $trns) { ?>
@@ -42,7 +42,7 @@
                             <div class="col-md-9">
                                 <div class="form-group">
                                 <label for="cusName">Customer Name </label>
-                                <input type="text" required="required" value="<?php echo $cusdata->CusName; ?>" class="form-control" name="cusName" id="cusName" placeholder="First name">
+                                <input type="text" onkeydown="return /[a-zA-Z0\s]/i.test(event.key)" required="required" value="<?php echo $cusdata->CusName; ?>" class="form-control" name="cusName" id="cusName" placeholder="First name">
                                 </div>
                             </div>
                             
@@ -68,7 +68,7 @@
                                     <option value="">-Select-</option>
                                     <option value='1' <?php echo ($cusdata->DisType==1) ? 'SELECTED' : '' ?> ><?php echo $cusdata->RespectSign.". ".$cusdata->CusName ?></option>
                                     
-                                    <option value='4' <?php echo ($cusdata->DisType==4) ? 'SELECTED' : '' ?>><?php echo "Ms. ".$cusdata->CusCompany ?></option>")                   
+                                    <option value='4' <?php echo ($cusdata->DisType==4) ? 'SELECTED' : '' ?>><?php echo "Ms. ".$cusdata->CusCompany ?></option>"                 
                                 </select>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                         <label for="cusName">Customer No </label>
                         <input type="text"  class="form-control" name="cusNo" id="cusNo" placeholder="Enter customer number"  value="<?php echo $cusdata->CusBookNo; ?>">
                     </div></div>
-                    <div class="col-md-6"><div class="form-group">
+                    <div class="col-md-6" style="display:none;"><div class="form-group">
                         <label for="cusName">Category </label>
                         <select class="form-control" name="category" id="category">
                             <option value="0">-Select-</option>
@@ -105,6 +105,22 @@
                             <?php } ?>
                         </select>
                     </div></div>
+                    <div class="col-md-6">
+                    <input type="hidden" required="required" class="form-control" value="<?php echo $cusdata->RouteId; ?>" name="saveroute" id="saveroute">
+
+                    <div class="form-group">
+                        <label for="cusName">Routes</label>
+                        <select class="form-control" name="route" id="route">
+                            <option value="0">-Select-</option>
+                            <?php foreach ($routes as $route) { ?>
+                                <option value="<?php echo $route->route_id ?>" 
+                                    <?php echo ($route->route_id == $cusdata->RouteId) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($route->route_name); ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                </div>
                 </div> 
                 
             </div>
@@ -567,4 +583,64 @@ function setDisplayType(){
     $("#displayType").append("<option value='4'>Ms. "+companyName+"</option>");
     $("#displayName").val(respectSign+". "+cusName);
 }
+
+// $('#salesperson').on('change', function() {
+//     var savedSalespersonID =$(this).val();
+//     // var savedRouteID = $('#saveroute').val();
+//         if (salespersonID != "0") {
+           
+//             $.ajax({
+//                 url: "<?php echo base_url(); ?>" + "admin/customer/findemploeeroute",
+//                 method: 'POST',
+//                 data: { salespersonID: salespersonID },
+//                 dataType: 'json',
+//                 success: function(response) {
+//                     console.log(response);
+//                     $('#route').empty();
+//                     $('#route').append('<option value="0">-Select-</option>');
+                    
+//                     $.each(response, function(index, routeID) {
+                        
+//                         var selected = (routeID.route_id == savedRouteID) ? 'selected' : '';
+//                     $('#route').append('<option value="'+ routeID.route_id +'" '+ selected +'>'+ routeID.route_name +'</option>');
+//                 });
+//                 },
+//                 error: function(xhr, status, error) {
+//                     console.error('Error fetching routes:', error);
+//                 }
+//             });
+//         } else {
+//             $('#route').empty();
+//             $('#route').append('<option value="0">-Select-</option>');
+//         }
+// });
+
+$('#salesperson').on('change', function() {
+        var salespersonID = $(this).val();
+        if (salespersonID != "0") {
+           
+            $.ajax({
+                url: "<?php echo base_url(); ?>" + "admin/customer/findemploeeroute",
+                method: 'POST',
+                data: { salespersonID: salespersonID },
+                dataType: 'json',
+                success: function(response) {
+                    
+                    $('#route').empty();
+                    $('#route').append('<option value="0">-Select-</option>');
+                    
+                    $.each(response, function(index, routeID) {
+                    console.log(routeID);
+                    $('#route').append('<option value="'+ routeID.route_id +'">'+ routeID.route_name +'</option>');
+                });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching routes:', error);
+                }
+            });
+        } else {
+            $('#route').empty();
+            $('#route').append('<option value="0">-Select-</option>');
+        }
+});
 </script>

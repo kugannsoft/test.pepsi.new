@@ -14,7 +14,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="box">
                     <div class="box-body">
                     <b><span class="alert alert-success pull-left" id="lastProduct"></span></b>
-                        <!-- <a href="../job/index" class="btn btn-flat btn-primary pull-right">Add New Job</a> -->
+                         <a href="../job/index" class="btn btn-flat btn-primary pull-right">Add New Job</a>
                     </div>
                 </div>
             </div>
@@ -29,13 +29,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <tr>
                                     <td>Job. No</td><td>Job. No</td>
                                     <td>Cus. Code</td>
-                                    
                                     <td>Customer</td>
                                     <td>Customer</td>
-                                    <td>Register No</td>
                                     <td>Appointment Date</td>
-                                     <td>Status</td>
-                                    <td>Add Estimate</td>
+                                    <td>Status</td>
+                                    <td>Issue Note</td>
                                     <td>Add Invoice</td>
                                     <td>View</td>
                                     <td>Edit</td>
@@ -66,7 +64,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         var producttbl = $('#producttbl').dataTable({
             "processing": true,
             "serverSide": true,
-            "order": [[6, "desc"]],
+            "order": [[1, "desc"]],
             "language": {
                 "processing": "<div class='overlay'><i class='fa fa-refresh fa-spin'></i></div>"
             },
@@ -105,7 +103,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <?php }?>
                         },
                         {"data": "CusName","visible": false,"searchable": true},
-                        {"data": "JRegNo"},
                         {"data": "appoimnetDate", searchable: false},
                         {"data": null, orderable: false, searchable: false,
                             mRender: function (data, type, row) {
@@ -130,43 +127,46 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             }
                         },
                         {
-                            <?php if (in_array("SM51", $blockAdd) || $blockAdd == null) { ?>
+                            <?php if (in_array("M3", $blockView) || $blockView == null) { ?>
                             "data": null, orderable: false, searchable: false,
                             mRender: function (data, type, row) {
-                                if(row.IsCancel==1){
-                                   return '<a disabled href="#" class="btn btn-xs btn-primary" >Estimate</a>';
-                                }else if(row.IsCancel==0){
-                                    return '<a href="../job/estimate_job?type=job&id='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-primary" >Estimate</a>';
+                                if(row.IsCancel==1 || row.IsCompelte==2){
+                                    return '<a disabled href="../Salesinvoice/addIssueNote/?job='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-warning" >Issue Note</a>';
+                                }else if(row.IsCancel==0 || row.IsCompelte==0){
+                                    return '<a href="../Salesinvoice/addIssueNote/?job='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-warning" >Issue Note</a>';
                                 }
                             }
                             <?PHP  } else {?>
                             "data": null, orderable: false, searchable: false,
                             mRender: function (data, type, row) {
-                                if(row.IsCancel==1){
-                                    return '<a disabled href="#" class="btn btn-xs btn-primary" disabled="">Estimate</a>';
-                                }else if(row.IsCancel==0){
-                                    return '<a href="../job/estimate_job?type=job&id='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-primary" disabled>Estimate</a>';
+                                if(row.IsCancel==1 || row.IsCompelte==2){
+                                    return '<a disabled href="../Salesinvoice/addIssueNote/?job='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-warning" disabled>Issue Note</a>';
+                                }else if(row.IsCancel==0 || row.IsCompelte==0){
+                                    return '<a href="../Salesinvoice/addIssueNote/?job='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-warning" disabled>Issue Note</a>';
                                 }
                             }
                             <?php }?>
+
                         },
                         {
                             <?php if (in_array("M4", $blockAdd) || $blockAdd == null) { ?>
                             "data": null, orderable: false, searchable: false,
                             mRender: function (data, type, row) {
-                                if(row.IsCancel==1){
+                                if(row.IsCancel==1 || row.IsCompelte==2){
                                     return '<a disabled href="#" class="btn btn-xs btn-primary" >Invoice</a>';
-                                }else if(row.IsCancel==0){
-                                    return '<a href="../Salesinvoice/job_invoice?type=job&id='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-primary" >Invoice</a>';
+                                }else if(row.IsCancel==0 && row.IsCompelte==4){
+                                    return '<a disabled href="#" class="btn btn-xs btn-primary" >Invoice</a>';
+                                }else if(row.IsCancel==0 && row.IsCompelte==0){
+                                    return '<a href="../Salesinvoice/job_invoice?type=job&id='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-success" >Invoice</a>';
                                 }
                             }
                             <?PHP  } else {?>
                             "data": null, orderable: false, searchable: false,
                             mRender: function (data, type, row) {
-                                if(row.IsCancel==1){
+                                if(row.IsCancel==1 || row.IsCompelte==2){
                                     return '<a disabled href="#" class="btn btn-xs btn-primary" disabled>Invoice</a>';
-                                }else if(row.IsCancel==0){
-                                    return '<a href="../Salesinvoice/job_invoice?type=job&id='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-primary" disabled>Invoice</a>';
+                                }else if(row.IsCancel==0 && row.IsCompelte==0){
+                                    return '<a href="../Salesinvoice/job_invoice?type=job&id='+ Base64.encode(row.JobCardNo) +'" class="btn btn-xs btn-success" disabled>Invoice</a>';
                                 }
                             }
                             <?php }?>

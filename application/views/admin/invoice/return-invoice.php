@@ -38,6 +38,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <textarea name="grnremark"  tabindex="2" id="grnremark" class="form-control"></textarea>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label for="additional" class="col-sm-4 control-label">Sales Person</label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" required="required"  name="newsalesperson" id="newsalesperson" placeholder="sales person">
+                                        <option value="">-Select a sales person-</option>
+                                        <?php foreach ($salesperson as $trns) { ?>
+                                            <option value="<?php echo $trns->RepID; ?>" 
+                                            >
+                                                <?php echo $trns->RepName; ?>
+                                            </option>
+                                        <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Routes </label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="route" id="route">
+                                            <option value="0">-Select-</option>
+                                        </select>                                    
+                                    </div>
+                                </div>
                             </form>
                         </div>
                         <div  class="col-md-5">
@@ -45,8 +67,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <div class="form-group">
                                     <label for="supplier" class="col-sm-4 control-label">Customer<span class="required">*</span></label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" tabindex="4" required="required"  name="customer" id="customer" placeholder="Customer name/Code/ Phone">
-                                     
+                                        <!-- <input type="text" class="form-control" tabindex="4" required="required"  name="customer" id="customer" placeholder="Customer name/Code/ Phone"> -->
+                                        <select class="form-control" required="required" name="customer" id="customer" placeholder="customer name">
+                                                    <option value="0">-Select a customer-</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -163,7 +187,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <div class="form-group" id="dv_SN">
                                             <label for="product" class="col-sm-4 control-label">Serial No <span class="required">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" tabindex="14" class="form-control" required="required"  name="serialNo" id="serialNo" placeholder="Enter Serial No"  value="">
+                                                <input readonly="readonly" type="text" tabindex="14" class="form-control" required="required"  name="serialNo" id="serialNo" placeholder="Enter Serial No"  value="">
                                                 <input type="hidden" tabindex="14" class="form-control" required="required"  name="serialQty" id="serialQty"  value="0">
                                             </div>
                                         </div>
@@ -236,4 +260,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         radioClass: 'iradio_square-blue',
         increaseArea: '50%'
     });
+
+    $('#customer').select2({
+    placeholder: "Select a customer",
+    allowClear: true,
+    minimumInputLength:1,
+    width: '100%'
+});
 </script>

@@ -25,7 +25,7 @@
         <!--    <?php// $logo =  $company['Logo']; ?>-->
         <!--    <img style="width: 100px; height:100px" src="<?php echo base_url($avatar_dir . '/'.$logo); ?>"  alt="logo">&nbsp;-->
         <!--</td>-->
-        <td colspan="5" style="font-size:20px;font-family: Arial, Helvetica, sans-serif;text-align: left;"><b> <?php echo $company['CompanyName'] ?><?php echo $company['CompanyName2'] ?></b>
+        <td colspan="5" style="font-size:20px;font-family: Arial, Helvetica, sans-serif;text-align: left;"><b> <?php echo $company['CompanyName'] ?></b>
         </td>
     </tr> 
     <tr style="text-align:left;color:#9a9494 !important;font-size:12px;font-family: Arial, Helvetica, sans-serif;">
@@ -33,7 +33,7 @@
     </tr>
   
      <tr style="text-align:left;color:#9a9494 !important;font-size:13px;font-family: Arial, Helvetica, sans-serif;">
-        <td colspan="5">Web : leaditsolutions.lk E-mail :<?php echo $company['Email01'] ?></td>
+        <td colspan="5">Web : www.mytechnology.lk E-mail :<?php echo $company['Email01'] ?></td>
     </tr>
     
     <tr style="text-align:left;color:#9a9494 !important;font-size:13px;font-family: Arial, Helvetica, sans-serif;">

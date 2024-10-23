@@ -137,6 +137,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <script>$(document).ready(function() { $('body').addClass('sidebar-collapse'); });</script>
             <script src="<?php echo base_url('assets/frameworks/job/add_sales_invoice1.6.js'); ?>"></script>
         <?php endif; ?>
+        <?php if ($this->router->fetch_method() == 'addIssueNote'): ?>
+            <script>$(document).ready(function() { $('body').addClass('sidebar-collapse'); });</script>
+            <script src="<?php echo base_url('assets/frameworks/job/add_issue_note.js'); ?>"></script>
+        <?php endif; ?>
         <?php if ($this->router->fetch_class() == 'job'): ?>
             <!--job js-->
             <script src="<?php echo base_url('assets/frameworks/jQuery.print.js'); ?>"></script>

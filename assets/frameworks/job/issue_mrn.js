@@ -384,14 +384,14 @@ $("#grn_no").autocomplete({
         $("#qty").focus();
 //       alert(misSerial);
         if (misSerial == 1) {
-//            $("#serialNo").val(mserial);
-//            $("#qty").val(1);
-//            $("#qty").attr('disabled', true);
+           $("#serialNo").val(mserial);
+           // $("#qty").val(1);
+           $("#qty").attr('disabled', true);
             $("#dv_SN").show();
             $("#qty").focus();
 
         } else {
-//            $("#mSerial").val('');
+           $("#mSerial").val('');
             $("#qty").attr('disabled', false);
             $("#dv_SN").hide();
         }
@@ -405,7 +405,7 @@ $("#grn_no").autocomplete({
         $("#upc").val(upc);
 
         if (misSerial == 1) {
-
+            $("#dv_SN").show();
         } else {
             $("#dv_SN").hide();
         }
@@ -545,10 +545,10 @@ $("#grn_no").autocomplete({
                 if ((itemCodeArrIndex < 0 && is_serail == 0) || (itemCodeArrIndex >= 0 && is_serail == 1) || (itemCodeArrIndex < 0 && is_serail == 1)) {
                     totalNet2 = parseFloat($("#totalAmount").val());
                     totalNet = parseFloat($("#netAmount").val());
-                     if(itemCode!=customProCode){
-                        itemcode.push(itemCode);
-                    }
-                    // itemcode.push(itemCode);
+                    //  if(itemCode!=customProCode){
+                    //     itemcode.push(itemCode);
+                    // }
+                    itemcode.push(itemCode);
                     total_amount2 += totalNet2;
                     totalCost += costPrice;
                     $("#totalWithOutDiscount").val(total_amount2);
@@ -617,8 +617,8 @@ $("#grn_no").autocomplete({
                         $("#serialQty").val(serialQty);
                     }
 
-                    $("#tbl_item2 tbody").append("<tr requestid='"+requestid+"'  ri=" + i + " id=" + i + " proCode='" + itemCode + "' uc='" + unit + "' brand='" + brand + "' quality='" + quality + "' qty='" + qty + "' unit_price='" + sellingPrice + "' upc='" + upc + "' caseCost='" + casecost + "' isSerial='" + is_serail + "' serial='" + serialNo + "' discount_percent='" + discount_precent + "' cPrice='" + costPrice + "' pL='" + priceLevel + "' fQ='" + freeQty + "' nonDisTotalNet='" + totalNet2 + "' netAmount='" + totalNet + "' proDiscount='" + product_discount + "' proName='" + prdName + "' proReturn='" + preturn + "' isVat='" + isvat + "' isNbt='" + isnbt + "' nbtRatio='"+nbtratio+"' vat='"+vat+"' nbt='"+nbt+"'>\n\
-                <td class='text-center'>" + i + "</td><td class='text-left'>" + itemCode + "</td><td>" + prdName + "</td><td class='qty" + i + "'>" + accounting.formatNumber(qty) + "</td><td>" + brand + "</td><td>" + quality + "</td><td class='rem" + i + "'><a href='#' class='remove btn btn-xs btn-danger'><i class='fa fa-remove'></i></a></td></tr>");
+                    $("#tbl_item2 tbody").append("<tr requestid='"+requestid+"'  ri=" + i + " id=" + i + " proCode='" + itemCode + "' uc='" + unit + "' brand='" + brand + "' quality='" + quality + "' qty='" + 1 + "' unit_price='" + sellingPrice + "' upc='" + upc + "' caseCost='" + casecost + "' isSerial='" + is_serail + "' serial='" + serialNo + "' discount_percent='" + discount_precent + "' cPrice='" + costPrice + "' pL='" + priceLevel + "' fQ='" + freeQty + "' nonDisTotalNet='" + totalNet2 + "' netAmount='" + totalNet + "' proDiscount='" + product_discount + "' proName='" + prdName + "' proReturn='" + preturn + "' isVat='" + isvat + "' isNbt='" + isnbt + "' nbtRatio='"+nbtratio+"' vat='"+vat+"' nbt='"+nbt+"'>\n\
+                <td class='text-center'>" + i + "</td><td class='text-left'>" + itemCode + "</td><td>" + prdName + "</td><td class='qty" + i + "'>" + accounting.formatNumber(1) + "</td><td>" + unit + "</td><td>" + serialNo + "</td><td class='rem" + i + "'><a href='#' class='remove btn btn-xs btn-danger'><i class='fa fa-remove'></i></a></td></tr>");
                     $("#tbl_item tr td .plus"+requestid).attr('disabled',true);
                     if (is_serail != 1) {
                         clear_gem_data();
@@ -1314,7 +1314,7 @@ function loadMrnDatatoGrid(resultData) {
         cusCode = resultData.mrn_hed.ToCustomer;
         $("#customer").val(cusCode);
         $("#grnremark").val(resultData.mrn_hed.MrnRemark);
-        $("#location_from").val(resultData.mrn_hed.FromLocation);
+        $("#location_from").val(resultData.mrn_hed.ToLocation);
          var k = 1;
         for (var i = 0; i < resultData.mrn_dtl.length; i++) {
 

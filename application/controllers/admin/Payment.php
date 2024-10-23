@@ -40,39 +40,226 @@ class Payment extends Admin_Controller {
     }
 /*shalika*/
     /*=========Customer payment===========================================*/
+    // public function cus_payment() {
+    //     $cus = isset($_GET['cus'])?$_GET['cus']:NULL;
+
+    //     $this->page_title->push(('Customer Payment'));
+    //     $this->breadcrumbs->unshift(1, 'Customer Payment', 'admin/payment/customer-payment');
+    //     $this->data['pagetitle'] = $this->page_title->show();
+    //     $this->data['breadcrumb'] = $this->breadcrumbs->show();
+    //     $this->data['location'] = $this->Payment_model->loadlocations();
+    //     $this->data['bank_acc']=$this->db->select('bank_account.*,bank.BankName')->from('bank_account')->join('bank','BankCode=acc_bank')->get()->result();
+
+    //       $this->data['total_credit']=$this->db->select('sum(CreditAmount) As CreditAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->get()->row()->CreditAmount;
+    //     $this->data['total_payment']=$this->db->select('sum(SettledAmount) As SettledAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->where('Type!=',2)->get()->row()->SettledAmount;
+    //      $this->data['return_payment']=$this->db->select('sum(returnAmount) As returnAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->get()->row()->returnAmount;
+
+    //     $this->data['return_payments']=$this->db->select('sum(ReturnAmount) As ReturnAmount')->from('return_payment')->where('CustomerNo',$cus)->where('IsComplete',0)->get()->row()->ReturnAmount;
+    //     $this->data['over_return__complete_payments']=$this->db->select('sum(ReturnAmount) As ReturnAmount')->from('return_payment')->where('CustomerNo',$cus)->where('PaymentType',3)->where('IsOverReturn',1)->get()->row()->ReturnAmount;
+    //     $this->data['over_return__not_complete_payments']=$this->db->select('sum(ReturnAmount) As ReturnAmount')->from('return_payment')->where('CustomerNo',$cus)->where('PaymentType',3)->where('IsOverReturn',1)->where('IsComplete',0)->get()->row()->ReturnAmount;
+    //     $this->data['selectedSalesperson'] = $this->db->select('SalesPerson')->from('customerpaymenthed')->where('CusCode', $cus)->get()->row()->SalesPerson;
+       
+    //     // $this->data['total_credit']=$this->db->select('sum(CreditAmount) As CreditAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->get()->row()->CreditAmount;
+    //     // $this->data['total_payment']=$this->db->select('sum(SettledAmount) As SettledAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->get()->row()->SettledAmount;
+    //     // $this->data['return_payment']=$this->db->select('sum(ReturnAmount) As ReturnAmount')->from('returninvoicehed')->where('CustomerNo',$cuscode)->where('IsCancel',0)->get()->row()->ReturnAmount;
+       
+        
+    //     $this->data['cheque']=$this->db->select('chequedetails.*,bank.BankName,date(chequedetails.ChequeDate) AS ChequeDate,date(chequedetails.ReceivedDate) AS ReceivedDate')->from('chequedetails')->join('bank','bank.BankCode=chequedetails.BankNo')->where('CusCode',$cus)->where('chequedetails.IsCancel',0)->get()->result();
+
+       
+
+    //     $location = $_SESSION['location'];
+    //     $id2 = array('IsActive' => '1', 'LocationCode' => $location);
+    //     $this->data['salePerson'] = $this->Payment_model->get_data_by_where('salespersons', $id2);
+    //     $this->load->model('admin/Pos_model');
+    //     $id3 = array('CompanyID' => $location);
+    //     $this->data['company'] = $this->Pos_model->get_data_by_where('company', $id3);
+    //     $this->data['salesperson'] = $this->db->select()->from('salespersons')->get()->result();
+        
+    //     $this->template->admin_render('admin/payment/customer-payment', $this->data);
+    // }
+
+
     public function cus_payment() {
-        $cus = isset($_GET['cus'])?$_GET['cus']:NULL;
-        $this->data['customer'] =$cus;
+        // Get the customer code from the URL parameter
+        $cus = isset($_GET['cus']) ? $_GET['cus'] : NULL;
+    
+        // Set page title and breadcrumbs
         $this->page_title->push(('Customer Payment'));
         $this->breadcrumbs->unshift(1, 'Customer Payment', 'admin/payment/customer-payment');
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        
+        // Load necessary data
         $this->data['location'] = $this->Payment_model->loadlocations();
-        $this->data['bank_acc']=$this->db->select('bank_account.*,bank.BankName')->from('bank_account')->join('bank','BankCode=acc_bank')->get()->result();
-
-          $this->data['total_credit']=$this->db->select('sum(CreditAmount) As CreditAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->get()->row()->CreditAmount;
-        $this->data['total_payment']=$this->db->select('sum(SettledAmount) As SettledAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->where('Type!=',2)->get()->row()->SettledAmount;
-         $this->data['return_payment']=$this->db->select('sum(returnAmount) As returnAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->get()->row()->returnAmount;
-
-        $this->data['return_payments']=$this->db->select('sum(ReturnAmount) As ReturnAmount')->from('return_payment')->where('CustomerNo',$cus)->where('IsComplete',0)->get()->row()->ReturnAmount;
-        $this->data['over_return__complete_payments']=$this->db->select('sum(ReturnAmount) As ReturnAmount')->from('return_payment')->where('CustomerNo',$cus)->where('PaymentType',3)->where('IsOverReturn',1)->get()->row()->ReturnAmount;
-        $this->data['over_return__not_complete_payments']=$this->db->select('sum(ReturnAmount) As ReturnAmount')->from('return_payment')->where('CustomerNo',$cus)->where('PaymentType',3)->where('IsOverReturn',1)->where('IsComplete',0)->get()->row()->ReturnAmount;
-        // $this->data['total_credit']=$this->db->select('sum(CreditAmount) As CreditAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->get()->row()->CreditAmount;
-        // $this->data['total_payment']=$this->db->select('sum(SettledAmount) As SettledAmount')->from('creditinvoicedetails')->where('CusCode',$cus)->where('IsCancel',0)->get()->row()->SettledAmount;
-        // $this->data['return_payment']=$this->db->select('sum(ReturnAmount) As ReturnAmount')->from('returninvoicehed')->where('CustomerNo',$cuscode)->where('IsCancel',0)->get()->row()->ReturnAmount;
-       
-
-        $this->data['cheque']=$this->db->select('chequedetails.*,bank.BankName,date(chequedetails.ChequeDate) AS ChequeDate,date(chequedetails.ReceivedDate) AS ReceivedDate')->from('chequedetails')->join('bank','bank.BankCode=chequedetails.BankNo')->where('CusCode',$cus)->where('chequedetails.IsCancel',0)->get()->result();
-
-       
-
+        $this->data['bank_acc'] = $this->db->select('bank_account.*, bank.BankName')
+                                           ->from('bank_account')
+                                           ->join('bank', 'BankCode = acc_bank')
+                                           ->get()
+                                           ->result();
+    
+        // Check if we are editing an existing customer
+        if ($cus) {
+            // Fetch customer related data for editing
+            $this->data['total_credit'] = $this->db->select('SUM(CreditAmount) AS CreditAmount')
+                                                    ->from('creditinvoicedetails')
+                                                    ->where('CusCode', $cus)
+                                                    ->where('IsCancel', 0)
+                                                    ->get()
+                                                    ->row()->CreditAmount;
+    
+            $this->data['total_payment'] = $this->db->select('SUM(SettledAmount) AS SettledAmount')
+                                                      ->from('creditinvoicedetails')
+                                                      ->where('CusCode', $cus)
+                                                      ->where('IsCancel', 0)
+                                                      ->where('Type !=', 2)
+                                                      ->get()
+                                                      ->row()->SettledAmount;
+    
+            $this->data['return_payment'] = $this->db->select('SUM(returnAmount) AS returnAmount')
+                                                      ->from('creditinvoicedetails')
+                                                      ->where('CusCode', $cus)
+                                                      ->where('IsCancel', 0)
+                                                      ->get()
+                                                      ->row()->returnAmount;
+    
+            // Fetch additional return payments data
+            $this->data['return_payments'] = $this->db->select('SUM(ReturnAmount) AS ReturnAmount')
+                                                       ->from('return_payment')
+                                                       ->where('CustomerNo', $cus)
+                                                       ->where('IsComplete', 0)
+                                                       ->get()
+                                                       ->row()->ReturnAmount;
+    
+            $this->data['over_return_complete_payments'] = $this->db->select('SUM(ReturnAmount) AS ReturnAmount')
+                                                                      ->from('return_payment')
+                                                                      ->where('CustomerNo', $cus)
+                                                                      ->where('PaymentType', 3)
+                                                                      ->where('IsOverReturn', 1)
+                                                                      ->get()
+                                                                      ->row()->ReturnAmount;
+    
+            $this->data['over_return_not_complete_payments'] = $this->db->select('SUM(ReturnAmount) AS ReturnAmount')
+                                                                          ->from('return_payment')
+                                                                          ->where('CustomerNo', $cus)
+                                                                          ->where('PaymentType', 3)
+                                                                          ->where('IsOverReturn', 1)
+                                                                          ->where('IsComplete', 0)
+                                                                          ->get()
+                                                                          ->row()->ReturnAmount;
+    
+            $this->data['selectedSalesperson'] = $this->db->select('SalesPerson')
+                                                          ->from('customerpaymenthed')
+                                                          ->where('CusCode', $cus)
+                                                          ->get()
+                                                          ->row()->SalesPerson;
+            $this->data['allsalespersonroute'] = $this->db->select('cr.id,cr.name')->from('employeeroutes')
+                                                        ->join('customer_routes cr', 'employeeroutes.route_id = cr.id') 
+                                                        ->where('employeeroutes.emp_id', $this->data['selectedSalesperson'])
+                                                        ->get()
+                                                        ->result();
+            $this->data['allroutecustomer'] = $this->db->select('c.CusCode,c.DisplayName')->from('employeeroutes')
+                                                        ->join('customer_routes cr', 'employeeroutes.route_id = cr.id') 
+                                                        ->join('customer c', 'cr.id = c.RouteId') 
+                                                        ->where('employeeroutes.emp_id', $this->data['selectedSalesperson'])
+                                                        ->get()
+                                                        ->result();
+            $this->data['selectedRoute'] = $this->db->select('RootNo')
+                                                     ->from('customerpaymenthed')
+                                                     ->where('CusCode', $cus)
+                                                     ->get()
+                                                     ->row()->RootNo;
+            $this->data['selectedcus'] = $cus;
+    
+            // Set the edit flag
+            $this->data['is_edit'] = true; // Flag to indicate that we are editing
+        } else {
+            // Initialize fields for adding a new customer
+            $this->data['total_credit'] = 0;
+            $this->data['total_payment'] = 0;
+            $this->data['return_payment'] = 0;
+            $this->data['return_payments'] = 0;
+            $this->data['over_return_complete_payments'] = 0;
+            $this->data['over_return_not_complete_payments'] = 0;
+            $this->data['selectedSalesperson'] = '';
+            $this->data['selectedRoute'] = '';
+            
+            // Set the edit flag
+            $this->data['is_edit'] = false; // Flag to indicate new entry
+        }
+    
+        // Load cheque details for the customer
+        $this->data['cheque'] = $this->db->select('chequedetails.*, bank.BankName, DATE(chequedetails.ChequeDate) AS ChequeDate, DATE(chequedetails.ReceivedDate) AS ReceivedDate')
+                                          ->from('chequedetails')
+                                          ->join('bank', 'bank.BankCode = chequedetails.BankNo')
+                                          ->where('CusCode', $cus)
+                                          ->where('chequedetails.IsCancel', 0)
+                                          ->get()
+                                          ->result();
+    
+        // Load salespersons and company data
         $location = $_SESSION['location'];
         $id2 = array('IsActive' => '1', 'LocationCode' => $location);
         $this->data['salePerson'] = $this->Payment_model->get_data_by_where('salespersons', $id2);
+        
         $this->load->model('admin/Pos_model');
         $id3 = array('CompanyID' => $location);
         $this->data['company'] = $this->Pos_model->get_data_by_where('company', $id3);
+        $this->data['salesperson'] = $this->db->select()->from('salespersons')->get()->result();
+    
+        // Load the view with the prepared data
         $this->template->admin_render('admin/payment/customer-payment', $this->data);
+    }
+    
+
+    public function findemploeeroute() {
+        $salespersonID = $this->input->post('salespersonID');
+        $this->load->database();
+        $this->db->select('er.route_id, cr.name');
+        $this->db->from('employeeroutes er');
+        $this->db->join('customer_routes cr', 'er.route_id = cr.id'); 
+        $this->db->where('er.emp_id', $salespersonID);
+        $query = $this->db->get();
+        // $routes = $query->result_array();
+        // echo json_encode($routes);
+        // exit();
+        $routes = [];
+        if ($query->num_rows() > 0) {
+         
+            foreach ($query->result() as $row) {
+                $routes[] = [
+                    'route_id' => $row->route_id,
+                    'route_name' => $row->name 
+                ];
+            }
+    
+        
+            echo json_encode($routes);
+        } else {
+         
+            echo json_encode([]);
+        }
+    
+   
+        exit();
+        
+    }
+
+    public function loadcustomersroutewise() {
+        $routeID = $this->input->post('routeID'); 
+        $newsalesperson = $this->input->post('newsalesperson');
+        $this->load->database();
+    
+    
+        $customers = $this->db->select('customer.CusCode,customer.DisplayName')
+        ->from('customer')
+        ->where('RouteId', $routeID)
+        ->where('HandelBy',$newsalesperson)
+        ->get()
+        ->result();
+    
+        echo json_encode($customers); 
+        die; 
     }
 
     /*=========Supplier payment===========================================*/
@@ -407,6 +594,8 @@ class Payment extends Admin_Controller {
         $bank_acc = isset($_POST['bank_acc'])?$_POST['bank_acc']:NULL;
         $avail_outstand = $outstanding - $total_settle;
         $receiptType = $_POST['receiptType'];
+        $route = $_POST['route'];
+        $newsalesperson = $_POST['newsalesperson'];
 
         $payMode = '';
         if ($payType == 1) {
@@ -438,7 +627,8 @@ class Payment extends Admin_Controller {
 
         $cpHed = array(
             'AppNo' => '1', 'CusPayNo' => $paymentNo, 'PaymentType' => $receiptType, 'CusCode' => $cusCode, 'RootNo' => 0, 'Location' => $location, 'PayDate' => $payDate, 'CashPay' => $cash_amount,
-            'ChequePay' => $cheque_amount, 'Remark' => $remark, 'CardPay' => $card_amount, 'TotalPayment' => $total_settle, 'AvailableOustanding' => $avail_outstand, 'CancelUser' => 0, 'SystemUser' => $invUser, 'IsCancel' => 0
+            'ChequePay' => $cheque_amount, 'Remark' => $remark, 'CardPay' => $card_amount, 'TotalPayment' => $total_settle, 'AvailableOustanding' => $avail_outstand, 'CancelUser' => 0, 'SystemUser' => $invUser, 'IsCancel' => 0,
+            'RootNo' => $route,'SalesPerson' => $newsalesperson,
         );
 
         $cpDtl = array(

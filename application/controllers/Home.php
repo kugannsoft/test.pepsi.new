@@ -13,4 +13,6 @@ class Home extends Public_Controller {
 	{
 		$this->load->view('public/home', $this->data);
 	}
+
+
 }

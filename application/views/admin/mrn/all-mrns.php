@@ -25,9 +25,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	                <thead>
 	                    <tr>
 	                        <td>MRN No</td>
-	                        <td>Job No</td>
-	                        <td>Estimate No</td>
 	                        <td>Remark</td>
+                            <td>Request From</td>
                             <td>Request Date</td>
 	                        <td>Received Date</td>
                             <td>Issue</td>
@@ -59,9 +58,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	"columns":
 	        [
 	            {"data": "MrnNo"},
-	            {"data": "MrnJobNo"},
-	            {"data": "MrnEstimateNo"},
 	            {"data": "MrnRemark"},
+	            {"data": "location"},
 	            {"data": "MrnDate", searchable: false},
 	            {"data": "ReceivedDate", searchable: false},
                 {"data": null, orderable: false, searchable: false,

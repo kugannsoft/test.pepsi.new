@@ -18,6 +18,18 @@ class Report_model extends CI_Model {
         return $this->db->get()->result();
     }
 
+    public function loadroute(){
+        $this->db->select();
+        $this->db->from('customer_routes');
+        return $this->db->get()->result();
+    }
+
+    public function loademployee(){
+        $this->db->select();
+        $this->db->from('salespersons');
+        return $this->db->get()->result();
+    }
+
     public function loadproduct() {
         $this->db->select('ProductCode,Prd_Description');
         $this->db->from('product');
@@ -1748,7 +1760,8 @@ class Report_model extends CI_Model {
         return $list;
     }
 
-    public function productdetailserial($route, $isall, $product = NULL,$dep,$subdep,$sup,$subcat) {
+    public function productdetailserial($transfer,$route, $isall, $product = NULL,$dep,$subdep,$sup,$subcat) {
+
         $this->db->select('product.ProductCode,
                             product.Prd_Description,
                             product.Prd_CostPrice AS Prd_CostPrice,
@@ -1807,19 +1820,19 @@ class Report_model extends CI_Model {
         
         $this->db->select('product.ProductCode,
                             product.Prd_Description,
-                            stocktransferdtl.CostPrice AS Prd_CostPrice,
+                            product.Prd_CostPrice AS Prd_CostPrice,
                             location.location,
                             productserialstock.Quantity,
                             productserialstock.SerialNo,
                             supplier.SupName,
                             subdepartment.Description,
-                            stocktransferhed.TransDateORG As GRN_DateORG');
+                            materialrequestnotehed.MrnDateORG As GRN_DateORG');
         $this->db->from('product');
         $this->db->join('productserialstock', 'productserialstock.ProductCode = product.ProductCode', 'INNER');
         $this->db->join('subdepartment', 'subdepartment.SubDepCode = product.SubDepCode', 'INNER');
         $this->db->join('location', 'location.location_id = productserialstock.Location', 'INNER');
-        $this->db->join('stocktransferhed', 'stocktransferhed.TrnsNo = productserialstock.GrnNo', 'Left');
-        $this->db->join('stocktransferdtl', 'stocktransferhed.TrnsNo = stocktransferdtl.TrnsNo', 'INNER');
+        $this->db->join('materialrequestnotehed', 'materialrequestnotehed.MrnNo = productserialstock.GrnNo', 'Left');
+        $this->db->join('materialrequestnotedtl', 'materialrequestnotehed.MrnNo = materialrequestnotedtl.MrnNo', 'INNER');
         $this->db->join('supplier', 'supplier.SupCode = product.Prd_Supplier', 'INNER');
         $this->db->where('product.Prd_IsActive', 1);
         
@@ -1859,14 +1872,18 @@ class Report_model extends CI_Model {
 //        $this->db->order_by('subcategory.Description', 'ASC');
         
         $result2=$this->db->get();
-        
+
         $list = array();
-        foreach ($result->result() as $row) {
-            $list[$row->Description][] = $row;
+        if (isset($transfer) && $transfer == 'transfer'){
+            foreach ($result2->result() as $row) {
+                $list[$row->Description][] = $row;
+            }
+        } else{
+            foreach ($result->result() as $row) {
+                $list[$row->Description][] = $row;
+            }
         }
-        foreach ($result2->result() as $row) {
-            $list[$row->Description][] = $row;
-        }
+
         return $list;
     }
     
@@ -2913,5 +2930,90 @@ foreach($row as $country => $cities) {
 //        $this->db->get();
 //        echo  $this->db->last_query(); die();
         return $this->db->get()->result();
+    }
+
+    public function genIssuenoteByDate($startdate, $enddate, $location = NULL,$locationAr = NULL,$invtype,$salesperson= NULL) {
+        if (isset($location) && $location != '') {
+            $this->db->select('issuenote_hed.SalesPONumber,customer.MobileNo,customer.CusCode,DATE(issuenote_hed.SalesDate) As InvDate,(issuenote_hed.SalesDisAmount) AS DisAmount,issuenote_hed.SalesInvNo,
+                                (issuenote_hed.SalesCashAmount) AS CashAmount,                          
+                                (issuenote_hed.SalesInvAmount) AS InvAmount,
+                                (issuenote_hed.SalesVatAmount) AS VatAmount,
+                                (issuenote_hed.SalesNbtAmount) AS NbtAmount,
+                                (issuenote_hed.SalesNetAmount) AS NetAmount,customer.CusName,
+                                customer.RespectSign');
+            $this->db->from('issuenote_hed');
+            $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
+            $this->db->where('DATE(issuenote_hed.SalesDate) <=', $enddate);
+            $this->db->where('DATE(issuenote_hed.SalesDate) >=', $startdate);
+            $this->db->where_in('issuenote_hed.SalesLocation', $locationAr);
+            $this->db->where('issuenote_hed.InvIsCancel', 0);
+            if (isset($invtype) && $invtype != '') {
+                $this->db->where('issuenote_hed.SalesInvType', $invtype);
+            }
+
+            if (isset($salesperson) && $salesperson != '') {
+                $this->db->where('issuenote_hed.SalesPerson', $salesperson);
+            }
+
+            // $this->db->group_by('DATE(SalesInvNo)');
+            $this->db->order_by('issuenote_hed.SalesDate', 'DESC');
+            // $this->db->limit(50);
+        } else {
+            $this->db->select('issuenote_hed.SalesPONumber,customer.MobileNo,customer.CusCode,DATE(issuenote_hed.SalesDate) As InvDate,(issuenote_hed.SalesDisAmount) AS DisAmount,issuenote_hed.SalesInvNo,
+                                (issuenote_hed.SalesCashAmount) AS CashAmount,                          
+                                (issuenote_hed.SalesInvAmount) AS InvAmount,
+                                (issuenote_hed.SalesVatAmount) AS VatAmount,
+                                (issuenote_hed.SalesNbtAmount) AS NbtAmount,
+                                (issuenote_hed.SalesNetAmount) AS NetAmount,customer.CusName,
+                                customer.RespectSign');
+            $this->db->from('issuenote_hed');
+            $this->db->join('customer', 'customer.CusCode = issuenote_hed.SalesCustomer', 'INNER');
+            $this->db->where('DATE(issuenote_hed.SalesDate) <=', $enddate);
+            $this->db->where('DATE(issuenote_hed.SalesDate) >=', $startdate);
+            $this->db->where('issuenote_hed.InvIsCancel', 0);
+            if (isset($invtype) && $invtype != '') {
+                $this->db->where('issuenote_hed.SalesInvType', $invtype);
+            }
+
+            if (isset($salesperson) && $salesperson != '') {
+                $this->db->where('issuenote_hed.SalesPerson', $salesperson);
+            }
+
+
+            $this->db->order_by('issuenote_hed.SalesDate', 'DESC');
+        }
+        return $this->db->get()->result();
+    }
+    
+    public function loadIssueNoteByJobs($startdate, $enddate, $location = NULL, $locationAr = NULL, $SalesPerson = NULL) {
+        $this->db->select('jobcardhed.JobCardNo,
+                           jobcardhed.appoimnetDate,
+                           jobcardhed.JestimateNo,
+                           jobcardhed.Advance,
+                           issuenote_hed.*,customer.CusName,customer.CusCode,customer.RespectSign
+                           ');
+        $this->db->from('issuenote_hed');
+        $this->db->join('jobcardhed', 'jobcardhed.JobCardNo = issuenote_hed.SalesPONumber', 'INNER');
+        $this->db->join('customer', 'customer.CusCode = jobcardhed.JCustomer', 'INNER');
+        $this->db->where('DATE(jobcardhed.appoimnetDate) <=', $enddate);
+        $this->db->where('DATE(jobcardhed.appoimnetDate) >=', $startdate);
+        $this->db->where('jobcardhed.IsCancel', 0);
+        if (isset($location) && $location != '') {
+            $this->db->where_in('jobcardhed.JLocation', $locationAr);
+        }
+
+        if (isset($SalesPerson) && $SalesPerson != '') {
+            $this->db->where_in('issuenote_hed.SalesPerson', $SalesPerson);
+        }
+
+        $this->db->order_by('jobcardhed.JobCardNo');
+
+        $result=$this->db->get();
+
+        $list = array();
+        foreach ($result->result() as $row) {
+            $list[$row->JobCardNo." | ".$row->appoimnetDate." | ".$row->JobCardNo." | ".$row->CusName." ------------ Total Advance Amount - ".$row->Advance][] = $row;
+        }
+        return $list;
     }
 }

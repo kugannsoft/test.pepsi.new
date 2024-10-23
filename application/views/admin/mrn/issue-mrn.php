@@ -42,18 +42,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                         <div  class="col-md-5">
                             <form class="form-horizontal" >
-                                <div class="form-group">
-                                        <label class="col-sm-4 control-label">Job Number</label>  
-                                        <div class="col-sm-6">
-                                            <input type="text" tabindex="1" readonly class="form-control" name="job_no" id="job_no" placeholder="Job No">
-                                        </div>
-                                    </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Estimate Number</label>  
-                                    <div class="col-sm-6">
-                                        <input type="text" tabindex="1" readonly class="form-control" name="est_no" id="est_no" placeholder="Estimate No">
-                                    </div>
-                                </div>                                
+<!--                                <div class="form-group">-->
+<!--                                        <label class="col-sm-4 control-label">Job Number</label>  -->
+<!--                                        <div class="col-sm-6">-->
+<!--                                            <input type="text" tabindex="1" readonly class="form-control" name="job_no" id="job_no" placeholder="Job No">-->
+                                            <input type="hidden" tabindex="1" readonly class="form-control" name="job_no" id="job_no" placeholder="Job No">
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                <div class="form-group">-->
+<!--                                    <label class="col-sm-4 control-label">Estimate Number</label>  -->
+<!--                                    <div class="col-sm-6">-->
+<!--                                        <input type="text" tabindex="1" readonly class="form-control" name="est_no" id="est_no" placeholder="Estimate No">-->
+                                        <input type="hidden" tabindex="1" readonly class="form-control" name="est_no" id="est_no" placeholder="Estimate No">
+<!--                                    </div>-->
+<!--                                </div>                                -->
                                 <div class="form-group" style="display: none;">
                                         <label class="col-sm-4 control-label">Price Level</label>  
                                         <div class="col-sm-6">
@@ -66,7 +68,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label">Request From</label>  
                                         <div class="col-sm-6">
-                                            <select tabindex="3" class="form-control" id="location_from">
+                                            <select tabindex="3" class="form-control" id="location_from" readonly="readonly" disabled="disabled">
                                                 <option value="">Select from location</option>
                                                 <?php foreach ($location as $loc) { ?>
                                             <option value="<?php echo $loc->location_id; ?>"><?php echo $loc->location; ?></option>

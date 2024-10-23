@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <tr>
                                     <td>Date</td>
                                     <td>Invoice No</td>
-                                    <td>Vehicle No</td>
+<!--                                    <td>Vehicle No</td>-->
                                     <td>Cash Amount</td>
                                     <td>Credit Amount</td>
                                     <td>Card Amount</td>
@@ -71,7 +71,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <tr>
                                     <th></th>
                                     <th></th>
-                                    <th></th>
+<!--                                    <th></th>-->
                                     <th id="totalca" style="text-align: right;color: #00aaf1;"></th>
                                     <th id="totalcra" style="text-align: right;color: #00aaf1;"></th>
                                     <th id="totalcrda" style="text-align: right;color: #00aaf1;"></th>
@@ -155,7 +155,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         
         row.append($("<td>" + rowData.InvDate + "</td>"));
         row.append($("<td>" + rowData.JobInvNo + "</td>"));
-        row.append($("<td>" + rowData.JRegNo + "</td>"));
         row.append($("<td class='cashamount' align='right'>" + accounting.formatMoney(rowData.CashAmount) + "</td>"));
         row.append($("<td class='creditamount' align='right'>" + accounting.formatMoney(rowData.CreditAmount) + "</td>"));
         row.append($("<td class='ccardamount' align='right'>" + accounting.formatMoney(rowData.CCardAmount) + "</td>"));

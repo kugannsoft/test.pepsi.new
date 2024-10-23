@@ -308,6 +308,8 @@ class Master extends Admin_Controller {
         }
     }
 
+
+
     public function loadmodal_addemp_type() {
         $this->load->view('admin/master/add-emp-type', $this->data);
     }
@@ -971,7 +973,7 @@ class Master extends Admin_Controller {
         echo json_encode($data);
         die();
     }
-    
+
     public function editEmpType() {
          $transactionCode =$_POST['id'];
          $name =$_POST['name'];
@@ -2039,6 +2041,78 @@ public function editBankAccount() {
         echo json_encode($data);
         die();
     }
+
+    
+    // customer routes function
+    public function customer_routes() {
+        if (!$this->ion_auth->logged_in() OR !$this->ion_auth->is_admin()) {
+            // Redirect to login page if the user is not logged in or not an admin
+            redirect('auth/login', 'refresh');
+        } else {
+            /* Title Page */
+            $this->breadcrumbs->unshift(1, lang('menu_category'), 'admin/master/customer_routes');
+            $this->page_title->push(('Customer Routes'));
+            $this->data['pagetitle'] = $this->page_title->show();
+
+            /* Breadcrumbs */
+            $this->data['breadcrumb'] = $this->breadcrumbs->show();
+
+            /* Data */
+            // Fetch data related to customer routes from the model
+            $this->data['customerRoutes'] = $this->master_model->get_data('customer_routes')->result();
+
+            /* Load Template */
+            // Load the 'customer_routes' view and pass the data
+            $this->template->admin_render('admin/master/customer_routes', $this->data);
+        }
+    }
+
+    public function loadmodal_customer_routes() {
+        $this->load->view('admin/master/add-customer-routes', $this->data);
+    }
+
+    public function loadmodal_editcustomer_routes() {
+        $id = $_REQUEST['id'];
+        $this->data['trans'] = $this->db->select('*')->where('id',$id)->get('customer_routes')->row();
+        $this->load->view('admin/master/edit_customer_routes', $this->data);
+    }
+
+    public function addCustomerRoute() {
+        $transactionCode =$this->db->select_max('id')->get('customer_routes')->row()->id;
+        $name = strtoupper($this->input->post('name'));
+        
+        $data2 = array(
+           'id' => ($transactionCode+1),
+           'name' => $name
+       );
+        $this->db->trans_start();
+        $this->db->insert('customer_routes',$data2);
+       $this->db->trans_complete();
+       $res2 = $this->db->trans_status();
+       $data['fb']=$res2;
+       $data['id']=($transactionCode+1);
+       $data['name']=$name;
+       echo json_encode($data);
+       die();
+    }
+
+    public function editCustomerRoute() {
+        $transactionCode =$_POST['id'];
+        $name =strtoupper($this->input->post('name'));
+        
+        $data2 = array(
+           'id' => ($transactionCode),
+           'name' => $name
+       );
+       $this->db->trans_start();
+       $this->db->update('customer_routes',$data2,array('id' =>$transactionCode));
+       $this->db->trans_complete();
+       $res2 = $this->db->trans_status();
+       $data['fb']=$res2;
+       $data['id']=($transactionCode);
+       echo json_encode($data);
+       die();
+   }
 }
 
 

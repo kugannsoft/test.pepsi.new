@@ -24,6 +24,7 @@ class Report extends Admin_Controller {
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
+        $this->data['staff'] = $this->db->select()->from('salespersons')->where('RepType',6)->get()->result();
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -213,7 +214,16 @@ class Report extends Admin_Controller {
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
         $this->data['products'] = $this->Report_model->loadproduct();
+
+        $role = $_SESSION['role'];
+
+        if ($role == 1){
+
         $this->template->admin_render('admin/report/serialreport', $this->data);
+        } else {
+
+        $this->template->admin_render('admin/report/serialreport_without_cost', $this->data);
+        }
     }
 
     public function productreport() {
@@ -223,7 +233,16 @@ class Report extends Admin_Controller {
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
+
+        $role = $_SESSION['role'];
+
+        if ($role == 1){
+
         $this->template->admin_render('admin/report/productreport', $this->data);
+        } else {
+
+        $this->template->admin_render('admin/report/productreport_without_cost', $this->data);
+        }
     }
 
     public function pricereport() {
@@ -255,7 +274,16 @@ class Report extends Admin_Controller {
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
         $this->data['products'] = $this->Report_model->loadproduct();
+
+        $role = $_SESSION['role'];
+
+        if ($role == 1){
+
         $this->template->admin_render('admin/report/lowstockreport', $this->data);
+        } else {
+
+        $this->template->admin_render('admin/report/lowstockreport_without_cost', $this->data);
+        }
     }
     
     public function trasferreport() {
@@ -277,7 +305,16 @@ class Report extends Admin_Controller {
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
         $this->data['products'] = $this->Report_model->loadproduct();
-        $this->template->admin_render('admin/report/grnreport', $this->data);
+
+        $role = $_SESSION['role'];
+
+        if ($role == 1){
+
+            $this->template->admin_render('admin/report/grnreport', $this->data);
+        } else {
+
+            $this->template->admin_render('admin/report/grnreport_without_cost', $this->data);
+        }
     }
     
     public function cashfloat() {
@@ -753,7 +790,8 @@ class Report extends Admin_Controller {
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
          $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
          $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->productdetailserial($routeAr, $isall, $product,$dep,$subdep,$sup,$subcat);
+         $transfer = isset($_POST['transfer']) ? $_POST['transfer'] : NULL;
+        $result = $this->Report_model->productdetailserial($transfer,$routeAr, $isall, $product,$dep,$subdep,$sup,$subcat);
         echo json_encode($result);die;
     }
 
@@ -1846,4 +1884,315 @@ class Report extends Admin_Controller {
         
     }
 
+    public function issueNoteByDate() {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Job Sales', 'admin/report/issueNoteByDate');
+        $this->page_title->push(('Issue Note By Date'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['locations'] = $this->Report_model->loadroot();
+        $this->data['staff'] = $this->db->select()->from('salespersons')->get()->result();
+        $people = array("0", "10", "13");
+
+        if (in_array($_SESSION['user_id'], $people)) {
+            $this->template->admin_render('admin/report/issueNoteByDate', $this->data);
+        } else {
+            $this->template->admin_render('admin/report/issueNoteByDate', $this->data);
+        }
+    }
+
+    public function loadreportissuenote() {
+        $this->output->set_content_type('application_json');
+        $enddate = $_POST['enddate'];
+        $startdate = $_POST['startdate'];
+        $invtype = isset($_POST['inv_type']) ? $_POST['inv_type'] : 0;
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $salesperson = isset($_POST['salesperson']) ? $_POST['salesperson'] : 0;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $result = $this->Report_model->genIssuenoteByDate($startdate, $enddate, $route,$routeAr,$invtype,$salesperson);
+        echo json_encode($result);die;
+    }
+
+    public function issueNoteByJob()
+    {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Job Sales', 'admin/report/issueNoteByDate');
+        $this->page_title->push(('Issue Note By Job'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['locations'] = $this->Report_model->loadroot();
+        $this->data['staff'] = $this->db->select()->from('salespersons')->get()->result();
+        $people = array("0", "10", "13");
+
+        if (in_array($_SESSION['user_id'], $people)) {
+            $this->template->admin_render('admin/report/issueNoteByJob', $this->data);
+        } else {
+            $this->template->admin_render('admin/report/issueNoteByJob', $this->data);
+        }
+    }
+    
+    public function loadIssueNoteByJobs() {
+        $this->output->set_content_type('application_json');
+        $enddate = $_POST['enddate'];
+        $startdate = $_POST['startdate'];
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $SalesPerson = isset($_POST['salesperson']) ? $_POST['salesperson'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $result['pro'] = $this->Report_model->loadIssueNoteByJobs($startdate, $enddate, $route, $routeAr, $SalesPerson);
+
+        $result['dis'] =null;
+        $result['expenses'] =null;
+        $result['earn'] =null;
+        echo json_encode($result);
+        die;
+    }
+
+
+    public function loadingreport() {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
+        $this->page_title->push(('Loading Report'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['salespersons'] = $this->Report_model->loademployee();
+
+        $this->template->admin_render('admin/report/loadingreport', $this->data);
+    }
+
+    public function loadloadingreport() {
+        $this->output->set_content_type('application/json');
+    
+        $startdate = $this->input->post('startdate'); 
+        $enddate = $this->input->post('enddate');
+        $salesperson = $this->input->post('newsalesperson'); 
+        $route = $this->input->post('route'); 
+        if (empty($startdate) || empty($enddate)) {
+            echo json_encode(['error' => 'Start date or end date is missing.']);
+            die;
+        }
+    
+        $this->db->select('d.SalesProductCode,d.SalesProductName, SUM(d.SalesQty) AS TotalSalesQty, SUM(d.SalesFreeQty) AS TotalSalesFreeQty,p.Prd_CostPrice');
+        $this->db->from('salesinvoicehed h');
+        $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
+        $this->db->join('product p', 'd.SalesProductCode = p.ProductCode');
+        // $this->db->where('h.SalesPerson',$salesperson);
+        // $this->db->where('h.RouteId',$route);
+    
+        // $this->db->where('h.SalesDate >=', $startdate);
+        // $this->db->where('h.SalesDate <=', $enddate);
+        
+        $this->db->group_by('d.SalesProductCode');
+    
+        $query = $this->db->get();
+    
+        $result = $query->result();
+    
+        $response = [
+            'startdate' => $startdate,
+            'enddate' => $enddate,
+            'salesperson' =>$salesperson,
+            'route' =>$route,
+            'data' => $result
+        ];
+    
+        echo json_encode($response);
+        die; 
+    }
+    public function routewisereport() {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
+        $this->page_title->push(('Route Wise Report'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['routes'] = $this->Report_model->loadroute();
+        $this->template->admin_render('admin/report/routewisereport', $this->data);
+    }
+
+    public function loadroutewisereport() {
+        $this->output->set_content_type('application/json');
+        
+        $route = $this->input->post('route'); 
+        $customer = $this->input->post('customer');
+        $startdate = $this->input->post('startdate'); 
+        $enddate = $this->input->post('enddate');
+        $this->db->select('h.SalesInvNo,h.SalesCustomer,c.DisplayName,h.RouteId,d.SalesQty,d.SalesTotalAmount');
+        $this->db->from('salesinvoicehed h');
+        $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
+        $this->db->join('customer c', 'h.SalesCustomer = c.CusCode');
+        $this->db->where('h.RouteId',$route);
+        $this->db->where('SalesCustomer',$customer);
+        $this->db->where('SalesDate >=', $startdate);
+        $this->db->where('SalesDate <=', $enddate);
+        $this->db->group_by('SalesProductCode');
+        $query = $this->db->get();
+        $result = $query->result();
+        $response = [  
+            'data' => $result
+        ];
+        echo json_encode($response);
+        die; 
+    
+    }
+
+    public function routewiseoutstandingreport() {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
+        $this->page_title->push(('Route Wise Outstanding Report'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['salespersons'] = $this->Report_model->loademployee();
+        $this->template->admin_render('admin/report/routewiseoutstandingreport', $this->data);
+    }
+
+    public function loadroutewiseoutstandingreport() {
+        $this->output->set_content_type('application/json');
+        $salesperson = $this->input->post('newsalesperson'); 
+        $route = $this->input->post('route'); 
+        $customer = $this->input->post('customer');
+        $startdate = $this->input->post('startdate'); 
+        $enddate = $this->input->post('enddate');
+        $this->db->select('sp.RepID,er.emp_id,er.route_id,cu.DisplayName,cu.CusCode,cu.HandelBy,cu.CusCode,
+                                DATE(cr.InvoiceDate) AS InvoiceDate,
+                                cr.InvoiceNo,
+                                cr.NetAmount,
+                                cr.CreditAmount,
+                                cr.SettledAmount,
+                                SUM(cr.returnAmount) AS ReturnAmount');
+        $this->db->from('salespersons sp');
+        $this->db->join('employeeroutes er','sp.RepID = er.emp_id','left');
+        $this->db->join('customer cu','er.emp_id = cu.HandelBy','left');
+        $this->db->join('creditinvoicedetails cr','cu.CusCode = cr.CusCode');
+        $this->db->where('er.emp_id',$salesperson);
+        $this->db->where('er.route_id', $route);
+        $this->db->where('cu.CusCode', $customer);
+        $query = $this->db->get();
+        $result = $query->result();
+        $response = [  
+            'salesperson'=>$salesperson,
+            'route' =>$route,
+            'customer' =>$customer,
+            'data' => $result
+        ];
+        echo json_encode($response);
+        die; 
+    }
+
+    public function invoicesaleswiseitemreport() {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
+        $this->page_title->push(('Invoice Sales Wise Item Report'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['salespersons'] = $this->Report_model->loademployee();
+        $this->template->admin_render('admin/report/invoicesaleswiseitemreport', $this->data);
+    }
+
+    public function loadinvoicesaleswiseitemreport() {
+        $this->output->set_content_type('application/json');
+        $salesperson = $this->input->post('newsalesperson'); 
+        $route = $this->input->post('route'); 
+        $customer = $this->input->post('customer');
+        $startdate = $this->input->post('startdate'); 
+        $enddate = $this->input->post('enddate');
+        $this->db->select('h.SalesInvNo,h.SalesDate,c.CusCode,c.DisplayName,d.SalesProductCode,d.SalesProductName,d.SalesQty,
+        d.SalesFreeQty,d.SalesCostPrice,d.SalesUnitPrice,d.SalesDisValue,d.SalesDisPercentage,d.SalesDisValue');
+        $this->db->from('salesinvoicehed h');
+        $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
+        $this->db->join('customer c', 'h.SalesCustomer = c.CusCode');
+        // $this->db->where('h.RouteId',$route);
+        // $this->db->where('SalesCustomer',$customer);
+        // $this->db->where('SalesDate >=', $startdate);
+        // $this->db->where('SalesDate <=', $enddate);
+        $this->db->group_by('h.SalesInvNo');
+        $query = $this->db->get();
+        $result = $query->result();
+        $response = [  
+        'salesperson'=>$salesperson,
+        'route' =>$route,
+        'customer' =>$customer,
+        'data' => $result
+        ];
+        echo json_encode($response);
+        die; 
+    }
+
+    public function saleswisereport() {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
+        $this->page_title->push(('Total Sales Report'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['salespersons'] = $this->Report_model->loademployee();
+        $this->template->admin_render('admin/report/saleswisereport', $this->data);
+    }
+
+    public function loadtotalsalesreport() {
+        $this->output->set_content_type('application/json');
+        $salesperson = $this->input->post('newsalesperson'); 
+        $route = $this->input->post('route'); 
+        $customer = $this->input->post('customer');
+        $startdate = $this->input->post('startdate'); 
+        $enddate = $this->input->post('enddate');
+        $this->db->select('h.*,h.SalesInvNo,h.SalesDate,c.CusCode,c.DisplayName');
+        $this->db->from('salesinvoicehed h');
+        // $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
+        $this->db->join('customer c', 'h.SalesCustomer = c.CusCode');
+        // $this->db->where('h.RouteId',$route);
+        // $this->db->where('SalesCustomer',$customer);
+        // $this->db->where('SalesDate >=', $startdate);
+        // $this->db->where('SalesDate <=', $enddate);
+        $this->db->group_by('h.SalesInvNo');
+        $query = $this->db->get();
+        $result = $query->result();
+        $response = [  
+        'salesperson'=>$salesperson,
+        'route' =>$route,
+        'customer' =>$customer,
+        'data' => $result
+        ];
+        echo json_encode($response);
+        die; 
+    }
+
+
+    public function returnreport() {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
+        $this->page_title->push(('Return Report'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['salespersons'] = $this->Report_model->loademployee();
+        $this->template->admin_render('admin/report/returnreport', $this->data);
+    }
+
+    public function loadreturnreport() {
+        $this->output->set_content_type('application/json');
+        $salesperson = $this->input->post('newsalesperson'); 
+        $route = $this->input->post('route'); 
+        $customer = $this->input->post('customer');
+        $startdate = $this->input->post('startdate'); 
+        $enddate = $this->input->post('enddate');
+        $this->db->select('h.*,h.InvoiceNo,h.ReturnDate,c.CusCode,c.DisplayName, d.*');
+        $this->db->from(' returninvoicehed h');
+        $this->db->join(' returninvoicedtl d', 'h.ReturnNo = d.ReturnNo');
+        $this->db->join('customer c', 'h.CustomerNo = c.CusCode');
+        // $this->db->where('h.RouteId',$route);
+        // $this->db->where('SalesCustomer',$customer);
+        // $this->db->where('SalesDate >=', $startdate);
+        // $this->db->where('SalesDate <=', $enddate);
+        $this->db->group_by('h.InvoiceNo');
+        $query = $this->db->get();
+        $result = $query->result();
+        $response = [  
+        'salesperson'=>$salesperson,
+        'route' =>$route,
+        'customer' =>$customer,
+        'data' => $result
+        ];
+        echo json_encode($response);
+        die; 
+    }
+        
 }
+
+

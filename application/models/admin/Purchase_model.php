@@ -275,8 +275,15 @@ class Purchase_model extends CI_Model {
                 'Serial' => $serial_noArr[$i]);
             $this->db->insert('purchasereturnnotedtl', $grnDtl);
         
+            //update price stock
+            $this->db->query("CALL SPP_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$qtyArr[$i]','$price_levelArr[$i]','$cost_priceArr[$i]','$sell_priceArr[$i]','$location','0','0','0','0')");
+            // $this->db->query("CALL SPT_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$qtyArr','$price_levelArr[$i]','$cost_priceArr[$i]','$sell_priceArr[$i]','$location')");
+
+            //update product stock
+            // $this->db->query("CALL SPT_UPDATE_PRO_STOCK('$product_codeArr[$i]','$qtyArr',0,'$location')");
+
             //update price and product stock
-            $this->db->query("CALL SPP_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$qtyArr[$i]','$price_levelArr[$i]','$cost_priceArr[$i]','$sell_priceArr[$i]','$location','$serial_noArr[$i]',0,0,0)");
+//            $this->db->query("CALL SPP_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$qtyArr[$i]','$price_levelArr[$i]','$cost_priceArr[$i]','$sell_priceArr[$i]','$location','$serial_noArr[$i]',0,0,0)");
              //update serial stock
              $this->db->query("UPDATE productserialstock AS S
                                 INNER JOIN  purchasereturnnotedtl AS D ON S.ProductCode=D.PRN_Product
@@ -284,26 +291,26 @@ class Purchase_model extends CI_Model {
                                 WHERE S.SerialNo = D.Serial AND D.IsSerial = 1 AND D.PRN_No = '$prnNo'");
 
              //update grn details
-            if($grnno!='' || $grnno!=0){
-                $this->db->update('goodsreceivenotedtl', array('GRN_ReturnQty'=>$qtyArr[$i]),array('GRN_No'=>$grnno,'GRN_Product'=>$product_codeArr[$i],'SerialNo'=>$serial_noArr[$i]));
-            }
+//            if($grnno!='' || $grnno!=0){
+//                $this->db->update('goodsreceivenotedtl', array('GRN_ReturnQty'=>$qtyArr[$i]),array('GRN_No'=>$grnno,'GRN_Product'=>$product_codeArr[$i],'SerialNo'=>$serial_noArr[$i]));
+//            }
         }
 
-        if($grnno!='' || $grnno!=0){
-            $grnCredit=0;
-            //update supplier outstanding
-            $this->db->query("CALL SPT_UPDATE_SUPOUTSTAND_RBACK('$sup_code','$total_amount','$total_amount')");
-
-            $this->db->update('goodsreceivenotehed', array('GRN_ReturnAmount'=>($total_amount)),array('GRN_No'=>($grnno)));
-
-            $grnCredit = $this->db->select('CreditAmount')->from('creditgrndetails')->where('GRNNO',$grnno)->get()->row()->CreditAmount;
-
-            if($grnCredit>0){
-                $creditAmount = $grnCredit-$total_amount;
-                //update credit invoices
-                $this->db->update('creditgrndetails', array('CreditAmount'=>($creditAmount)),array('GRNNO'=>($grnno)));
-            }
-         }
+//        if($grnno!='' || $grnno!=0){
+//            $grnCredit=0;
+//            //update supplier outstanding
+//            $this->db->query("CALL SPT_UPDATE_SUPOUTSTAND_RBACK('$sup_code','$total_amount','$total_amount')");
+//
+//            $this->db->update('goodsreceivenotehed', array('GRN_ReturnAmount'=>($total_amount)),array('GRN_No'=>($grnno)));
+//
+//            $grnCredit = $this->db->select('CreditAmount')->from('creditgrndetails')->where('GRNNO',$grnno)->get()->row()->CreditAmount;
+//
+//            if($grnCredit>0){
+//                $creditAmount = $grnCredit-$total_amount;
+//                //update credit invoices
+//                $this->db->update('creditgrndetails', array('CreditAmount'=>($creditAmount)),array('GRNNO'=>($grnno)));
+//            }
+//         }
         $this->bincard($grnno,11,'Created');//update bincard
         $this->db->insert('purchasereturnnotehed', $grnHed);
         $this->update_max_code('PRN');

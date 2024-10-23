@@ -72,13 +72,14 @@ class Grn extends Admin_Controller {
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['plv'] = $this->Grn_model->loadpricelevel();
         $this->data['location'] = $this->Grn_model->loadlocations();
-        $people = array("1", "3", "13");
+        // $people = array("1", "3", "13");
         
-        if (in_array($_SESSION['user_id'], $people)) {
-            $this->template->admin_render('admin/grn/add_grn', $this->data);
-        }else{
-           redirect('admin/dashboard'); 
-        }
+         $this->template->admin_render('admin/grn/add_grn', $this->data);
+        // if (in_array($_SESSION['user_id'], $people)) {
+           
+        // }else{
+        //   redirect('admin/dashboard'); 
+        // }
     }
 
     public function loadallgrns() {

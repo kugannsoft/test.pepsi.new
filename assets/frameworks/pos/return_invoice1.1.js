@@ -99,62 +99,165 @@ $(document).ready(function() {
     var loc = $("#invlocation").val();
 
     //customer autoload
-    $("#customer").autocomplete({
-        source: function(request, response) {
-            cusType = $("#CustType option:selected").val();
-
+    $('#newsalesperson').on('change', function() {
+        
+        var salespersonID = $(this).val();
+        if (salespersonID != "0") {
+           
             $.ajax({
-                url: 'loadcustomersjson',
-                dataType: "json",
-                data: {
-                    q: request.term
+                url: 'findemploeeroute',
+                method: 'POST',
+                data: { salespersonID: salespersonID },
+                dataType: 'json',
+                success: function(response) {
+                    
+                    $('#route').empty();
+                    $('#route').append('<option value="0">-Select-</option>');
+                    
+                    $.each(response, function(index, routeID) {
+                    console.log(routeID);
+                    $('#route').append('<option value="'+ routeID.route_id +'">'+ routeID.route_name +'</option>');
+                });
+              
                 },
-                success: function(data) {
-                    response($.map(data, function(item) {
-                        return {
-                            label: item.label,
-                            value: item.value,
-                            data: item
-                        }
-                    }));
+                error: function(xhr, status, error) {
+                    console.error('Error fetching routes:', error);
                 }
             });
-        },
-        autoFocus: true,
-        minLength: 0,
-        select: function(event, ui) {
-            $("input[name='nonInv']").iCheck('uncheck');
-            $("#invoice").val('');
-            invNo = 0;
-            cusCode = ui.item.value;
-            $("#tbl_payment tbody").html("");
+        } else {
+            $('#route').empty();
+            $('#route').append('<option value="0">-Select-</option>');
+        }
+    });
 
+    $('#route').on('change', function() {
+        var routeID = $(this).val();
+        var newsalesperson = $('#newsalesperson').val();
+        console.log("Route ID changed to:", routeID);
+        console.log("Customer newsalesperson selected:", newsalesperson);
+
+        $.ajax({
+            url: 'loadcustomersroutewise',
+            type: 'POST',
+            dataType: "json",
+            data: {
+                routeID: routeID,
+                newsalesperson:newsalesperson
+            },
+            success: function(data) {
+                console.log("Customer Data:", data); 
+                $("#customer").html('<option value="">Select Customer</option>');
+                
+                // Populate the dropdown with customers
+                if (data.length > 0) {
+                    $.each(data, function(index, customer) {
+                        $("#customer").append(
+                            `<option value="${customer.CusCode}">${customer.DisplayName}</option>`
+                        );
+                    });
+
+                  
+                }
+
+                $('#customer').select2({
+                    placeholder: "Select a customer",
+                    allowClear: true,
+                    width: '100%'
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", error); // Log any AJAX errors
+            }
+        });
+    });
+
+    $('#customer').on('change', function() {
+        var cusCode = $(this).val(); 
+        console.log("Customer Code selected:", cusCode);
+        if (cusCode) {
+            $("#tbl_payment tbody").html(""); 
             $.ajax({
                 type: "POST",
                 url: "../../admin/Payment/getCustomersDataById",
                 data: {cusCode: cusCode},
                 success: function(data)
-                {
-                    var resultData = JSON.parse(data);
-
-                    cusCode = resultData.cus_data.CusCode;
-                    outstanding = resultData.cus_data.CusOustandingAmount;
-                    available_balance = parseFloat(resultData.cus_data.CreditLimit) - parseFloat(outstanding);
-                    customer_name = resultData.cus_data.CusName;
-                    $("#cusCode").html(resultData.cus_data.CusName);
-                    $("#customer").val(resultData.cus_data.CusCode);
-                    $("#creditLimit").html(accounting.formatMoney(resultData.cus_data.CreditLimit));
-                    $("#creditPeriod").html(resultData.cus_data.CreditPeriod);
-                    $("#cusOutstand").html(accounting.formatMoney(outstanding));
-                    $("#availableCreditLimit").html(accounting.formatMoney(available_balance));
-                    $("#city").html(resultData.cus_data.MobileNo);
-
-                }
-            });
-
-
+                    {
+                        var resultData = JSON.parse(data);
+            
+                        cusCode = resultData.cus_data.CusCode;
+                        outstanding = resultData.cus_data.CusOustandingAmount;
+                        available_balance = parseFloat(resultData.cus_data.CreditLimit) - parseFloat(outstanding);
+                        customer_name = resultData.cus_data.CusName;
+                        $("#cusCode").html(resultData.cus_data.CusName);
+                        $("#customer").val(resultData.cus_data.CusCode);
+                        $("#creditLimit").html(accounting.formatMoney(resultData.cus_data.CreditLimit));
+                        $("#creditPeriod").html(resultData.cus_data.CreditPeriod);
+                        $("#cusOutstand").html(accounting.formatMoney(outstanding));
+                        $("#availableCreditLimit").html(accounting.formatMoney(available_balance));
+                        $("#city").html(resultData.cus_data.MobileNo);
+            
+                    }
+                });
         }
     });
+
+
+    // $("#customer").autocomplete({
+    //     source: function(request, response) {
+    //         cusType = $("#CustType option:selected").val();
+
+    //         $.ajax({
+    //             url: 'loadcustomersjson',
+    //             dataType: "json",
+    //             data: {
+    //                 q: request.term
+    //             },
+    //             success: function(data) {
+    //                 response($.map(data, function(item) {
+    //                     return {
+    //                         label: item.label,
+    //                         value: item.value,
+    //                         data: item
+    //                     }
+    //                 }));
+    //             }
+    //         });
+    //     },
+    //     autoFocus: true,
+    //     minLength: 0,
+    //     select: function(event, ui) {
+    //         $("input[name='nonInv']").iCheck('uncheck');
+    //         $("#invoice").val('');
+    //         invNo = 0;
+    //         cusCode = ui.item.value;
+    //         $("#tbl_payment tbody").html("");
+
+    //         $.ajax({
+    //             type: "POST",
+    //             url: "../../admin/Payment/getCustomersDataById",
+    //             data: {cusCode: cusCode},
+    //             success: function(data)
+    //             {
+    //                 var resultData = JSON.parse(data);
+
+    //                 cusCode = resultData.cus_data.CusCode;
+    //                 outstanding = resultData.cus_data.CusOustandingAmount;
+    //                 available_balance = parseFloat(resultData.cus_data.CreditLimit) - parseFloat(outstanding);
+    //                 customer_name = resultData.cus_data.CusName;
+    //                 $("#cusCode").html(resultData.cus_data.CusName);
+    //                 $("#customer").val(resultData.cus_data.CusCode);
+    //                 $("#creditLimit").html(accounting.formatMoney(resultData.cus_data.CreditLimit));
+    //                 $("#creditPeriod").html(resultData.cus_data.CreditPeriod);
+    //                 $("#cusOutstand").html(accounting.formatMoney(outstanding));
+    //                 $("#availableCreditLimit").html(accounting.formatMoney(available_balance));
+    //                 $("#city").html(resultData.cus_data.MobileNo);
+
+    //             }
+    //         });
+
+
+    //     }
+    // });
     var invoiceType =1;
 
 $("#invType").change(function(){
@@ -407,6 +510,7 @@ var invPrice=0;
                             qty: item.qty,
                             price: item.price,
                             name:item.name,
+                            serial:item.serial,
                             data: item
                         }
                     }));
@@ -418,6 +522,7 @@ var invPrice=0;
         select: function(event, ui) {
             itemCode = ui.item.value;
             var proname = ui.item.name;
+            var serial = ui.item.serial;
             minQty = ui.item.qty;
              invPrice = ui.item.price;
             if(isNonRt==1){
@@ -455,11 +560,11 @@ var invPrice=0;
                      $.ajax({
                         type: "POST",
                         url: "../Salesinvoice/getSalesInvoiceProductById",
-                        data: { proCode: itemCode , invNo: invNo , name: proname },
+                        data: { proCode: itemCode , invNo: invNo , name: proname , serial: serial },
                         success: function(data) {
                             var resultData = JSON.parse(data);
                             if (resultData) {
-                                loadProModal(resultData.product.SalesProductName, resultData.product.ProductCode, (resultData.product.SalesInvNetAmount/resultData.product.SalesQty), resultData.product.Prd_CostPrice, 0, resultData.product.IsSerial, resultData.product.IsFreeIssue, resultData.product.IsOpenPrice, resultData.product.IsMultiPrice, resultData.product.Prd_UPC, resultData.product.WarrantyMonth);
+                                loadProModal(resultData.product.SalesProductName, resultData.product.ProductCode, (resultData.product.SalesInvNetAmount/resultData.product.SalesQty), resultData.product.Prd_CostPrice, resultData.product.SalesSerialNo, resultData.product.IsSerial, resultData.product.IsFreeIssue, resultData.product.IsOpenPrice, resultData.product.IsMultiPrice, resultData.product.Prd_UPC, resultData.product.WarrantyMonth);
                             } else {
                                 $.notify("Product not found.", "warning");
                                 $("#itemCode").val('');
@@ -529,9 +634,9 @@ $("#addpro").click(function(e){
         $("#qty").focus();
 //       alert(misSerial);
         if (misSerial == 1) {
-//            $("#serialNo").val(mserial);
+              $("#serialNo").val(mserial);
 //            $("#qty").val(1);
-//            $("#qty").attr('disabled', true);
+              $("#qty").attr('disabled', true);
             $("#dv_SN").show();
             $("#qty").focus();
         } else {
@@ -1152,6 +1257,8 @@ var settleArry = [];
         var invUser = $("#invUser").val();
         var returnlocation = $("#invlocation").val();
        var invType = $("#invType option:selected").val();
+       var route = $("#route").val();
+       var newsalesperson = $("#newsalesperson").val();
 //        var chequeReference = $("#chequeReference").val();
 //        var chequeRecivedDate = $("#chequeReciveDate").val();
 //        var chequeDate = $("#chequeDate").val();
@@ -1222,7 +1329,8 @@ var settleArry = [];
                     data: {invoicenumber: invNo, invType:invType, remark: remark, product_code: sendProduct_code, serial_no: sendSerial_no, qty: sendQty, unit_price: sendUnit_price,
                         discount_precent: sendDiscount_precent, pro_discount: sendPro_discount, total_net: sendTotal_net, unit_type: sendUnit_type, price_level: sendPrice_level, upc: sendUpc,
                         case_cost: sendCaseCost, freeQty: sendFree_qty, cost_price: sendCost_price, pro_total: sendPro_total, isSerial: sendIsSerial, proName: sendPro_name, total_cost: totalCost, totalProDiscount: totalProWiseDiscount, totalGrnDiscount: totalGrnDiscount,
-                        invDate: invDate, invUser: invUser, total_amount: total_amount, total_discount: total_discount, total_net_amount: totalNetAmount, location: returnlocation, cuscode: cusCode},
+                        invDate: invDate, invUser: invUser, total_amount: total_amount, total_discount: total_discount, total_net_amount: totalNetAmount, location: returnlocation, cuscode: cusCode,
+                        route:route,newsalesperson:newsalesperson},
                     success: function(data) {
                         var resultData = JSON.parse(data);
                         var feedback = resultData['fb'];

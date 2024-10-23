@@ -261,4 +261,19 @@ class Customer_model extends CI_Model {
         $result = $sql->row()->AccId;
         return $result;
     }
+
+    public function getRoutesByCusCode($cusCode) {
+        // $this->db->select('e.route_id'); 
+        // $this->db->from('customer c');
+        // $this->db->join('employeeroutes e', 'e.emp_id = c.HandelBy'); 
+        // $this->db->where('c.CusCode', $cusCode);
+        
+        $this->db->select('e.route_id, cr.name AS route_name');
+        $this->db->from('customer c');
+        $this->db->join('employeeroutes e', 'e.emp_id = c.HandelBy');
+        $this->db->join('customer_routes cr', 'cr.id = e.route_id');
+        $this->db->where('c.CusCode', $cusCode);
+        $query = $this->db->get(); 
+        return $query->result();
+    }
 }

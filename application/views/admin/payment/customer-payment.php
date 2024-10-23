@@ -25,12 +25,71 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <!--<form class="form-horizontal">-->
                         <div class="row">
                             <div class="col-md-6">
+                                <label for="salesperson" class="col-sm-5 control-label">Salesperson <span class="required">*</span></label>
+                                <div class="col-sm-6">
+                                    <select class="form-control" required="required"  name="newsalesperson" id="newsalesperson" placeholder="sales person">
+                                        <option value="">-Select a sales person-</option>
+                                        <?php foreach ($salesperson as $trns) { ?>
+                                            <option value="<?php echo $trns->RepID; ?>" 
+                                                    <?php echo ($trns->RepID == $selectedSalesperson) ? 'selected' : ''; ?>>
+                                                <?php echo $trns->RepName; ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+     
+                                <?php if ($is_edit): ?>
+                                    <div class="form-group">
+                                            <label for="route" class="col-sm-5 control-label">Route <span class="required">*</span></label>
+                                            <div class="col-sm-6">
+                                                <select class="form-control" required="required"  name="route" id="route" placeholder="route">
+                                                    <option value="">-Select a Route-</option>
+                                                    <?php foreach ($allsalespersonroute as $trns) { ?>
+                                                        <option value="<?php echo $trns->id; ?>" 
+                                                            <?php echo ($trns->route_id == $selected_route) ? 'selected' : ''; ?>>
+                                                            <?php echo $trns->name; ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                <?php else: ?>
+                                        <div class="form-group">
+                                            <label for="route" class="col-sm-5 control-label">Route <span class="required">*</span></label>
+                                            <div class="col-sm-6">
+                                                <select class="form-control" required="required"  name="route" id="route" placeholder="route">
+                                                    <option value="">-Select a Route-</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                <?php endif; ?>
+                                <?php if ($is_edit): ?>
                                 <div class="form-group">
                                     <label for="customer" class="col-sm-5 control-label">Customer <span class="required">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" autofocus required="required"  name="customer" id="customer" placeholder="Enter Customer" value="<?php echo $customer; ?>">
+                                        <!-- <input type="text" class="form-control" autofocus required="required"  name="customer" id="customer" placeholder="Enter Customer" value="<?php echo $customer; ?>"> -->
+                                        <select class="form-control" required="required" name="customer" id="customer" placeholder="customer name">
+                                                <option value="0">-Select a customer-</option>
+                                                <?php foreach ($allroutecustomer as $trns) { ?>
+                                                        <option value="<?php echo $trns->CusCode; ?>" 
+                                                        <?php echo ($trns->CusCode == $selectedcus) ? 'selected' : ''; ?>>
+                                                            <?php echo $trns->DisplayName; ?>
+                                                        </option>
+                                                <?php } ?>
+                                        </select>
                                     </div>
                                 </div>
+                                <?php else: ?>
+                                    <div class="form-group">
+                                        <label for="customer" class="col-sm-5 control-label">Customer <span class="required">*</span></label>
+                                        <div class="col-sm-6">
+                                            <!-- <input type="text" class="form-control" autofocus required="required"  name="customer" id="customer" placeholder="Enter Customer" value="<?php echo $customer; ?>"> -->
+                                            <select class="form-control" required="required" name="customer" id="customer" placeholder="customer name">
+                                                    <option value="0">-Select a customer-</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
                                 <div class="form-group">
                                     <label for="customer" class="col-sm-5 control-label">Receipt Type <span class="required">*</span></label>
                                     <div class="col-sm-6">
@@ -287,5 +346,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         font-size:10px;
     }
     
+    
 </style>
-<script type="text/javascript"></script>
+<script type="text/javascript">
+       $('#customer').select2({
+            placeholder: "Select a customer",
+            allowClear: true,
+            minimumInputLength:1,
+            width: '100%'
+       });
+</script>

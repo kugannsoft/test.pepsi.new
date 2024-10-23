@@ -8,6 +8,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <?php // echo $breadcrumb; ?>
     </section>
     <section class="content">
+    <?php if ($this->session->flashdata('success')): ?>
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <?php echo $this->session->flashdata('success'); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($this->session->flashdata('error')): ?>
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <?php echo $this->session->flashdata('error'); ?>
+            </div>
+        <?php endif; ?>
         <div class="row">
             <div class="col-md-12">
                 <div class="box">
@@ -32,6 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <td>Type</td>
                                     <td>###</td>
                                     <td>###</td>
+                                    <td>###</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,6 +59,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </section>
 </div>
 <div id="suppliermodal" class="modal fade bs-add-category-modal-lg" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- load data -->
+        </div>
+    </div>
+</div>
+
+<div id="routeConfigmodal" class="modal fade bs-add-category-modal-lg" tabindex="-1" role="dialog" aria-hidden="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <!-- load data -->
@@ -77,6 +99,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         mRender: function (data, type, row) {
                             return '<button class="btn btn-xs btn-default" onclick="editm(\'' + row.RepID + '\')">Edit</button>';
                         }
+                    },
+                    {"data": null, orderable: false, searchable: false,
+                        mRender: function (data, type, row) {
+                            return '<button class="btn btn-xs btn-default" onclick="routeConf(\'' + row.RepID + '\')">Route Config</button>';
+                        }
                     }
                 ],
         "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -97,4 +124,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             $('#suppliermodal').modal({show: true});
         });
     }
+    // route config model
+   
+</script>
+<script>
+     function routeConf(d) {
+        console.log(d);
+        $('.modal-content').load('<?php echo base_url() ?>admin/sales/loadmodal_routeconfig/' + d, function (result) {
+            $('#routeConfigmodal').modal({show: true});
+        });
+    }
+    
 </script>

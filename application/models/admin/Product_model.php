@@ -38,6 +38,12 @@ class Product_model extends CI_Model {
         return $query;
     }
 
+    public function loadproductstockbyid($product,$location)
+    {
+        return $this->db->select('Stock')
+            ->from('productstock')->where('ProductCode', $product)->where('Location', $location)
+            ->get()->row();
+    }
 
     public function get_max_code($form) {
         $query = $this->db->select('*')->where('FormName', $form)->get('codegenerate');

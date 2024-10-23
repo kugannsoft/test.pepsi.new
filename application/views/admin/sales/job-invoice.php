@@ -23,22 +23,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <div class="col-sm-2">
                             <label for="companyCode" class="control-label">&nbsp;&nbsp;Job Number <span class="required"></span></label>
                         </div>
+<!--                        <div class="col-sm-2">-->
+<!--                            <label for="companyCode" class="control-label">Estimate No. <span class="required"></span></label>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-1">-->
+<!--                            <label for="companyCode" class="control-label">Suppl. No. <span class="required"></span></label>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-1">-->
+<!--                            <label for="companyCode" class="control-label">Temp. Inv. No. <span class="required"></span></label>-->
+<!--                        </div>-->
                         <div class="col-sm-2">
-                            <label for="companyCode" class="control-label">Estimate No. <span class="required"></span></label>
-                        </div>
-                        <div class="col-sm-1">
-                            <label for="companyCode" class="control-label">Suppl. No. <span class="required"></span></label>
-                        </div>
-                        <div class="col-sm-1">
-                            <label for="companyCode" class="control-label">Temp. Inv. No. <span class="required"></span></label>
-                        </div>
-                        <div class="col-sm-1">
                             <label for="companyCode" class="control-label">Invoice No. <span class="required"></span></label>
                         </div>
-                        <div class="col-sm-3">
+                        <div class="col-sm-4">
                             <label for="cusName" class="control-label"><i class="fa fa-user"></i>&nbsp;<span id="cusName"></span>&nbsp;&nbsp;&nbsp;<i class="fa fa-phone"></i>&nbsp;<span id="cusPhone"></span></label>
                         </div>
-                        <div class="col-sm-2">
+                        <div class="col-sm-3">
                             <label for="companyCode" class="control-label">Outstanding : <span id="cusOutstand"></span></label>
                         </div>
                         
@@ -49,56 +49,39 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <input type="text" class="form-control"  name="jobNo" id="jobNo" value="<?php if(isset($JobNo)){echo $JobNo;}?>" placeholder="Job Number">                             
                             </div>
                         </div>
-                        <div class="col-sm-2">
-                            <div  class="form-group">
-                            <input  class="form-control" type="text" placeholder="Estimate No" name="estimateNo" id="estimateNo" value="<?php if(isset($EstimateNo)){echo $EstimateNo;}?>">
+<!--                        <div class="col-sm-2">-->
+<!--                            <div  class="form-group">-->
+<!--                            <input  class="form-control" type="text" placeholder="Estimate No" name="estimateNo" id="estimateNo" value="--><?php //if(isset($EstimateNo)){echo $EstimateNo;}?><!--">-->
                                 <input type="hidden" name="location" id="location" value="<?php echo $_SESSION['location'] ?>"><input type="hidden" name="estimateNo" id="estimateNo" value="">
                                 <input type="hidden" name="vatRate" id="vatRate" value="<?php echo $company['VAT']; ?>">
                                 <input type="hidden" name="nbtRate" id="nbtRate" value="<?php echo $company['NBT']; ?>">
                                 <input type="hidden" name="nbtRatioRate" id="nbtRatioRate" value="<?php echo $company['NBT_Ratio']; ?>">
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-                            <div  class="form-group">
-                                 <input type="text" class="form-control" required="required"  name="supplemetNo" id="supplemetNo" placeholder="Supplementary No" value="<?php if(isset($supNo)){echo $supNo;}else{echo 0;}?>">
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-                            <div  class="form-group">
-                                <input type="text" class="form-control" required="required"  name="tempNo" id="tempNo" placeholder="Temp. No"  value="<?php if(isset($TempNo)){echo $TempNo;}?>" >
-                            </div>
-                        </div>
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-1">-->
+<!--                            <div  class="form-group">-->
+<!--                                 <input type="text" class="form-control" required="required"  name="supplemetNo" id="supplemetNo" placeholder="Supplementary No" value="--><?php //if(isset($supNo)){echo $supNo;}else{echo 0;}?><!--">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-1">-->
+<!--                            <div  class="form-group">-->
+<!--                                <input type="text" class="form-control" required="required"  name="tempNo" id="tempNo" placeholder="Temp. No"  value="--><?php //if(isset($TempNo)){echo $TempNo;}?><!--" >-->
+<!--                            </div>-->
+<!--                        </div>-->
                         <div class="col-sm-2">
                             <div  class="form-group">
                                 <input type="text" class="form-control" required="required"  name="invoiceNo" id="invoiceNo" placeholder="Invoice No (Autogenerate)"  value="<?php if(isset($JobInvoiceNo)){echo $JobInvoiceNo;}?>" >
                             </div>
                         </div>
-                        <div class="col-sm-1">
+                        <div class="col-sm-2">
                             <div  class="form-group">
                                 <input type="text" class="form-control" disabled required="required"  name="cusCode" id="cusCode" value="" placeholder="Customer">
                             </div>
                         </div>
                         <div class="col-sm-2">
                             <div  class="form-group">
-                                <input type="text" class="form-control" disabled required="required"  name="regNo" id="regNo" placeholder="Register Number">
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-                            <div  class="form-group">
-                                 <button id="addProduct" class="btn btn-flat btn-primary pull-right">Add Product</button>
-                            </div>
-                        </div>
-                        <!-- <div class="col-sm-2">
-                            <div  class="form-group">
-                                <button  class="btn btn-success pull-right" data-toggle="modal" data-target="#customermodal" id="btnViewJob" type="button">View Job Card Details</button>
-                            </div>
-                        </div> -->
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <div  class="form-group">
-                            <input type="text" class="form-control" required="required"  name="appoDate" id="appoDate" placeholder="Date">
-                            <input type="hidden" class="form-control" required="required"  name="jobType" id="jobType" placeholder="Date">
+                                <input type="text" class="form-control" required="required"  name="appoDate" id="appoDate" placeholder="Date">
+                                <input type="hidden" class="form-control" required="required"  name="jobType" id="jobType" placeholder="Date">
                                 <!-- <select name="jobType" required="required"  id="jobType" class="form-control">
                                             <option value="">Select a job type</option>
                                              <?php foreach ($jobtype as $trns) { ?>
@@ -107,7 +90,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         </select> -->
                             </div>
                         </div>
-                        <div class="col-sm-1">
+                        <div class="col-sm-2">
                             <div  class="form-group">
                                 <select name="invoiceType" required="required"  id="invoiceType" class="form-control">
                                     <!-- <option value="">Select a Invoice type</option> -->
@@ -116,29 +99,87 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </select>
                             </div>
                         </div>
+<!--                        <div class="col-sm-2">-->
+<!--                            <div  class="form-group">-->
+<!--                                <input type="text" class="form-control" disabled required="required"  name="regNo" id="regNo" placeholder="Register Number">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-1">-->
+<!--                            <div  class="form-group">-->
+<!--                                 <button id="addProduct" class="btn btn-flat btn-primary pull-right">Add Product</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <!-- <div class="col-sm-2">
+                            <div  class="form-group">
+                                <button  class="btn btn-success pull-right" data-toggle="modal" data-target="#customermodal" id="btnViewJob" type="button">View Job Card Details</button>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="row">
+
+<!--                        <div class="col-sm-2">-->
+<!--                            <div  class="form-group">-->
+<!--                                <select name="partInvType" required="required"  id="partInvType" class="form-control">-->
+                                    <!-- <option value="">Select a Invoice type</option> -->
+<!--                                    <option value="1">Labour and Part Invoice</option>-->
+<!--                                    <option value="2">Part Separate Invoice</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-2">-->
+<!--                            <div  class="form-group">-->
+<!--                                <select name="vehicleCompany" id="vehicleCompany" class="form-control">-->
+<!--                                            <option value="">Select a company</option>-->
+<!--                                            --><?php //foreach ($vehicle_company as $trns) { ?>
+<!--                                            <option value="--><?php //echo $trns->VComId; ?><!--" >--><?php //echo $trns->VComName; ?><!--</option>-->
+<!--                                            --><?php //} ?>
+<!--                                        </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
                         <div class="col-sm-2">
                             <div  class="form-group">
-                                <select name="partInvType" required="required"  id="partInvType" class="form-control">
-                                    <!-- <option value="">Select a Invoice type</option> -->
-                                    <option value="1">Labour and Part Invoice</option>
-<!--                                    <option value="2">Part Separate Invoice</option>-->
+                                <select name="workType" required="required"  id="workType" class="form-control">
+                                    <option value="">Select a work type</option>
+                                    <?php foreach ($worktype as $trns) { ?>
+                                        <option value="<?php echo $trns->jobtype_id; ?>" jobOrder="<?php echo $trns->jobtype_order; ?>"  isVat="<?php echo $trns->isVat; ?>"  isNbt="<?php echo $trns->isNbt; ?>"   nbtRatio="<?php echo $trns->nbtRatio; ?>"><?php echo $trns->jobtype_code; ?> - <?php echo $trns->jobtype_name; ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
                         </div>
                         <div class="col-sm-2">
-                            <div  class="form-group">
-                                <select name="vehicleCompany" id="vehicleCompany" class="form-control">
-                                            <option value="">Select a company</option>
-                                            <?php foreach ($vehicle_company as $trns) { ?>
-                                            <option value="<?php echo $trns->VComId; ?>" ><?php echo $trns->VComName; ?></option>
-                                            <?php } ?>
-                                        </select>
+                            <div  class="form-group" id="jobDescDiv">
+                                <input type="text" class="form-control" required="required" onfocus="this.select();" name="jobdesc" id="jobdesc" value="" placeholder=" Job Description">
+                            </div>
+                            <div  class="form-group" id="spartDiv">
+                                <input type="text" class="form-control" required="required" onfocus="this.select();" name="product" id="product" value="" placeholder="Spart Part">
+                                <input type="hidden" class="form-control"  name="serial" id="serial" value="">
                             </div>
                         </div>
                         <div class="col-sm-1">
+                            <div  class="form-group">
+                                <input type="number" class="form-control" required="required" onfocus="this.select();" name="qty" id="qty" min="0" value="" placeholder="Qty">
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <div  class="form-group">
+                                <input type="number" class="form-control" required="required" onfocus="this.select();" name="sellPrice" min="0" id="sellPrice" value="" placeholder="Unit Price">
+                                <input type="hidden" name="prdName" id="prdName">
+                                <input type="hidden" name="timestamp" id="timestamp" value="">
+                                <input type="hidden" name="estlineno" id="estlineno" value="0">
+                                <input type="hidden" name="estPrice" id="estPrice" value="0">
+                            </div>
+                        </div>
+                        <div class="col-sm-1">
+                            <div  class="form-group">
+                                <input type="button" class="btn btn-success" required="required"  name="addJob" id="addJob" value="Add">
+                            </div>
+                        </div>
+
+                        <div class="col-sm-1">
                             <div  class="form-group  pull-right">
-                            Discout Type
-                          <!--   <input type="hidden" class="form-control" required="required"  name="vehicleCompany" id="vehicleCompany" value="0"> -->
+                           <b>Discount Type</b>
+                                <!--   <input type="hidden" class="form-control" required="required"  name="vehicleCompany" id="vehicleCompany" value="0"> -->
                                <!--  <select name="vehicleCompany" id="vehicleCompany" class="form-control">
                                             <option value="">Select a company</option>
                                             <?php foreach ($vehicle_company as $trns) { ?>
@@ -184,43 +225,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <span class='pull-left' id="lastJob"></span>
                     </div> -->
                     <div class="row row-eq-height">
-                        <div class="col-sm-2">
-                            <div  class="form-group">
-                                <select name="workType" required="required"  id="workType" class="form-control">
-                                    <option value="">Select a work type</option>
-                                     <?php foreach ($worktype as $trns) { ?>
-                                    <option value="<?php echo $trns->jobtype_id; ?>" jobOrder="<?php echo $trns->jobtype_order; ?>"  isVat="<?php echo $trns->isVat; ?>"  isNbt="<?php echo $trns->isNbt; ?>"   nbtRatio="<?php echo $trns->nbtRatio; ?>"><?php echo $trns->jobtype_code; ?> - <?php echo $trns->jobtype_name; ?></option>
-                                    <?php } ?>
-                                </select>
-                            </div>
+                        <div class="col-sm-8">
+
                         </div>
-                        <div class="col-sm-2">
-                            <div  class="form-group" id="jobDescDiv">
-                                <input type="text" class="form-control" required="required" onfocus="this.select();" name="jobdesc" id="jobdesc" value="" placeholder=" Job Description">
-                            </div>
-                            <div  class="form-group" id="spartDiv">
-                                <input type="text" class="form-control" required="required" onfocus="this.select();" name="product" id="product" value="" placeholder="Spart Part">
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-                            <div  class="form-group">
-                                <input type="number" class="form-control" required="required" onfocus="this.select();" name="qty" id="qty" min="0" value="" placeholder="Qty">
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div  class="form-group">
-                                <input type="number" class="form-control" required="required" onfocus="this.select();" name="sellPrice" min="0" id="sellPrice" value="" placeholder="Unit Price">
-                                <input type="hidden" name="prdName" id="prdName">
-                                <input type="hidden" name="timestamp" id="timestamp" value="">
-                                <input type="hidden" name="estlineno" id="estlineno" value="0">
-                                <input type="hidden" name="estPrice" id="estPrice" value="0">
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-                            <div  class="form-group">
-                                <input type="button" class="btn btn-success" required="required"  name="addJob" id="addJob" value="Add">
-                            </div>
-                        </div>
+
                         <div class="col-sm-2">
                             <div class="form-group input-group">
                                 <span class="input-group-addon">
@@ -241,81 +249,83 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-5">
-                            <div class="form-group">
-                                        <div class="col-sm-4">
-
-                                            <input type="number" class="form-control"  name="mileageout" id="mileageout" placeholder="Odo Meter Out" value="">
-                                        </div>
-                                        <div class="col-sm-2">
-                                            <select  class="form-control" name="mileageoutUnit"  id="mileageoutUnit" >
-                                                <option value="1">Km</option>
-                                                <option value="2">Miles</option>
-                                            </select>
-                                        </div>
-                                    </div>
+<!--                    <div class="row">-->
+<!--                        <div class="col-sm-5">-->
+<!--                            <div class="form-group">-->
+<!--                                        <div class="col-sm-4">-->
+<!---->
+<!--                                            <input type="number" class="form-control"  name="mileageout" id="mileageout" placeholder="Odo Meter Out" value="">-->
+<!--                                        </div>-->
+<!--                                        <div class="col-sm-2">-->
+<!--                                            <select  class="form-control" name="mileageoutUnit"  id="mileageoutUnit" >-->
+<!--                                                <option value="1">Km</option>-->
+<!--                                                <option value="2">Miles</option>-->
+<!--                                            </select>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
 
 
                            <!--  <div  class="form-group">
                                 <input type="number" class="form-control"  name="mileageout" id="mileageout"  value="" placeholder="Mileage Out">
                             </div> -->
-                        </div>
-                        <div class="col-sm-1">
-                            <div  class="form-group">
-                                <input class="prd_icheck" type="checkbox" name="isProVat"  id="isProVat" value="1"> VAT
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-                            <div  class="form-group">
-                                <input class="prd_icheck" type="checkbox" name="isProNbt" id="isProNbt" value='1'> NBT
+<!--                        </div>-->
+<!--                        <div class="col-sm-1">-->
+<!--                            <div  class="form-group">-->
+                                <input class="prd_icheck" type="hidden" name="isProVat"  id="isProVat" value="1">
+<!--                        VAT-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-1">-->
+<!--                            <div  class="form-group">-->
+                                <input class="prd_icheck" type="hidden" name="isProNbt" id="isProNbt" value='1'>
+<!--                        NBT-->
                                 <input class="" type="hidden" name="proNbtRatio" id="proNbtRatio" value='1'>
-                            </div>
-                        </div>
-                        <div class="col-sm-1">
-                            <div  class="form-group">
-                               <input type="number" class="form-control" required="required" onfocus="this.select();" name="costPrice" min="0" id="costPrice" value="0" placeholder="Cost Price">
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div  class="form-group">
-                               
-                            </div>
-                        </div>
-                        
-                        <div class="col-sm-1">
-                            <div  class="form-group text-right">
-                               
-                            </div><br>
-                        </div>
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-1">-->
+<!--                            <div  class="form-group">-->
+                               <input type="hidden" class="form-control" required="required" onfocus="this.select();" name="costPrice" min="0" id="costPrice" value="0" placeholder="Cost Price">
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-2">-->
+<!--                            <div  class="form-group">-->
+<!--                               -->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        -->
+<!--                        <div class="col-sm-1">-->
+<!--                            <div  class="form-group text-right">-->
+<!--                               -->
+<!--                            </div><br>-->
+<!--                        </div>-->
                        <!--  <div class="col-sm-1">
                             <div  class="form-group">
                                 <input class="prd_icheck" type="checkbox" name="isTotalVat"  id="isTotalVat" value='1'> VAT
                             </div>
                         </div> -->
-                        <div class="col-sm-2">
-                        </div>
-                        <div class="col-sm-2">
-                            <div  class="form-group">
-                               
-                            </div>
-                        </div>
+<!--                        <div class="col-sm-2">-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-2">-->
+<!--                            <div  class="form-group">-->
+<!--                               -->
+<!--                            </div>-->
+<!--                        </div>-->
                         
-                    </div>
+<!--                    </div>-->
                     <div class="row">
                         <div class="col-sm-1">
                             <div  class="form-group">
                                 
                             </div>
                         </div>
-                        <div class="col-sm-2">
-                            <div  class="form-group">
-                                 <span>Job Description</span>
-                            </div>
-                        </div>
                         <div class="col-sm-1">
                             <div  class="form-group">
-                                
+
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div  class="form-group">
+                                 <span style="font-size: 15px;">Job Description</span>
                             </div>
                         </div>
                         <div class="col-sm-3">
@@ -361,6 +371,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <th>No</th>
                                             <th>Job</th>
                                             <th>Description</th>
+                                            <th>Serial</th>
                                             <th>Qty</th>
                                             <th>Price</th>
                                             <th>Discount(%)</th>
@@ -394,13 +405,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <tr><td>Net Amount</td><td>&nbsp;:&nbsp;</td><td id="totalNet" class="text-right" style="font-weight: bold;font-size:25px;color:#3c8dbc;"></td></tr>
                                 </table>
                                 <hr>
-                                <div class="row">
-                                    <div class="col-sm-1">&nbsp;</div>
-                                    <div class="col-sm-10">
-                                        <button class="btn btn-primary btn-lg btn-block" type="button" id="btnSaveTemp">Temparary Save</button>&nbsp;
-                                    </div>
-                                    <div class="col-sm-1">&nbsp;</div>
-                                </div>
+<!--                                <div class="row">-->
+<!--                                    <div class="col-sm-1">&nbsp;</div>-->
+<!--                                    <div class="col-sm-10">-->
+<!--                                        <button class="btn btn-primary btn-lg btn-block" type="button" id="btnSaveTemp">Temparary Save</button>&nbsp;-->
+<!--                                    </div>-->
+<!--                                    <div class="col-sm-1">&nbsp;</div>-->
+<!--                                </div>-->
                                 <div class="row">
                                     <div class="col-sm-1">&nbsp;</div>
                                     <div class="col-sm-10">

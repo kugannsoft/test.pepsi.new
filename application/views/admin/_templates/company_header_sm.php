@@ -19,13 +19,13 @@
         <td colspan="6">&nbsp;</td>
     </tr>
 </table> -->
-<table style="border-collapse:collapse;width:550px;margin:5px;font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;" border="0">
+<table style="border-collapse:collapse;width:590px;margin:5px;font-family: 'Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif;" border="0">
     <tr style="text-align:left;font-size:35px;font-family: Arial, Helvetica, sans-serif;">
         <td rowspan="4">
             <?php $logo =  $company['Logo']; ?>
-            <img style="width: 100px;" src="<?php echo base_url($avatar_dir . '/'.$logo); ?>"  alt="logo">
+            <!--<img style="width: 100px;" src="<?php// echo base_url($avatar_dir . '/'.$logo); ?>"  alt="logo">-->
         </td>
-        <td colspan="5" style="font-size:15px;font-family: Arial, Helvetica, sans-serif;text-align: right;"><b> <?php echo $company['CompanyName'] ?> <?php echo $company['CompanyName2'] ?></b>
+        <td colspan="5" style="font-size:25px;font-family: Arial, Helvetica, sans-serif;text-align: right;"><b> <?php echo $company['CompanyName'] ?> </b>
 
 
         </td>

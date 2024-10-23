@@ -97,22 +97,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             href="../../job/edit_job/<?php echo base64_encode($jobHed->JobCardNo); ?>"
                                             class="btn btn-info btn-sm btn-block">Edit</a></div>
                             <?php } ?>
-                            <div class="col-sm-2"><a
-                                        href="../../purchase/addpo?job=<?php echo base64_encode($jobHed->JobCardNo); ?>"
-                                        class="btn btn-info btn-sm btn-block">PO</a></div>
-                            <?php if (in_array("SM51", $blockAdd) || $blockAdd == null) { ?>
-                                <div class="col-sm-2">
-                                    <a href="../../job/estimate_job?type=job&id=<?php echo base64_encode($jobHed->JobCardNo); ?>"
-                                       class="btn btn-info btn-sm ">Estimate</a>
-                                    <!-- <?php if ($jobHed->IsCancel == 0) { ?><button type="button" id="btnPrint" class="btn btn-danger btn-sm btn-block">Cancel</button><?php } ?> -->
-                                </div>
-                            <?php } ?>
-                            <?php if (in_array("M4", $blockAdd) || $blockAdd == null) { ?>
-                                <div class="col-sm-2">
-                                    <a href="../../Salesinvoice/job_invoice?type=job&id=<?php echo base64_encode($jobHed->JobCardNo); ?>"
-                                       class="btn btn-info btn-sm ">Invoice</a>
-                                </div>
-                            <?php } ?>
+<!--                            <div class="col-sm-2"><a-->
+<!--                                        href="../../purchase/addpo?job=--><?php //echo base64_encode($jobHed->JobCardNo); ?><!--"-->
+<!--                                        class="btn btn-info btn-sm btn-block">PO</a></div>-->
+<!--                            --><?php //if (in_array("SM51", $blockAdd) || $blockAdd == null) { ?>
+<!--                                <div class="col-sm-2">-->
+<!--                                    <a href="../../job/estimate_job?type=job&id=--><?php //echo base64_encode($jobHed->JobCardNo); ?><!--"-->
+<!--                                       class="btn btn-info btn-sm ">Estimate</a>-->
+<!--                                    <!-- --><?php //if ($jobHed->IsCancel == 0) { ?><!--<button type="button" id="btnPrint" class="btn btn-danger btn-sm btn-block">Cancel</button>--><?php //} ?><!-- -->
+<!--                                </div>-->
+<!--                            --><?php //} ?>
+<!--                            --><?php //if (in_array("M4", $blockAdd) || $blockAdd == null) { ?>
+<!--                                <div class="col-sm-2">-->
+<!--                                    <a href="../../Salesinvoice/job_invoice?type=job&id=--><?php //echo base64_encode($jobHed->JobCardNo); ?><!--"-->
+<!--                                       class="btn btn-info btn-sm ">Invoice</a>-->
+<!--                                </div>-->
+<!--                            --><?php //} ?>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
@@ -146,16 +146,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><b><?php echo $jobHed->JobCardNo?></b></td>
                         </tr>
                         <tr style="text-align:left;font-size:12px;">
-                            <td style="border-top: #000 solid 1px;border-left: #000 solid 1px;padding-left:5px;"> Code</td>
+                            <td style="border-top: #000 solid 1px;border-left: #000 solid 1px;padding-left:5px;">Code</td>
                             <td style="border-top: #000 solid 1px;"> :</td>
                             <td colspan="4" style="border-top: #000 solid 1px;border-right: #000 solid 1px;"><?php echo $jobHed->JCustomer?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contact Name : <?php echo $invVehi->contactName?></td>
                             <td>&nbsp;</td>
-                            <td style="text-align:left;font-size:15px;"> <b>REG NO</b></td>
-                            <td > :</td>
-                            <td style="text-align:left;font-size:15px;"> <b><?php echo $jobHed->JRegNo?></b></td>
+                            <td style="text-align:left;font-size:15px;"> <b></b></td>
+                            <td > </td>
+                            <td style="text-align:left;font-size:15px;"> <b></b></td>
                         </tr>
                         <tr style="text-align:left;font-size:12px;">
-                            <td style="border-left: #000 solid 1px;padding: 0 px5px;" valign="top">Customer Name </td>
+                            <td style="border-left: #000 solid 1px;padding-left: 5px;" valign="top">Customer Name </td>
                             <td> :</td>
                             <td rowspan="3" colspan="4" valign="top" style="border-right: #000 solid 1px;border-bottom: #000 solid 1px;"> <span><a href="<?php echo base_url('admin/payment/view_customer/').$invCus->CusCode ?>"><?php echo $invCus->DisplayName;?></a></span><br>
                 <?php if ($invCus->DisType==4): ?>
@@ -170,42 +170,30 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </span><br>    
             <span id="lbladdress2">Tel : <?php echo $invCus->LanLineNo;?> Mobile : <?php echo $invCus->MobileNo;?></span></td>
                             <td>&nbsp;</td>
-                            <td colspan="3" rowspan="6" style="padding-left:20px;">
-                            <table style="font-size: 11px">
+                            <td colspan="3" rowspan="6" style="border-top: #000 solid 1px;border-right: #000 solid 1px; border-bottom: #000 solid 1px; border-left: #000 solid 1px; padding-left:20px;">
+                            <table style="font-size: 12px">
                             <tbody>
+<!--                                    <tr>-->
+<!--                                        <td>No of Job Card</td><td>:</td><td>--><?php //echo $job_count->noofjobs?><!--</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Origin</td><td>:</td><td>--><?php //echo $invVehi->body_color?><!--</td>-->
+<!--                                    </tr>-->
                                     <tr>
-                                        <td>No of Job Card</td><td>:</td><td><?php echo $job_count->noofjobs?></td>
+                                        <td>Delivery Date</td><td>&nbsp; : &nbsp;</td><td><?php echo substr($jobHed->deliveryDate,0,10)?></td>
                                     </tr>
-                                    <tr>
-                                        <td>Origin</td><td>:</td><td><?php echo $invVehi->body_color?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Delivery Date</td><td>:</td><td><?php echo substr($jobHed->deliveryDate,0,10)?></td>
-                                    </tr>
-                                     <tr>
-                                        <td>Delivery Time</td><td>:</td><td><?php echo substr($jobHed->deliveryDate,10,9)?></td>
-                                    </tr>
-                                     <tr>
-                                        <td>Make</td><td>:</td><td><?php echo $invVehi->make?></td>
-                                    </tr>
-                                     <tr>
-                                        <td>Model No</td><td>:</td><td><?php echo $invVehi->model?></td>
-                                    </tr>
-                                     <tr>
-                                        <td>Odo Meter</td><td>:</td><td><?php echo $jobHed->OdoIn?></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Your Ref</td><td>:</td><td></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Next Service</td><td>:</td><td><?php if($jobHed->NextService>0){echo ($jobHed->OdoIn+$jobHed->NextService);}?></td>
-                                    </tr>
+<!--                                     <tr>-->
+<!--                                        <td>Delivery Time</td><td>:</td><td>--><?php //echo substr($jobHed->deliveryDate,10,9)?><!--</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Your Ref</td><td>:</td><td></td>-->
+<!--                                    </tr>-->
                                 </tbody>
                             </table>
                             </td>
                         </tr>
                         <tr style="text-align:left;font-size:12px;">
-                            <td style="border-left: #000 solid 1px;" valign="top">Address </td>
+                            <td style="border-left: #000 solid 1px;padding-left: 5px;" valign="top">Address </td>
                             <td></td>
                             <td>&nbsp;</td>
                         </tr>
@@ -214,37 +202,37 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td  style="border-bottom: #000 solid 1px;"></td>
                             <td >&nbsp;</td>
                         </tr>
-                        <tr style="text-align:left;font-size:12px;">
-                            <td> Email Address</td>
-                            <td> :</td>
-                            <td > <?php echo $invCus->Email?></td>
-                            <td colspan="3">Payment Type &nbsp;&nbsp;<?php echo $jobHed->payType?></td>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr style="text-align:left;font-size:12px;">
-                            <td> S.A.Name</td>
-                            <td> :</td>
-                            <td><?php echo $jobSerAdv->first_name." ".$jobSerAdv->last_name?></td>
-                            <td  colspan="4"></td>
-                        </tr>
-                        <tr style="text-align:left;font-size:12px;">
-                            <td> Tel/ Mob/ Fax No : </td>
-                            <td> :</td>
-                            <td> <?php echo $jobSerAdv->phone?></td>
-                            <td ></td>
-                            <td > </td>
-                            <td></td>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr style="text-align:left;font-size:12px;">
-                            <td> V. I. No </td>
-                            <td>:</td>
-                            <td colspan="4"> <?php echo $invVehi->ChassisNo?></td>
-                            <td>&nbsp;</td>
-                            <td > </td>
-                            <td> </td>
-                            <td></td>
-                        </tr>
+<!--                        <tr style="text-align:left;font-size:12px;">-->
+<!--                            <td> Email Address</td>-->
+<!--                            <td> :</td>-->
+<!--                            <td > --><?php //echo $invCus->Email?><!--</td>-->
+<!--                            <td colspan="3">Payment Type &nbsp;&nbsp;--><?php //echo $jobHed->payType?><!--</td>-->
+<!--                            <td>&nbsp;</td>-->
+<!--                        </tr>-->
+<!--                        <tr style="text-align:left;font-size:12px;">-->
+<!--                            <td> S.A.Name</td>-->
+<!--                            <td> :</td>-->
+<!--                            <td>--><?php //echo $jobSerAdv->first_name." ".$jobSerAdv->last_name?><!--</td>-->
+<!--                            <td  colspan="4"></td>-->
+<!--                        </tr>-->
+<!--                        <tr style="text-align:left;font-size:12px;">-->
+<!--                            <td> Tel/ Mob/ Fax No : </td>-->
+<!--                            <td> :</td>-->
+<!--                            <td> --><?php //echo $jobSerAdv->phone?><!--</td>-->
+<!--                            <td ></td>-->
+<!--                            <td > </td>-->
+<!--                            <td></td>-->
+<!--                            <td>&nbsp;</td>-->
+<!--                        </tr>-->
+<!--                        <tr style="text-align:left;font-size:12px;">-->
+<!--                            <td> V. I. No </td>-->
+<!--                            <td>:</td>-->
+<!--                            <td colspan="4"> --><?php //echo $invVehi->ChassisNo?><!--</td>-->
+<!--                            <td>&nbsp;</td>-->
+<!--                            <td > </td>-->
+<!--                            <td> </td>-->
+<!--                            <td></td>-->
+<!--                        </tr>-->
                         <!-- <tr style="text-align:left;font-size:12px;">
                             <td colspan="10">&nbsp;</td>
                         </tr> -->
@@ -573,15 +561,6 @@ $('#printArea').focus().print();
                     $("#lblCusName").html(resultData.cus_data.RespectSign+". "+resultData.cus_data.CusName);
                     $("#lblpaymentType").html(resultData.cus_data.payType);
                     $("#lblemail").html(resultData.cus_data.Email);
-                    
-                    $("#lblcusName").html(resultData.vehicle_data.contactName);
-                   
-                    $("#lblmake").html(resultData.vehicle_data.make);
-                    $("#lblmodel").html(resultData.vehicle_data.model);
-                    $("#lblFuelType").html(resultData.vehicle_data.fuel_type);
-                    $("#lblviNo").html(resultData.vehicle_data.ChassisNo);
-                    
-                    $("#lblcountry").html(resultData.vehicle_data.body_color);
 
                     $("#lblcusCode").html(resultData.cus_data.CusCode);
                     $("#lblJobNo").html(resultData.job_data.JobCardNo);

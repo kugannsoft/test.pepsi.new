@@ -189,7 +189,10 @@ class Job extends Admin_Controller {
             $location =  $this->db->select('JLocation')->from('jobcardhed')->where('JobCardNo',$jno)->get()->row()->JLocation;
             $appoimnetDate =$this->db->select('appoimnetDate')->from('jobcardhed')->where('JobCardNo', $jno)->get()->row()->appoimnetDate;
             $this->data['invCus']= $this->db->select('customer.*')
-                ->from('customer')->join('vehicledetail','vehicledetail.CusCode=customer.CusCode')->join('paytype','paytype.payTypeId=customer.payMethod')->where('customer.CusCode',$cusCode)->get()->row();
+                ->from('customer')
+//                ->join('vehicledetail','vehicledetail.CusCode=customer.CusCode')
+                ->join('paytype','paytype.payTypeId=customer.payMethod')
+                ->where('customer.CusCode',$cusCode)->get()->row();
             $this->data['invVehi']= $this->db->select('vehicledetail.ChassisNo,vehicledetail.contactName,make.make,model.model,vehicledetail.Color AS body_color,fuel_type.fuel_type')->from('vehicledetail')->join('make','make.make_id=vehicledetail.Make','left')->join('fuel_type','fuel_type.fuel_typeid=vehicledetail.FuelType','left')->join('model','model.model_id=vehicledetail.Model','left')->where('vehicledetail.RegNo',$regNo)->get()->row();
             $this->data['error']='';
 
@@ -260,7 +263,7 @@ class Job extends Admin_Controller {
             $id3 = array('CompanyID' => $location);
             $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
 
-            $this->data['worktype'] = $this->db->select('jobtype.*,jobtypeheader.jobhead_name')->from('jobtype')->join('jobtypeheader','jobtypeheader.jobhead_id=jobtype.jobhead')->where_in('jobtype.jobtype_id', array('2','9'))->get()->result();
+            $this->data['worktype'] = $this->db->select('jobtype.*,jobtypeheader.jobhead_name')->from('jobtype')->join('jobtypeheader','jobtypeheader.jobhead_id=jobtype.jobhead')->get()->result();
             // $this->data['parttype'] = $this->db->select()->from('parttype')->get()->result();
             $this->data['jobdesc'] = $this->db->select()->from('jobdescription')->get()->result();
             $this->data['jobtype'] = $this->db->select()->from('estimate_jobtype')->get()->result();
@@ -689,8 +692,29 @@ class Job extends Admin_Controller {
 
     public function loadcustomersjson() {
         $query = $_GET['q'];
-        echo $this->Job_model->loadcustomersjson($query); die;
+        $routeID = isset($_GET['routeID']) ? $_GET['routeID'] : null;
+        echo jason_encode($routeID);
+        die;
+        echo $this->Job_model->loadcustomersjson($query,$routeID); die;
     }
+
+    public function loadcustomersroutewise() {
+        $routeID = $this->input->post('routeID'); 
+        $newsalesperson = $this->input->post('newsalesperson');
+        $this->load->database();
+    
+    
+        $customers = $this->db->select('customer.CusCode,customer.DisplayName')
+        ->from('customer')
+        ->where('RouteId', $routeID)
+        ->where('HandelBy',$newsalesperson)
+        ->get()
+        ->result();
+    
+        echo json_encode($customers); 
+        die; 
+    }
+    
 
     public function loadjobjson() {
         $query = $_GET['q'];
@@ -720,8 +744,8 @@ class Job extends Admin_Controller {
     public function loadestimatejsonbycustomer() {
         $query = $_GET['q'];
         $cuscode =$_GET['cusCode'];
-        $regno =$_GET['regNo'];
-        $q = $this->db->select('EstimateNo AS id,EstimateNo AS text')->from('estimatehed')->where('EstCustomer',$cuscode)->where('EstRegNo',$regno)->like('EstimateNo', $query)->group_by('EstimateNo')->order_by('EstimateNo','DESC')->get()->result();
+//        $regno =$_GET['regNo'];
+        $q = $this->db->select('EstimateNo AS id,EstimateNo AS text')->from('estimatehed')->where('EstCustomer',$cuscode)->like('EstimateNo', $query)->group_by('EstimateNo')->order_by('EstimateNo','DESC')->get()->result();
         echo json_encode($q);die;
     }
 
@@ -844,15 +868,15 @@ class Job extends Admin_Controller {
         $data['JCompanyCode'] = $_POST['companyCode'];
         $data['JLocation']    = $location;
         $data['JCustomer']    = $_POST['cusCode'];
-        $data['JRegNo']       = $regNo;
+//        $data['JRegNo']       = $regNo;
         $data['JCusType']     = $_POST['cusType'];
         $data['JPayType']     = $_POST['payType'];
         $data['JCusCompany']  = isset($_POST['vehicleCompany']) ? $_POST['vehicleCompany']:0;
         $data['JIsInsDoc']    = isset($_POST['insdoc']) ? $_POST['insdoc']:0;
-        $data['OdoIn']        = $_POST['odoIn'];
-        $data['OdoOut']       = $_POST['odoOut'];
-        $data['OdoInUnit']    = $_POST['odoInUnit'];
-        $data['OdoOutUnit']   = $_POST['odoOutUnit'];
+//        $data['OdoIn']        = $_POST['odoIn'];
+//        $data['OdoOut']       = $_POST['odoOut'];
+//        $data['OdoInUnit']    = $_POST['odoInUnit'];
+//        $data['OdoOutUnit']   = $_POST['odoOutUnit'];
         $data['NextService']  = $_POST['nextService'];
         $data['PrevJobNo']    = $_POST['prevJobNum'];
         $data['SparePartJobNo'] = $_POST['sparePartCNo'];

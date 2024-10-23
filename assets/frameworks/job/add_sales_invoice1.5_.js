@@ -1443,7 +1443,7 @@ var action=0;
         var proNbtArr = JSON.stringify(proNbt);
         var salePersonArr = JSON.stringify(salePerson);
 
-        var r = confirm("Do you want to save this invoice.?");
+        var r = confirm("Do you want to save this invoice .?");
         if (r == true) {
             if (cusCode == '' || cusCode == '0') {
                 $.notify("Please select a customer.", "warning");

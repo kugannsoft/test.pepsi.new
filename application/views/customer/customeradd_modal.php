@@ -37,7 +37,7 @@
                     </div></div>
                     <div class="col-md-9"><div class="form-group">
                     <label for="cusName">Customer Name </label>
-                    <input type="text" required="required" value="<?php echo urldecode($q); ?>" class="form-control" name="cusName" id="cusName" placeholder="Ex: Kamal Jayasinghe">
+                    <input type="text" onkeydown="return /[a-zA-Z0\s]/i.test(event.key)" required="required" value="<?php echo urldecode($q); ?>" class="form-control" name="cusName" id="cusName" placeholder="Ex: Kamal Jayasinghe">
                     </div></div>
                     
                 </div>
@@ -86,7 +86,7 @@
                     <label for="cusName">Customer No </label>
                     <input type="text" class="form-control" name="cusNo" id="cusNo" placeholder="Enter customer number">
                 </div></div>
-                <div class="col-md-6"><div class="form-group">
+                <div class="col-md-6" style="display:none;"><div class="form-group">
                     <label for="cusName">Category </label>
                     <select class="form-control" name="category" id="category">
                         <option value="0">-Select-</option>
@@ -95,6 +95,15 @@
                         <?php } ?>
                     </select>
                 </div></div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="cusName">Routes</label>
+                        <select class="form-control" name="route" id="route">
+                            <option value="0">-Select-</option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
 <!--                --><?php //if (in_array("SM22", $blockAdd) || $blockAdd == null) { ?>
@@ -552,7 +561,6 @@ $("input[name='Isvehicle']").click(function(){
 		var mobileNo =$("#mobileNo").val();
 		var balanaceAmount =$("#balanaceAmount").val();
         var balanceDate =$("#balanceDate").val();
-
 		if (paytype==2 && address=='') {
 		    $.notify("Please enter primary address.", "warn");
 		}else if (paytype==2 && mobileNo.length<10) {
@@ -561,7 +569,7 @@ $("input[name='Isvehicle']").click(function(){
             $.notify("Please enter balance Date", "warn");
         }else{
 		     $("#btnsave").prop("disabled",true);
-		       
+             
 		    $.ajax({
 		            url: "<?php echo base_url('admin/customer/savecustomer/') ?>",
 		            type: "POST",
@@ -930,6 +938,35 @@ $("input[name='Isvehicle']").click(function(){
         }
     }
 
+});
+
+$('#salesperson').on('change', function() {
+        var salespersonID = $(this).val();
+        if (salespersonID != "0") {
+           
+            $.ajax({
+                url: "<?php echo base_url(); ?>" + "admin/customer/findemploeeroute",
+                method: 'POST',
+                data: { salespersonID: salespersonID },
+                dataType: 'json',
+                success: function(response) {
+                    
+                    $('#route').empty();
+                    $('#route').append('<option value="0">-Select-</option>');
+                    
+                    $.each(response, function(index, routeID) {
+                    console.log(routeID);
+                    $('#route').append('<option value="'+ routeID.route_id +'">'+ routeID.route_name +'</option>');
+                });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching routes:', error);
+                }
+            });
+        } else {
+            $('#route').empty();
+            $('#route').append('<option value="0">-Select-</option>');
+        }
 });
     
 </script>

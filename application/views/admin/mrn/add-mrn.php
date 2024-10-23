@@ -42,18 +42,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                         <div  class="col-md-5">
                             <form class="form-horizontal" >
-                                <div class="form-group">
-                                        <label class="col-sm-4 control-label">Job Number</label>  
-                                        <div class="col-sm-6">
-                                            <input type="text" tabindex="1" class="form-control" name="job_no" id="job_no" placeholder="Job No" value="<?php echo $jobNo;?>">
-                                        </div>
-                                    </div>
-                                <div class="form-group">
-                                    <label class="col-sm-4 control-label">Estimate Number</label>  
-                                    <div class="col-sm-6">
-                                        <input type="text" tabindex="1" class="form-control" name="est_no" id="est_no" placeholder="Estimate No"  value="<?php echo $estNo;?>">
-                                    </div>
-                                </div>                                
+<!--                                <div class="form-group">-->
+<!--                                        <label class="col-sm-4 control-label">Job Number</label>  -->
+<!--                                        <div class="col-sm-6">-->
+<!--                                            <input type="text" tabindex="1" class="form-control" name="job_no" id="job_no" placeholder="Job No" value="--><?php //echo $jobNo;?><!--">-->
+                                            <input type="hidden" tabindex="1" class="form-control" name="job_no" id="job_no" placeholder="Job No" value="<?php echo $jobNo;?>">
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                <div class="form-group">-->
+<!--                                    <label class="col-sm-4 control-label">Estimate Number</label>  -->
+<!--                                    <div class="col-sm-6">-->
+<!--                                        <input type="text" tabindex="1" class="form-control" name="est_no" id="est_no" placeholder="Estimate No"  value="--><?php //echo $estNo;?><!--">-->
+                                        <input type="hidden" tabindex="1" class="form-control" name="est_no" id="est_no" placeholder="Estimate No"  value="<?php echo $estNo;?>">
+<!--                                    </div>-->
+<!--                                </div>                                -->
                                 <div class="form-group" style="display: none;">
                                         <label class="col-sm-4 control-label">Price Level</label>  
                                         <div class="col-sm-6">
@@ -80,7 +82,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <div class="form-group">
                                 <!-- <label class="col-sm-4 control-label">Customer</label>   -->
                                 <div class="col-sm-12" id="customerDiv">
-                                    <input type="text" name="customer" id="customer" class="form-control" placeholder="Customer">
+                                    <input type="hidden" name="customer" id="customer" class="form-control" placeholder="Customer">
+<!--                                    <input type="text" name="customer" id="customer" class="form-control" placeholder="Customer">-->
                                      <span id="cusCode"></span><br>
                                      <span id="cusName"></span><br>
                                     <span id="cusAddress"></span>

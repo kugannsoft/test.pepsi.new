@@ -39,8 +39,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	                        <td>Payment</td>
                             <td>Status</td>
                             <td>###</td>
-                            <td>###</td>
-                            <td>###</td>
 	                    </tr>
 	                </thead>
 	                <tbody>
@@ -148,27 +146,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 }
                             }
                 },
-	            {
-                    <?php if (in_array("SM45", $blockEdit) || $blockEdit == null) { ?>
-	                "data": null, orderable: false, searchable: false,
-	                mRender: function (data, type, row) {
-                        if(row.IsPayment==0 && row.IsCancel==0){
-	                    return '<a href="Salesinvoice/job_invoice?type=inv&id=' + Base64.encode(row.JobInvNo) +'" class="btn btn-xs btn-default" >Edit</a> &nbsp;';
-                        }else{
-                            return '<a href="#" disabled class="btn btn-xs btn-default" >Edit</a> &nbsp;';
-                        }
-	                }
-                    <?PHP  } else {?>
-                    "data": null, orderable: false, searchable: false,
-                    mRender: function (data, type, row) {
-                        if(row.IsPayment==0 && row.IsCancel==0){
-                            return '<a href="Salesinvoice/job_invoice?type=inv&id=' + Base64.encode(row.JobInvNo) +'" class="btn btn-xs btn-default" disabled>Edit</a> &nbsp;';
-                        }else{
-                            return '<a href="#" disabled class="btn btn-xs btn-default" >Edit</a> &nbsp;';
-                        }
-                    }
-                    <?php }?>
-	            },
                 {
                     <?php if (in_array("SM45", $blockView) || $blockView == null) { ?>
                     "data": null, orderable: false, searchable: false,
@@ -181,15 +158,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         return '<a href="Salesinvoice/view_invoice/' + Base64.encode(row.JobInvNo) + '" class="btn btn-xs btn-default" disabled>View</a> &nbsp;';
                     }
                     <?php }?>
-                },
-                {"data": null, orderable: false, searchable: false,
-                    mRender: function (data, type, row) {
-                        if(row.IsPayment==0 && row.IsCancel==0){
-                        return '<a href="payment/job_payment/' + Base64.encode(row.JobInvNo) +'" class="btn btn-xs btn-primary" >Pay</a> &nbsp;';
-                        }else{
-                            return '<a href="#" disabled class="btn btn-xs btn-primary" >Pay</a> &nbsp;';
-                        }
-                    }
                 }
 	        ]
 	});

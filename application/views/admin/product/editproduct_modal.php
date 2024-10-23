@@ -331,7 +331,9 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="costprice" class="control-label">Cost Price<span class="required">*</span></label>
+                                <?php if (in_array("SM135", $blockView) || $blockView == null) { ?>
                                 <input type="text" class="form-control"  name="costprice" id="costprice" value="<?php echo $product->Prd_CostPrice; ?>">
+                                <?php } ?>
                             </div>
                         </div>
                         <div class="col-md-6">

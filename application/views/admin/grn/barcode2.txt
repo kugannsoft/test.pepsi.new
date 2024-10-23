@@ -1,4 +1,3 @@
 Company,ProductCode,ProductName,Price
 
-Avinda Enterprises,100001,CUSTOM,1000
-Avinda Enterprises,100003,MOBIL GOLD 4L,1000
+My Technology (PVT) LTD.,100119,SAMSUNG S20 ULTRA 12GB/128GB BLACK,145000

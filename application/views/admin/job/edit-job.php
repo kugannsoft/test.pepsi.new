@@ -34,16 +34,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <input type="text" class="form-control" required="required"  name="cusCode" id="cusCode" value="" placeholder="">
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label for="regNo" class="col-sm-5 control-label">Vehicle Number <span class="required">*</span></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control" required="required"  name="regNo" id="vehicleNo" placeholder="">
-                                    </div>
-                                </div>
+<!--                                <div class="form-group">-->
+<!--                                    <label for="regNo" class="col-sm-5 control-label">Vehicle Number <span class="required">*</span></label>-->
+<!--                                    <div class="col-sm-7">-->
+                                        <input type="hidden" class="form-control" required="required"  name="regNo" id="vehicleNo" placeholder="">
+<!--                                    </div>-->
+<!--                                </div>-->
                                 <div class="form-group">
                                     <label for="cusType" class="col-sm-5 control-label">Payment Type <span class="required">*</span></label>
                                     <div class="col-sm-7">
-                                    <!-- <input type="hidden" name="cusType" id="cusType" value="0"> -->
+                                     <input type="hidden" name="cusType" id="cusType" value="0">
                                         <select name="payType" required="required"  id="payType" class="form-control">
                                             <option value="">Select a payment type</option>
                                              <?php foreach ($paytype as $trns) { ?>
@@ -55,31 +55,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <div class="form-group" style="display: none;">
                                     <label for="cusType" class="col-sm-5 control-label">Customer Type <span class="required">*</span></label>
                                     <div class="col-sm-7">
-                                        <select name="cusType" required="required"  id="cusType" class="form-control">
-                                            <option value="">Select a customer type</option>
-                                             <?php foreach ($custype as $trns) { ?>
-                                            <option value="<?php echo $trns->CusTypeId; ?>" ><?php echo $trns->CusType; ?></option>
-                                            <?php } ?>
-                                        </select>
+<!--                                        <select name="cusType" required="required"  id="cusType" class="form-control">-->
+<!--                                            <option value="">Select a customer type</option>-->
+<!--                                             --><?php //foreach ($custype as $trns) { ?>
+<!--                                            <option value="--><?php //echo $trns->CusTypeId; ?><!--" >--><?php //echo $trns->CusType; ?><!--</option>-->
+<!--                                            --><?php //} ?>
+<!--                                        </select>-->
                                     </div>
                                 </div>
-                                <div class="form-group"  id="vcompany">
-                                <div class="form-group">
-                                    <label for="cusCompany" class="col-sm-5 control-label">Insurance Company<span class="required"></span></label>
-                                    <div class="col-sm-7">
-                                        <select name="vehicleCompany" id="vehicleCompany2" class="form-control">
-                                            <option value="">Select a company</option>
-                                            <?php foreach ($vehicle_company as $trns) { ?>
-                                            <option value="<?php echo $trns->VComId; ?>" ><?php echo $trns->VComName; ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="cusCompany" class="col-sm-5 control-label">Insurance Document<span class="required"></span></label>
-                                    <div class="col-sm-7">
-                                     Yes <input type="radio" <?php if ($JobHed->JIsInsDoc==1){ echo "checked='checked'";} ?> class="prd_icheck" name="insdoc" id="insdoc1" value="1">&nbsp;&nbsp;
-                                    No <input type="radio" <?php if ($JobHed->JIsInsDoc==0){ echo 'checked="checked"';} ?> class="prd_icheck" name="insdoc" id="insdoc2" value="0">
+<!--                                <div class="form-group"  id="vcompany">-->
+<!--                                <div class="form-group">-->
+<!--                                    <label for="cusCompany" class="col-sm-5 control-label">Insurance Company<span class="required"></span></label>-->
+<!--                                    <div class="col-sm-7">-->
+<!--                                        <select name="vehicleCompany" id="vehicleCompany2" class="form-control">-->
+<!--                                            <option value="">Select a company</option>-->
+<!--                                            --><?php //foreach ($vehicle_company as $trns) { ?>
+<!--                                            <option value="--><?php //echo $trns->VComId; ?><!--" >--><?php //echo $trns->VComName; ?><!--</option>-->
+<!--                                            --><?php //} ?>
+<!--                                        </select>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="form-group">-->
+<!--                                    <label for="cusCompany" class="col-sm-5 control-label">Insurance Document<span class="required"></span></label>-->
+<!--                                    <div class="col-sm-7">-->
+<!--                                     Yes <input type="radio" --><?php //if ($JobHed->JIsInsDoc==1){ echo "checked='checked'";} ?><!-- class="prd_icheck" name="insdoc" id="insdoc1" value="1">&nbsp;&nbsp;-->
+<!--                                    No <input type="radio" --><?php //if ($JobHed->JIsInsDoc==0){ echo 'checked="checked"';} ?><!-- class="prd_icheck" name="insdoc" id="insdoc2" value="0">-->
                                    <!--  <input type="tet" name="insdoc"  class="form-control" id="insdoc" value=""> -->
                                          <!-- <select name="vehicleCompany" id="vehicleCompany" class="form-control">
                                             <option value="">Select a company</option>
@@ -87,72 +87,47 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <option value="<?php echo $trns->VComId; ?>" ><?php echo $trns->VComName; ?></option>
                                             <?php } ?>
                                         </select> -->
-                                    </div>
-                                </div>
-                                </div>
-                                    <div class="form-group">
-                                        <label for="odoIn" class="col-sm-5 control-label">Odo meter In <span class="required">*</span></label>
-                                        <div class="col-sm-4">
-                                            <input type="number" class="form-control" name="odoIn" id="odoIn" placeholder="">
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <select  class="form-control" name="odoInUnit" id="odoInUnit" >
-                                                <option value="1">km</option>
-                                                <option value="2">miles</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="odoOut" class="col-sm-5 control-label">Odo meter Out <span class="required"></span></label>
-                                        <div class="col-sm-4">
-                                            <input type="number" class="form-control" name="odoOut" id="odoOut" placeholder="">
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <select  class="form-control" name="odoOutUnit" id="odoOutUnit" >
-                                                <option value="1">km</option>
-                                                <option value="2">miles</option>
-                                            </select>
-                                        </div>
-                                    </div>                                   
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label for="odoIn" class="col-sm-5 control-label">Odo meter In <span class="required">*</span></label>-->
+<!--                                        <div class="col-sm-4">-->
+<!--                                            <input type="number" class="form-control" name="odoIn" id="odoIn" placeholder="">-->
+<!--                                        </div>-->
+<!--                                        <div class="col-sm-3">-->
+<!--                                            <select  class="form-control" name="odoInUnit" id="odoInUnit" >-->
+<!--                                                <option value="1">km</option>-->
+<!--                                                <option value="2">miles</option>-->
+<!--                                            </select>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label for="odoOut" class="col-sm-5 control-label">Odo meter Out <span class="required"></span></label>-->
+<!--                                        <div class="col-sm-4">-->
+<!--                                            <input type="number" class="form-control" name="odoOut" id="odoOut" placeholder="">-->
+<!--                                        </div>-->
+<!--                                        <div class="col-sm-3">-->
+<!--                                            <select  class="form-control" name="odoOutUnit" id="odoOutUnit" >-->
+<!--                                                <option value="1">km</option>-->
+<!--                                                <option value="2">miles</option>-->
+<!--                                            </select>-->
+<!--                                        </div>-->
+<!--                                    </div>                                   -->
                                 <div class="form-group">
                                         <label for="advance" class="col-sm-5 control-label">Estimate No<span class="required"></span></label>
                                         <div class="col-sm-7">
                                             <input type="text" class="form-control"  name="estimateNo" id="estimateNo" placeholder="">
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="sparePartCNo" class="col-sm-5 control-label">Spare Part Card No <span class="required"></span></label>
-                                        <div class="col-sm-7">
-                                            <input type="text" class="form-control"  name="sparePartCNo" id="sparePartCNo" placeholder="">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="nextService" class="col-sm-5 control-label">Next Service (Km) <span class="required"></span></label>
-                                        <div class="col-sm-7">
-                                            <input type="text" class="form-control" onfocus="this.select();"  name="nextService" id="nextService" placeholder="" value="0">
-                                        </div>
-                                    </div>
-                                <!-- </form> -->
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group" >
-                                    <label for="jobSection" class="col-sm-5 control-label">Job Type <span class="required">*</span></label>
-                                    <div class="col-sm-7">
-                                        <?php foreach ($jobsection as $trns) { ?>
-                                        <div class="input-group">
-                                            <input type="checkbox" class="prd_icheck input-group-text" <?php if (in_array($trns->JobSecNo, $job_type)){ echo 'checked="checked"';} ?>  name="jobSection[]" id="jobSection<?php echo $trns->JobSecNo; ?>" value="<?php echo $trns->JobSecNo; ?>">&nbsp;-&nbsp;<label class="input-group-text"><?php echo $trns->JobSection; ?>&nbsp;</label>&nbsp;<br>
-                                        </div>
-                                        <?php } ?>
-                                    </div>
-                                </div>
-                                 <!-- <form action=""  class="form-horizontal" accept-charset="utf-8"> -->
+
                                 <div class="form-group">
                                     <label for="advisorName" class="col-sm-5 control-label">Service Advisor <span class="required"></span></label>
                                     <div class="col-sm-7">
                                         <select name="advisorName" id="advisorName" class="form-control">
                                             <option value="">Select an advisor</option>
                                             <?php foreach ($advisor as $trns) { ?>
-                                            <option value="<?php echo $trns->id; ?>" ><?php echo $trns->first_name." ".$trns->last_name; ?></option>
+                                                <option value="<?php echo $trns->id; ?>" ><?php echo $trns->first_name." ".$trns->last_name; ?></option>
                                             <?php } ?>
                                         </select>
                                         <!-- <input type="text" class="form-control" required="required"  name="advisorName" id="advisorName" placeholder="Service Advisor Name"> -->
@@ -176,6 +151,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <input type="text" class="form-control" required="required"  name="deliveryDate" id="deliveryDate" placeholder="">
                                     </div>
                                 </div>
+<!--                                    <div class="form-group">-->
+<!--                                        <label for="sparePartCNo" class="col-sm-5 control-label">Spare Part Card No <span class="required"></span></label>-->
+<!--                                        <div class="col-sm-7">-->
+<!--                                            <input type="text" class="form-control"  name="sparePartCNo" id="sparePartCNo" placeholder="">-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label for="nextService" class="col-sm-5 control-label">Next Service (Km) <span class="required"></span></label>-->
+<!--                                        <div class="col-sm-7">-->
+<!--                                            <input type="text" class="form-control" onfocus="this.select();"  name="nextService" id="nextService" placeholder="" value="0">-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+                                <!-- </form> -->
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group" >
+                                    <label for="jobSection" class="col-sm-5 control-label">Job Type <span class="required">*</span></label>
+                                    <div class="col-sm-7">
+                                        <?php foreach ($jobsection as $trns) { ?>
+                                        <div class="input-group">
+                                            <input type="checkbox" class="prd_icheck input-group-text" <?php if (in_array($trns->JobSecNo, $job_type)){ echo 'checked="checked"';} ?>  name="jobSection[]" id="jobSection<?php echo $trns->JobSecNo; ?>" value="<?php echo $trns->JobSecNo; ?>">&nbsp;-&nbsp;<label class="input-group-text"><?php echo $trns->JobSection; ?>&nbsp;</label>&nbsp;<br>
+                                        </div>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                 <!-- <form action=""  class="form-horizontal" accept-charset="utf-8"> -->
+
                                     <div class="form-group"  style="display:none;">
                                     <label for="jobtype" class="col-sm-5 control-label">Job Type <span class="required">*</span></label>
                                     <div class="col-sm-7">
@@ -187,12 +189,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         </select>
                                     </div>
                                 </div>
-                                <div class="form-group"  id="divprevjob">
-                                        <label for="prevJobNum" class="col-sm-5 control-label">Previous Job No <span class="required"></span></label>
-                                        <div class="col-sm-7">
-                                            <input type="text" class="form-control" name="prevJobNum" id="prevJobNum" placeholder="">
-                                        </div>
-                                    </div>
+<!--                                <div class="form-group"  id="divprevjob">-->
+<!--                                        <label for="prevJobNum" class="col-sm-5 control-label">Previous Job No <span class="required"></span></label>-->
+<!--                                        <div class="col-sm-7">-->
+                                            <input type="hidden" class="form-control" name="prevJobNum" id="prevJobNum" placeholder="">
+<!--                                        </div>-->
+<!--                                    </div>-->
                                     <div class="form-group">
                                     <label for="advance" class="col-sm-5 control-label">Advance<span class="required"></span></label>
 
@@ -312,7 +314,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <table id="cus_details">
                                    <tbody>
                                    <tr><tr>
-                                            <th colspan="3"><b>Customer Details</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="NewVehicle" class="btn btn-sm btn-success pull-right">New Vehicle <i class="fa fa-plus"></i></button></th>
+                                            <th colspan="3"><b>Customer Details</b>
+<!--                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button id="NewVehicle" class="btn btn-sm btn-success pull-right">New Vehicle <i class="fa fa-plus"></i></button>-->
+                                            </th>
                                         </tr>
                                         <tr>
                                             <td>Customer Name</td>
@@ -339,40 +343,40 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <td id="cusOutstand"></td>
                                         </tr> <tr><td colspan="3" >&nbsp;</td></tr>
                                         <tr>
-                                            <th colspan="3"><b>Vehicle details</b></th>
-                                        </tr> <tr><td colspan="3" >&nbsp;</td></tr>
-
-                                        <tr>
-                                            <td>Contact Name</td>
-                                            <td>:</td>
-                                            <td id="contactName"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Register No</td>
-                                            <td>:</td>
-                                            <td id="registerNo"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Make</td>
-                                            <td>:</td>
-                                            <td id="lblmake"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Model</td>
-                                            <td>:</td>
-                                            <td id="lblmodel"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Chassis No</td>
-                                            <td>:</td>
-                                            <td id="chassi"></td>
-                                        </tr>
+<!--                                            <th colspan="3"><b>Vehicle details</b></th>-->
+<!--                                        </tr> <tr><td colspan="3" >&nbsp;</td></tr>-->
+<!---->
+<!--                                        <tr>-->
+<!--                                            <td>Contact Name</td>-->
+<!--                                            <td>:</td>-->
+<!--                                            <td id="contactName"></td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>Register No</td>-->
+<!--                                            <td>:</td>-->
+<!--                                            <td id="registerNo"></td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>Make</td>-->
+<!--                                            <td>:</td>-->
+<!--                                            <td id="lblmake"></td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>Model</td>-->
+<!--                                            <td>:</td>-->
+<!--                                            <td id="lblmodel"></td>-->
+<!--                                        </tr>-->
+<!--                                        <tr>-->
+<!--                                            <td>Chassis No</td>-->
+<!--                                            <td>:</td>-->
+<!--                                            <td id="chassi"></td>-->
+<!--                                        </tr>-->
                                     </tbody>
                                 </table>
-                                <div class="col-sm-12" style="font-size: 20px">
-                                        Next Service Mileage - 
-                                        <b><span   name="nextMileage" id="nextMileage"></span> Km</b>
-                                    </div>
+<!--                                <div class="col-sm-12" style="font-size: 20px">-->
+<!--                                        Next Service Mileage - -->
+<!--                                        <b><span   name="nextMileage" id="nextMileage"></span> Km</b>-->
+<!--                                    </div>-->
                                     <div class="col-sm-12"><br></div>
                             </div></div></div></div>
             </div>

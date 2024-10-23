@@ -10,6 +10,7 @@ class Product extends Admin_Controller {
         /* Load :: Common */
         $this->load->helper('number');
         $this->load->model('admin/Product_model');
+        $this->load->model('admin/Transer_model');
         date_default_timezone_set("Asia/Colombo");
     }
 
@@ -109,10 +110,17 @@ class Product extends Admin_Controller {
     }
 
     public function allProducts() {
+//        $this->load->library('Datatables');
+//        $this->datatables->select('product.*, productprice.ProductPrice');
+//        $this->datatables->from('product');
+//        $this->datatables->join('productprice','productprice.ProductCode=product.ProductCode', 'inner');
+//        $this->datatables->where('productprice.PL_No',1);
+//        echo $this->datatables->generate('json', 'ISO-8859-1');
+//        die;
+
         $this->load->library('Datatables');
-        $this->datatables->select('product.*, productprice.ProductPrice');
+        $this->datatables->select('product.*');
         $this->datatables->from('product');
-        $this->datatables->join('productprice','productprice.ProductCode=product.ProductCode', 'inner');
         echo $this->datatables->generate('json', 'ISO-8859-1');
         die;
     }
@@ -151,8 +159,9 @@ class Product extends Admin_Controller {
         $dep = $_POST['proCode'];
         $pl = $_POST['prlevel'];
         $location = $_POST['location'];
-        $this->data['product'] = $this->Product_model->loadproductbyserial($dep, $pl, $location);
-        echo json_encode($this->data['product']);
+//        $this->data['product'] = $this->Product_model->loadproductbyserial($dep, $pl, $location);
+        $arr['product'] = $this->Product_model->loadproductbyserial($dep, $pl, $location);
+        echo json_encode($arr);
         die;
     }
     
@@ -190,9 +199,19 @@ class Product extends Admin_Controller {
         $dep = $_POST['proCode'];
         $pl = $_POST['prlevel'];
         $location = $_POST['location'];
+        $locationS = $_SESSION['location'];
         $arr['product'] = $this->Product_model->loadproductbypcode($dep, $pl);
+        $arr['productstock']  = $this->Product_model->loadproductstockbyid($dep,$locationS);
         $arr['serial'] = $this->Product_model->loadproductbyserialArrayByCode($dep, $pl,$location);
         echo json_encode($arr);
+        die;
+    }
+
+    public function loadproductSerial() {
+        $q = $_GET['q'];
+        $product= $_REQUEST['proCode'];
+        $location= $_REQUEST['location'];
+        echo $this->Transer_model->loadproductSerial($product, $q, $location);
         die;
     }
     
@@ -417,6 +436,7 @@ class Product extends Admin_Controller {
         }
 
         if (isset($_POST['pl'])) {
+            $this->db->delete('productprice',array('ProductCode' => $productcode));
             foreach ($_POST['pl'] AS $key => $val) {
                 $plrowdata = array(
                     'ProductCode' => $productcode,
@@ -424,7 +444,8 @@ class Product extends Admin_Controller {
                     'ProductPrice' => $val
                 );
                 if ($val != '' || $_POST['pl'][$key]) {
-                    $this->Product_model->update_data('productprice', $plrowdata, array('ProductCode' => $productcode, 'PL_No' => $key));
+                    $this->db->insert('productprice', $plrowdata);
+                    // $this->Product_model->update_data('productprice', $plrowdata, array('ProductCode' => $productcode, 'PL_No' => $key));
                 }
             }
         }

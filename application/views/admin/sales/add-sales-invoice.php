@@ -60,12 +60,44 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <div class="col-sm-7">
                                         <select class="form-control" required="required"  name="newsalesperson" id="newsalesperson" placeholder="sales person">
                                         <option value="">-Select a sales person-</option>
-                                       <?php foreach ($salesperson as $trns) { ?>
-                                <option value="<?php echo $trns->RepID; ?>" ><?php echo $trns->RepName; ?></option>
-                                <?php } ?>
+                                        <?php foreach ($salesperson as $trns) { ?>
+                                            <option value="<?php echo $trns->RepID; ?>" 
+                                                    <?php echo ($trns->RepID == $selectedSalespersonID) ? 'selected' : ''; ?>>
+                                                <?php echo $trns->RepName; ?>
+                                            </option>
+                                        <?php } ?>
                                         </select>
                                     </div>
                                 </div>
+                               
+                                <?php if (!$isEditMode) { ?>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Routes </label>
+                                    <div class="col-sm-7">
+                                        <select class="form-control" name="route" id="route">
+                                            <option value="0">-Select-</option>
+                                        </select>                                    
+                                    </div>
+                                </div>
+                                <?php } ?>
+
+                                <?php if ($isEditMode) { ?>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">Routes</label>
+                                        <div class="col-sm-7">
+                                            <select class="form-control" name="route" id="route">
+                                                <option value="0">-Select-</option>
+                                                <?php foreach ($routes as $route) { ?>
+                                                     <option value="<?php echo $route->id; ?>"
+                                                            <?php echo (isset($selectedRoute) && $route->id == $selectedRoute) ? 'selected' : ''; ?>>
+                                                        <?php echo $route->name;  ?>
+                                                    </option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+
                                 <div class="form-group">
 <!--                                    <label for="additional" class="col-sm-4 control-label">Insurance</label>-->
                                     <div class="col-sm-7">
@@ -84,14 +116,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <row class="form-horizontal" >
                                 <div class="form-group">
                                     <label for="supplier" class="col-sm-4 control-label">Customer<span class="required">*</span></label>
+                                    <?php if (!$isEditMode) { ?>
                                     <div class="col-sm-7">
                                         <div class="input-group">
-                                          <input type="text" tabindex="1" class="form-control" required="required"  name="customer" id="customer" placeholder="Customer" value="<?php echo $customer; ?>">
+                                          <!-- <input type="text" tabindex="1" class="form-control" required="required"  name="customer" id="customer" placeholder="Customer" value="<?php echo $customer; ?>"> -->
+                                            <select class="form-control" required="required" name="customer" id="customer" placeholder="customer name">
+                                                <option value="0">-Select a customer-</option>
+                                            </select>
                                           <span class="input-group-btn">
                                             <button data-target="#customermodal"  id="addNewCustomer" class="btn btn-flat btn-primary pull-right" title="New Customer"><i class="fa fa-user-plus"></i></button>
                                           </span>
-                                        </div><!-- /input-group -->
+                                        </div>
                                     </div>
+                                    <?php } ?>
+                                    <?php if ($isEditMode) { ?>
+                                        <div class="col-sm-7">
+                                        <div class="input-group">
+                                          <!-- <input type="text" tabindex="1" class="form-control" required="required"  name="customer" id="customer" placeholder="Customer" value="<?php echo $customer; ?>"> -->
+                                            <select class="form-control" required="required" name="customer" id="customer" placeholder="customer name">
+                                            <option value="">Select Customer</option>
+                                                <?php foreach ($customers as $customer): ?>
+                                                    <option value="<?= $customer->CusCode ?>"><?= $customer->DisplayName ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            
+                                          <span class="input-group-btn">
+                                            <button data-target="#customermodal"  id="addNewCustomer" class="btn btn-flat btn-primary pull-right" title="New Customer"><i class="fa fa-user-plus"></i></button>
+                                          </span>
+                                        </div>
+                                    </div>
+                                    <?php } ?>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-6">
@@ -237,6 +291,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <form class="form-horizontal" id="formProduct">
                                     <span id="lbl_batch_no"></span>
                                     <label id="errProduct"></label>
+                                    <div class="form-group">
+                                        <div>
+                                            <label for="itemCode" class="col-sm-4 control-label"><span class="required"></span></label>
+                                            <div class="col-sm-8"><span id="productName" style="font-size: 10px;"></span>&nbsp;
+                                                <span id="productStock" style="font-size: 10px;"></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!-- <span id="productName"></span> -->
                                     <!-- <div class="form-group">
                                         <label class="col-sm-4 control-label">Supplier Item</label>
@@ -346,20 +408,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <div class="col-sm-6">
                                                 <input type="text" tabindex="14" class="form-control" required="required"  name="serialNo" id="serialNo" placeholder="Enter Serial No"  value="" onfocus="this.select();" >
                                                 <input type="hidden" tabindex="14" class="form-control" required="required"  name="serialQty" id="serialQty"  value="0">
+                                                <input type="hidden" tabindex="14" class="form-control" name="serialNoCheck" id="serialNoCheck">
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                    <label for="supplier" class="col-sm-4 control-label">Sales Person<span class="required">*</span></label>
-                                    <div class="col-sm-7">
-                                        <select class="form-control" tabindex="14" required="required"  name="salesperson" id="salesperson" placeholder="sales person">
-                                        <option value="">-Select a sales person-</option>
-                                       <?php foreach ($salesperson as $trns) { ?>
-                                <option value="<?php echo $trns->RepID; ?>" ><?php echo $trns->RepName; ?></option>
-                                <?php } ?>
-                                        </select>
-                                    </div>
+                                            <input type="hidden" name="salesperson" id="salesperson" value="0">
+<!--                                    <label for="supplier" class="col-sm-4 control-label">Sales Person<span class="required">*</span></label>-->
+<!--                                    <div class="col-sm-7">-->
+<!--                                        <select class="form-control" tabindex="14" required="required"  name="salesperson" id="salesperson" placeholder="sales person">-->
+<!--                                        <option value="">-Select a sales person-</option>-->
+<!--                                       --><?php //foreach ($salesperson as $trns) { ?>
+<!--                                <option value="--><?php //echo $trns->RepID; ?><!--" >--><?php //echo $trns->RepName; ?><!--</option>-->
+<!--                                --><?php //} ?>
+<!--                                        </select>-->
+<!--                                    </div>-->
                                 </div>
-                                        <div class="form-group">
+                                        <!-- <div class="form-group">
                                             <label for="additional" class="col-sm-4 control-label">Warranty Period</label>
                                             <div class="col-sm-7">
                                                 <select class="form-control" required="required"  name="warrantytype" id="warrantytype" placeholder="">
@@ -369,7 +433,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     <?php } ?>
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="form-group">
                                             <label for="product" class="col-sm-7 control-label">Product Wise Discount<span class="required">*</span></label>
                                             <div class="col-sm-3"><input tabindex="15" type="radio" checked required="required" class="prd_icheck"  name="discount_type" id="productWise" value="1"></div>
@@ -416,12 +480,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <th>Product</th>
                                             <th>Cost</th>
                                             <th>Quantity</th>
+                                            <th>Free Quantity</th>
                                             <th>Price</th>
                                             <th>Discount (%)</th>
                                             <th>Total Amount</th>
                                             <th>Serial</th>
-                                            <th>warranty</th>
-                                            <th>Sale person</th>
+                                            <!-- <th>warranty</th> -->
+                                            <!--<th>Sale person</th>-->
                                             <th>##</th>
                                             <th>##</th>
                                         </tr>
@@ -712,11 +777,82 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         minimumInputLength: 1
     });
 
+  
+
+    $('#newsalesperson').on('change', function() {
+        var salespersonID = $(this).val();
+        if (salespersonID != "0") {
+           
+            $.ajax({
+                url: "<?php echo base_url(); ?>" + "admin/customer/findemploeeroute",
+                method: 'POST',
+                data: { salespersonID: salespersonID },
+                dataType: 'json',
+                success: function(response) {
+                    
+                    $('#route').empty();
+                    $('#route').append('<option value="0">-Select-</option>');
+                    
+                    $.each(response, function(index, routeID) {
+                    console.log(routeID);
+                    $('#route').append('<option value="'+ routeID.route_id +'">'+ routeID.route_name +'</option>');
+                });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching routes:', error);
+                }
+            });
+        } else {
+            $('#route').empty();
+            $('#route').append('<option value="0">-Select-</option>');
+        }
+    });
+
     
+   
+       
+
+    // $('#route').on('change', function() {
+    //     var routeID = $(this).val();
+    //     if (routeID != "0") {
+           
+    //         $.ajax({
+    //             url: "<?php echo base_url(); ?>" + "admin/sales/findroutecustomer",
+    //             method: 'POST',
+    //             data: { routeID: routeID },
+    //             dataType: 'json',
+    //             success: function(response) {
+                    
+    //                 $('#customer').empty();
+    //                 $('#customer').append('<option value="0">-Select-</option>');
+                    
+    //                 $.each(response, function(index, customers) {
+    //                 console.log(customers);
+    //                 $('#customer').append('<option value="'+ customers.CusCode +'">'+ customers.CusName +'</option>');
+    //             });
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 console.error('Error fetching customer:', error);
+    //             }
+    //         });
+    //     } else {
+    //         $('#customer').empty();
+    //         $('#customer').append('<option value="0">-Select-</option>');
+    //     }
+    // });
 
 </script>
-<style type="text/css">
+
+<script type="text/javascript">
+       $('#customer').select2({
+            placeholder: "Select a customer",
+            allowClear: true,
+            minimumInputLength:1,
+            width: '100%'
+       });
+</script>
+<!-- <style type="text/css">
     ul.ui-autocomplete {
     z-index: 1100;
-}
+} -->
 </style>

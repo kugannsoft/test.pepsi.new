@@ -109,6 +109,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
     $('#filterform').submit(function (e) {
         e.preventDefault();
+       
         $.ajax({
             type: 'POST',
             url: "loadmonthlywisereport",

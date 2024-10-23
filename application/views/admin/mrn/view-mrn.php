@@ -78,6 +78,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <td>:</td>
         <td colspan="2" ><?php echo $invHed->ReceivedDate;?></td>
     </tr>
+    <tr style="text-align:left;font-size:13px;">
+        <td> &nbsp;</td>
+        <td>Request From</td>
+        <td>:</td>
+        <td colspan="2" ><?php echo $invHed->location;?></td>
+    </tr>
 </table>
 <style type="text/css" media="screen">
 

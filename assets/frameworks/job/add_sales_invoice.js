@@ -1309,6 +1309,7 @@ var action=0;
         var proNbt = new Array();
         var salePerson = new Array();
 
+
         var ccRef = new Array();
         var ccAmount = new Array();
         var ccType = new Array();
@@ -1339,8 +1340,8 @@ var action=0;
         var salesorder = $("#soNo").val();
         var po_number = $("#po_number").val();
         var newsalesperson = $("#newsalesperson").val();
+        var route = $("#route").val();
 
-        
         // var grnremark = $("#grnremark").val();
         action = $("#action").val();
         var nbtRatioRate=$("#nbtRatioRate").val();
@@ -1369,6 +1370,7 @@ var action=0;
             proVat.push($(this).attr('proVat'));
             proNbt.push($(this).attr('proNbt'));
             salePerson.push($(this).attr('salesperson'));
+
         });
 
         var sendProduct_code = JSON.stringify(product_code);
@@ -1409,7 +1411,7 @@ var action=0;
                 $.ajax({
                     type: "post",
                     url: "saveNewSalesInvoice",
-                    data: {regNo:regNo,cusCode:cusCode,grn_no:poNo,po_number:po_number,newsalesperson:newsalesperson,action:action,salesorder: salesorder, invType:invType, product_code: sendProduct_code, serial_no: sendSerial_no, qty: sendQty, unit_price: sendUnit_price,org_unit_price:sendOrgUnit_price,
+                    data: {regNo:regNo,cusCode:cusCode,grn_no:poNo,po_number:po_number,newsalesperson:newsalesperson,route:route,action:action,salesorder: salesorder, invType:invType, product_code: sendProduct_code, serial_no: sendSerial_no, qty: sendQty, unit_price: sendUnit_price,org_unit_price:sendOrgUnit_price,
                         discount_precent: sendDiscount_precent, pro_discount: sendPro_discount, total_net: sendTotal_net, unit_type: sendUnit_type, price_level: sendPrice_level, upc: sendUpc,
                         case_cost: sendCaseCost, freeQty: sendFree_qty, cost_price: sendCost_price, pro_total: sendPro_total, isSerial: sendIsSerial, proName: sendPro_name,isVat:isVatArr,isNbt:isNbtArr,nbtRatio:nbtRatioArr,proVat:proVatArr,proNbt:proNbtArr,salePerson:salePersonArr, total_cost: totalCost, totalProDiscount: totalProWiseDiscount, totalGrnDiscount: totalGrnDiscount,
                         grnDate: grnDate, invUser: invUser, total_amount: total_amount, total_discount: total_discount, total_net_amount: totalNetAmount, location: location, supcode: supcode, maxSerialQty: maxSerialQty, serialAutoGen: serialAutoGen,nbtRatioRate: nbtRatioRate,isTotalVat:isTotalVat,isTotalNbt:isTotalNbt,totalVat:finalVat,totalNbt:finalNbt,cashAmount:cashAmount,creditAmount:creditAmount,chequeAmount:chequeAmount,cardAmount:cardAmount,advance_amount:advance_amount,advance_pay_no:advance_payment_no,return_payment_no:return_payment_no,return_amount:return_amount,

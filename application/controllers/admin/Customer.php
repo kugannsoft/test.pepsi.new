@@ -145,6 +145,7 @@ class Customer extends Admin_Controller {
         $this->data['emp'] = $this->db->select()->from('salespersons')->get()->result();
         $this->data['cat'] = $this->db->select()->from('customer_category')->get()->result();
         $this->data['vehicle_company'] = $this->db->select()->from('vehicle_company')->get()->result();
+        $this->data['routes'] = $this->Customer_model->getRoutesByCusCode($id);
         $this->load->view('customer/customeredit_modal', $this->data);
     }
 
@@ -213,6 +214,7 @@ class Customer extends Admin_Controller {
         $data['BalanaceAmount'] = $_POST['balanaceAmount'];
         $data['CusType_easy'] = $_POST['cusType'];
         $data['Nic'] = $_POST['nic'];
+        $data['RouteId'] = $_POST['route'];
         //shalika
         if ($_POST['balanceDate']!='') {
             $data['BalanceDate'] = $_POST['balanceDate'];
@@ -361,7 +363,7 @@ class Customer extends Admin_Controller {
         $data['CusType_easy'] = $_POST['cusType'];
         $data['Nic'] = $_POST['nic'];
         $bamount=$_POST['balanaceAmount'];//SHALIKA
-
+        $data['RouteId'] = $_POST['route'];
         $data['payMethod'] = $_POST['payMethod'];
 
         // $cInv['AppNo'] = '1';
@@ -794,4 +796,40 @@ class Customer extends Admin_Controller {
         $res2= $this->db->trans_status();
         echo $res2;die;
     }
+
+    public function findemploeeroute() {
+        $salespersonID = $this->input->post('salespersonID');
+        $this->load->database();
+        $this->db->select('er.route_id, cr.name');
+        $this->db->from('employeeroutes er');
+        $this->db->join('customer_routes cr', 'er.route_id = cr.id'); 
+        $this->db->where('er.emp_id', $salespersonID);
+        $query = $this->db->get();
+        // $routes = $query->result_array();
+        // echo json_encode($routes);
+        // exit();
+        $routes = [];
+
+        // Check if any rows are returned
+        if ($query->num_rows() > 0) {
+            // Fetch the results and store route_id and route_name
+            foreach ($query->result() as $row) {
+                $routes[] = [
+                    'route_id' => $row->route_id,
+                    'route_name' => $row->name 
+                ];
+            }
+    
+            // Encode the result to JSON and return it
+            echo json_encode($routes);
+        } else {
+            // Return an empty array if no routes are found
+            echo json_encode([]);
+        }
+    
+        // Exit after outputting the response
+        exit();
+        
+    }
+    
 }

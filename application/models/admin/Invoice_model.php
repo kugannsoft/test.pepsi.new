@@ -193,17 +193,19 @@ class Invoice_model extends CI_Model {
         } elseif ($sup == 0 && ($inv != '' || $inv != 0)) {
 
             if($invType==1){
-                $query1 = $this->db->select('product.ProductCode,salesinvoicedtl.SalesProductName AS Prd_Description,(salesinvoicedtl.SalesQty-salesinvoicedtl.SalesReturnQty) As InvQty,salesinvoicedtl.SalesUnitPrice as ProductPrice')
+                $query1 = $this->db->select('product.ProductCode,salesinvoicedtl.SalesProductName AS Prd_Description,(salesinvoicedtl.SalesQty-salesinvoicedtl.SalesReturnQty) As InvQty,salesinvoicedtl.SalesUnitPrice as ProductPrice, productcondition.IsSerial, salesinvoicedtl.SalesSerialNo')
                             ->from('salesinvoicedtl')
                             ->join('product', 'salesinvoicedtl.SalesProductCode = product.ProductCode', 'INNER')
+                            ->join('productcondition', 'productcondition.ProductCode = product.ProductCode', 'INNER')
                             ->where('salesinvoicedtl.SalesInvNo', $inv)
                             ->where('salesinvoicedtl.SalesPriceLevel', $pl)
                             ->like("CONCAT(' ',product.ProductCode,salesinvoicedtl.SalesProductName)", $query, 'left')
                             ->limit(50)->get();
             }elseif($invType==2){
-                $query1 = $this->db->select('jobinvoicedtl.JobCode As ProductCode,jobinvoicedtl.JobDescription AS Prd_Description,(jobinvoicedtl.JobQty-jobinvoicedtl.JobReturnQty) As InvQty,jobinvoicedtl.JobPrice as ProductPrice')
+                $query1 = $this->db->select('jobinvoicedtl.JobCode As ProductCode,jobinvoicedtl.JobDescription AS Prd_Description,(jobinvoicedtl.JobQty-jobinvoicedtl.JobReturnQty) As InvQty,jobinvoicedtl.JobPrice as ProductPrice, productcondition.IsSerial')
                             ->from('jobinvoicedtl')
                             ->join('product', 'jobinvoicedtl.JobCode = product.ProductCode', 'left')
+                            ->join('productcondition', 'productcondition.ProductCode = product.ProductCode', 'INNER')
                             ->where('jobinvoicedtl.JobInvNo', $inv)
                             // ->where('jobinvoicedtl.InvPriceLevel', $pl)
                             ->like("CONCAT(' ',product.ProductCode,jobinvoicedtl.JobDescription)", $query, 'left')
@@ -213,7 +215,13 @@ class Invoice_model extends CI_Model {
 //        
         if ($query1->num_rows() > 0) {
             foreach ($query1->result_array() as $row) {
+                if ($row['IsSerial'] == 1) {
+                $new_row['label'] = htmlentities(stripslashes($row['Prd_Description'] . " = Rs." . $row['ProductPrice'] . " , Serial - " . $row['SalesSerialNo']));
+                $new_row['serial'] = htmlentities(stripslashes($row['SalesSerialNo']));
+                } else {
                 $new_row['label'] = htmlentities(stripslashes($row['Prd_Description'] . " = Rs." . $row['ProductPrice']));
+                }
+
                 $new_row['value'] = htmlentities(stripslashes($row['ProductCode']));
                 if ($sup == 1 && ($inv == '' || $inv == 0)) {
                     $new_row['qty'] = htmlentities(stripslashes('All'));

@@ -149,10 +149,62 @@ class Invoice extends Admin_Controller {
             $this->load->model('admin/Invoice_model');
             $id3 = array('CompanyID' => $location);
             $this->data['company'] = $this->Invoice_model->get_data_by_where('company', $id3);
-
+            $this->data['salesperson'] = $this->db->select()->from('salespersons')->get()->result();
+            // echo json_encode($this->data['salesperson']);
+            // die();
             /* Load Template */
             $this->template->admin_render('admin/invoice/return-invoice', $this->data);
         }
+    }
+
+    public function findemploeeroute() {
+        $salespersonID = $this->input->post('salespersonID');
+        $this->load->database();
+        $this->db->select('er.route_id, cr.name');
+        $this->db->from('employeeroutes er');
+        $this->db->join('customer_routes cr', 'er.route_id = cr.id'); 
+        $this->db->where('er.emp_id', $salespersonID);
+        $query = $this->db->get();
+        // $routes = $query->result_array();
+        // echo json_encode($routes);
+        // exit();
+        $routes = [];
+        if ($query->num_rows() > 0) {
+         
+            foreach ($query->result() as $row) {
+                $routes[] = [
+                    'route_id' => $row->route_id,
+                    'route_name' => $row->name 
+                ];
+            }
+    
+        
+            echo json_encode($routes);
+        } else {
+         
+            echo json_encode([]);
+        }
+    
+   
+        exit();
+        
+    }
+
+    public function loadcustomersroutewise() {
+        $routeID = $this->input->post('routeID'); 
+        $newsalesperson = $this->input->post('newsalesperson');
+        $this->load->database();
+    
+    
+        $customers = $this->db->select('customer.CusCode,customer.DisplayName')
+        ->from('customer')
+        ->where('RouteId', $routeID)
+        ->where('HandelBy',$newsalesperson)
+        ->get()
+        ->result();
+    
+        echo json_encode($customers); 
+        die; 
     }
     
     public function loadcustomersjson() {
@@ -190,6 +242,8 @@ class Invoice extends Admin_Controller {
         $total_discount = $_POST['total_discount'];
         $total_net_amount = $_POST['total_net_amount'];
         $total_cost = $_POST['total_cost'];
+        $route = $_POST['route'];
+        $newsalesperson = $_POST['newsalesperson'];
         $location = $_POST['location'];
         $supplier =$_POST['cuscode'];
         $isComplete=0;
@@ -220,12 +274,12 @@ class Invoice extends Admin_Controller {
         $invDate = date("Y-m-d H:i:s");
         
         $retHed = array(
-            'AppNo' => '1','ReturnNo' => $grnNo,'ReturnLocation' => $location,'ReturnDate' => $invDate,'RootNo' => 0,
+            'AppNo' => '1','ReturnNo' => $grnNo,'ReturnLocation' => $location,'ReturnDate' => $invDate,'RootNo' =>$route,'SalesPerson'=>$newsalesperson,
             'InvoiceNo' => $invNo,'InvoiceType' => $invType,'CustomerNo' => $supplier,'Remark' => $remark,'ReturnAmount' => $total_amount,'ReturnUser' => $invUser,'IsComplete' => $isComplete,'IsCancel'=>0
         );
 
         $retPay = array(
-            'AppNo' => '1','ReturnNo' => $grnNo,'ReturnLocation' => $location,'ReturnDate' => $invDate,'RootNo' => 0,
+            'AppNo' => '1','ReturnNo' => $grnNo,'ReturnLocation' => $location,'ReturnDate' => $invDate,'RootNo' =>$route,
             'InvoiceNo' => $invNo,'InvoiceType' => $invType,'CustomerNo' => $supplier,'Remark' => $remark,'ReturnAmount' => $total_amount,'ReturnUser' => $invUser
         );
         

@@ -277,7 +277,7 @@ class Mrn_model extends CI_Model {
         $brandArr = json_decode($_POST['brand']);
         $pro_nameArr = json_decode($_POST['proName']);
         $location = $post['location'];
-        $location_to = $post['location'];
+        $location_to = $post['location_from'];
         $location_from = '';
         $grnDattime = date("Y-m-d H:i:s");
         
@@ -309,6 +309,26 @@ class Mrn_model extends CI_Model {
             
            //update stock
             $this->db->query("CALL SPP_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$qtyArr[$i]','$price_levelArr[$i]','$cost_priceArr[$i]','$sell_priceArr[$i]','$location','$serialNo','0','0','0')");
+
+//            Add Additional Code By Asanka
+
+            //update location price stock
+            $this->db->query("CALL SPT_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$qtyArr[$i]','$price_levelArr[$i]','$cost_priceArr[$i]','$sell_priceArr[$i]','$location_to')");
+
+            //update location product stock
+            $this->db->query("CALL SPT_UPDATE_PRO_STOCK('$product_codeArr[$i]','$qtyArr[$i]',0,'$location_to')");
+
+            //update to location serial stock
+            $ps = $this->db->select('ProductCode')->from('productserialstock')->where(array('ProductCode'=> $product_codeArr[$i],'SerialNo'=>$serialNo,'Location'=>$location_to))->get();
+            if($ps->num_rows()>0){
+                    $this->db->update('productserialstock',array('Quantity'=>1),array('ProductCode'=> $product_codeArr[$i],'SerialNo'=>$serialNo,'Location'=> $location_to));
+            }else{
+                if($isSerialArr[$i]==1){
+                    $this->db->insert('productserialstock', array('ProductCode'=> $product_codeArr[$i],'Location'=> $location_to,'SerialNo'=>$serialNo,'Quantity'=>1,'GrnNo'=>$grnNo));
+                }
+            }
+
+//            Add Additional Code By Asanka
 
             //update serial stock
             if($serialNo!=''){

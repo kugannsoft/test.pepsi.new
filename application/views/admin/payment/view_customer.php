@@ -251,7 +251,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <thead>
                                         <th>Invoice Date</th>
                                         <th>Invoice No</th>
-                                        <th>Vehicle</th>
+<!--                                        <th>Vehicle</th>-->
                                         <th>Invoice Amount</th>
                                         <th>Credit Amount</th>
                                         <th>Payment Type</th>
@@ -264,7 +264,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <td><?php echo $v->SalesDate;?></td>
                                                 <td><a href="<?php echo base_url('admin/Salesinvoice/view_sales_invoice/').base64_encode($v->SalesInvNo); ?>"><?php echo $v->SalesInvNo;?></a></td>
 
-                                                <td><?php echo ($v->SalesVehicle);?></td>
+<!--                                                <td>--><?php //echo ($v->SalesVehicle);?><!--</td>-->
                                                 <td><?php echo number_format($v->SalesNetAmount,2);?></td>
                                                 <td><?php echo number_format($v->SalesCreditAmount,2);?></td>
                                                 <td>
@@ -288,63 +288,63 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 
-<!--                                    -->
-<!--                                    <hr>-->
-<!--                                    <h4>Job Details</h4>-->
-<!--                                    <table class="table table-hover">-->
-<!--                                        <thead>-->
-<!--                                        <th>Invoice Date</th>-->
-<!--                                        <th>Invoice No</th>-->
-<!--                                        <th>Vehicle</th>-->
-<!--                                        <th>Invoice Amount</th>-->
-<!--                                        <th>Credit Amount</th>-->
-<!--                                        <th></th>-->
-<!--                                        <th></th>-->
-<!--                                        </thead>-->
-<!--                                        <tbody>-->
-<!--                                        --><?php //foreach($job as $v){?>
-<!--                                            <tr>-->
-<!--                                                <td>--><?php //echo $v->JobInvoiceDate;?><!--</td>-->
-<!--                                                <td><a href="--><?php //echo base_url('admin/Salesinvoice/view_invoice/').base64_encode($v->JobInvNo); ?><!--">--><?php //echo $v->JobInvNo;?><!--</a></td>-->
-<!--                                                <td>--><?php //echo ($v->JRegNo);?><!--</td>-->
-<!--                                                <td>--><?php //echo number_format($v->JobNetAmount,2);?><!--</td>-->
-<!--                                                <td>--><?php //echo number_format($v->JobCreditAmount,2);?><!--</td>-->
-<!--                                                <td>--><?php //echo printStats($v->IsCompelte,'Closed','success','Pending','warning','warning');?><!--</td>-->
-<!--                                                <td>--><?php //echo printStats($v->IsCancel,'Canceld','danger','Active','success','success');?><!--</td>-->
-<!--                                            </tr>-->
-<!--                                        --><?php //}?>
-<!--                                        </tbody>-->
-<!--                                    </table>-->
 
-<!--                                    <hr>-->
-<!--                                    <h4>Job Card Details</h4>-->
-<!--                                    <table class="table table-hover">-->
-<!--                                        <thead>-->
-<!--                                        <th>Appointment Date</th>-->
-<!--                                        <th>JobCardNo No</th>-->
+                                    <hr>
+                                    <h4>Job Details</h4>
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <th>Invoice Date</th>
+                                        <th>Invoice No</th>
 <!--                                        <th>Vehicle</th>-->
-<!--                                        <th>OdoIn</th>-->
-<!--                                        <th>End Date</th>-->
-<!--                                        <th></th>-->
-<!--                                        <th></th>-->
-<!--                                        <th>Action</th>-->
-<!--                                        </thead>-->
-<!--                                        <tbody>-->
-<!--                                        --><?php //foreach($job_card as $v){?>
-<!--                                            <tr>-->
-<!--                                                <td>--><?php //echo $v->appoimnetDate;?><!--</td>-->
-<!--                                                <td><a href="--><?php //echo base_url('admin/job/view_job_card/').base64_encode($v->JobCardNo); ?><!--">--><?php //echo $v->JobCardNo;?><!--</a></td>-->
+                                        <th>Invoice Amount</th>
+                                        <th>Credit Amount</th>
+                                        <th></th>
+                                        <th></th>
+                                        </thead>
+                                        <tbody>
+                                        <?php foreach($job as $v){?>
+                                            <tr>
+                                                <td><?php echo $v->JobInvoiceDate;?></td>
+                                                <td><a href="<?php echo base_url('admin/Salesinvoice/view_invoice/').base64_encode($v->JobInvNo); ?>"><?php echo $v->JobInvNo;?></a></td>
 <!--                                                <td>--><?php //echo ($v->JRegNo);?><!--</td>-->
-<!--                                                <td>--><?php //echo ($v->OdoIn);?><!--</td>-->
-<!--                                                <td>--><?php //echo ($v->endDate);?><!--</td>-->
-<!--                                                <td>--><?php //echo printStats($v->IsCompelte,'Closed','success','Pending','warning','warning');?><!--</td>-->
-<!--                                                <td>--><?php //echo printStats($v->IsCancel,'Canceld','danger','Active','success','success');?><!--</td>-->
-<!--                                                <td>--><?php //if ($v->IsCompelte == 0 && $v->IsCancel == 0) { ?><!-- <a href="--><?php //echo base_url('admin/job/edit_job/').base64_encode($v->JobCardNo); ?><!--" class="btn btn-xs btn-warning" >EDIT</a> --><?php //}
-//                                                    else {?><!-- <a href="" class="btn btn-xs btn-warning" disabled>EDIT</a> --><?php //} ?><!--</td>-->
-<!--                                            </tr>-->
-<!--                                        --><?php //}?>
-<!--                                        </tbody>-->
-<!--                                    </table>-->
+                                                <td><?php echo number_format($v->JobNetAmount,2);?></td>
+                                                <td><?php echo number_format($v->JobCreditAmount,2);?></td>
+                                                <td><?php echo printStats($v->IsCompelte,'Closed','success','Pending','warning','warning');?></td>
+                                                <td><?php echo printStats($v->IsCancel,'Canceld','danger','Active','success','success');?></td>
+                                            </tr>
+                                        <?php }?>
+                                        </tbody>
+                                    </table>
+
+                                    <hr>
+                                    <h4>Job Card Details</h4>
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <th>Appointment Date</th>
+                                        <th>JobCardNo No</th>
+<!--                                        <th>Vehicle</th>-->
+                                        <th>OdoIn</th>
+                                        <th>End Date</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th>Action</th>
+                                        </thead>
+                                        <tbody>
+                                        <?php foreach($job_card as $v){?>
+                                            <tr>
+                                                <td><?php echo $v->appoimnetDate;?></td>
+                                                <td><a href="<?php echo base_url('admin/job/view_job_card/').base64_encode($v->JobCardNo); ?>"><?php echo $v->JobCardNo;?></a></td>
+<!--                                                <td>--><?php //echo ($v->JRegNo);?><!--</td>-->
+                                                <td><?php echo ($v->OdoIn);?></td>
+                                                <td><?php echo ($v->endDate);?></td>
+                                                <td><?php echo printStats($v->IsCompelte,'Closed','success','Pending','warning','warning');?></td>
+                                                <td><?php echo printStats($v->IsCancel,'Canceld','danger','Active','success','success');?></td>
+                                                <td><?php if ($v->IsCompelte == 0 && $v->IsCancel == 0) { ?> <a href="<?php echo base_url('admin/job/edit_job/').base64_encode($v->JobCardNo); ?>" class="btn btn-xs btn-warning" >EDIT</a> <?php }
+                                                    else {?> <a href="" class="btn btn-xs btn-warning" disabled>EDIT</a> <?php } ?></td>
+                                            </tr>
+                                        <?php }?>
+                                        </tbody>
+                                    </table>
                                     <hr>
 
                                     <h4>Advanced Payment Details</h4>

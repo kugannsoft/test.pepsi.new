@@ -262,7 +262,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <tr style="line-height:20px; border-bottom:1px solid #000000; border-top:1px solid #000000; border-left:1px solid #000000; border-right:1px solid #000000;">
                           <td style="border-bottom:1px solid #e4dbdb;"><?php echo $invdata->SalesProductCode;?></td>
                           <td style="border-bottom:1px solid #e4dbdb;" ><?php echo $invdata->SalesProductName."<br>".$invdata->SalesSerialNo;?> </td>
-                          <td style="border-bottom:1px solid #e4dbdb;"><?php echo number_format(($invdata->WarrantyMonth),0)?>&nbsp; Month</td>
+                          <td style="border-bottom:1px solid #e4dbdb;"><?php echo $invdata->type; ?></td>
                           <td style="border-bottom:1px solid #e4dbdb; text-align:center;"><?php echo number_format(($invdata->SalesQty),0)?></td>
                           <td style="border-bottom:1px solid #e4dbdb; text-align:right;" class='text-right'><?php echo number_format(($invdata->SalesUnitPrice),2)?></td>
                           <td style="border-bottom:1px solid #e4dbdb; text-align:right;" class='text-right'><?php echo number_format(($invdata->SalesTotalAmount),2)?></td>

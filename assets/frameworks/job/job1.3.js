@@ -309,32 +309,36 @@ $(document).ready(function() {
 
     regnum =$("#vehicleNo").val();
     cusCode =$("#cusCode").val();
-    if (regnum != '') {
-        $.ajax({
-                type: "POST",
-                url: "../job/getVehicleDetailsByIdandCus",
-                data: { id: regnum,cuscode:cusCode},
-                success: function(data)
-                {
-                    var resultData = JSON.parse(data);
-                    if(resultData){
-                        regNo=resultData.RegNo;
-                        cusCode=resultData.CusCode;
-                        $("#contactName").html(resultData.contactName);
-                        $("#registerNo").html(resultData.RegNo);
-                        $("#lblmake").html(resultData.make);
-                        $("#lblmodel").html(resultData.model);
-                        $("#fuel").html(resultData.fuel_type);
-                        $("#chassi").html(resultData.ChassisNo);
-                        $("#engNo").html(resultData.EngineNo);
-                        $("#yom").html(resultData.ManufactureYear);
-                        $("#color").html(resultData.body_color);
-                        $("#nextService").val(resultData.EngineNo);
-                        loadCustomerDatabyId(resultData.CusCode);
-                    }
-                }
-            });
-    } 
+
+    if (cusCode != '') {
+        loadCustomerDatabyId(cusCode);
+    }
+    // if (regnum != '') {
+    //     $.ajax({
+    //             type: "POST",
+    //             url: "../job/getVehicleDetailsByIdandCus",
+    //             data: { id: regnum,cuscode:cusCode},
+    //             success: function(data)
+    //             {
+    //                 var resultData = JSON.parse(data);
+    //                 if(resultData){
+    //                     regNo=resultData.RegNo;
+    //                     cusCode=resultData.CusCode;
+    //                     $("#contactName").html(resultData.contactName);
+    //                     $("#registerNo").html(resultData.RegNo);
+    //                     $("#lblmake").html(resultData.make);
+    //                     $("#lblmodel").html(resultData.model);
+    //                     $("#fuel").html(resultData.fuel_type);
+    //                     $("#chassi").html(resultData.ChassisNo);
+    //                     $("#engNo").html(resultData.EngineNo);
+    //                     $("#yom").html(resultData.ManufactureYear);
+    //                     $("#color").html(resultData.body_color);
+    //                     $("#nextService").val(resultData.EngineNo);
+    //                     loadCustomerDatabyId(resultData.CusCode);
+    //                 }
+    //             }
+    //         });
+    // }
 
     $("#estimateNo").autocomplete({
         source: function(request, response) {
@@ -484,12 +488,8 @@ $(document).ready(function() {
         e.preventDefault();
         var jobdata = $("#jobArr").val();
         $("#modelNotifi").html('');
-        if(regNo=='' || regNo==0){
-            $.notify("Please select a vehicle.", "danger");
-        }else if(cusCode=='' || cusCode==0){
+         if(cusCode=='' || cusCode==0){
             $.notify("Please select a customer..", "danger");
-        }else if(odo=='' || odo==0) {
-            $.notify("Please add Odo meter In.", "danger");
         }else if(jobtype=='' || jobtype==0) {
             $.notify("Please select a job type.", "danger");
         }else if(jobSection=='' || jobSection==0) {

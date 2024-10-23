@@ -294,15 +294,15 @@ $(document).ready(function() {
                     $("#cusAddress2").html(resultData.cus_data.Address03);
                     $("#cusPhone").html(resultData.cus_data.MobileNo);
 
-                    $("#contactName").html(resultData.vehicle_data.contactName);
-                    $("#registerNo").html(resultData.vehicle_data.RegNo);
-                    $("#make").html(resultData.vehicle_data.make);
-                    $("#model").html(resultData.vehicle_data.model);
-                    $("#fuel").html(resultData.vehicle_data.fuel_type);
-                    $("#chassi").html(resultData.vehicle_data.ChassisNo);
-                    $("#engNo").html(resultData.vehicle_data.EngineNo);
-                    $("#yom").html(resultData.vehicle_data.ManufactureYear);
-                    $("#color").html(resultData.vehicle_data.body_color);
+                    // $("#contactName").html(resultData.vehicle_data.contactName);
+                    // $("#registerNo").html(resultData.vehicle_data.RegNo);
+                    // $("#make").html(resultData.vehicle_data.make);
+                    // $("#model").html(resultData.vehicle_data.model);
+                    // $("#fuel").html(resultData.vehicle_data.fuel_type);
+                    // $("#chassi").html(resultData.vehicle_data.ChassisNo);
+                    // $("#engNo").html(resultData.vehicle_data.EngineNo);
+                    // $("#yom").html(resultData.vehicle_data.ManufactureYear);
+                    // $("#color").html(resultData.vehicle_data.body_color);
 
                     $("#cusCode").val(resultData.cus_data.CusCode);
                     $("#vehicleNo").val(resultData.job_data.JRegNo);
@@ -460,8 +460,7 @@ loadInvoicetoPrint(jobNo);
                 dataType: "json",
                 data: {
                     q: request.term,
-                    cusCode:cusCode,
-                    regNo:regNo
+                    cusCode:cusCode
                 },
                 success: function(data) {
                     response($.map(data, function(item) {
@@ -724,17 +723,17 @@ if(jobNo!=''){
                     $("#cusAddress").html(resultData.cus_data.Address01+", "+resultData.cus_data.Address02);
                     $("#cusAddress2").html(resultData.cus_data.Address03);
                     $("#cusPhone").html(resultData.cus_data.MobileNo);
-
-                    $("#contactName").html(resultData.vehicle_data.contactName);
-                    $("#registerNo").html(resultData.vehicle_data.RegNo);
-                    regNo = resultData.vehicle_data.RegNo;
-                    $("#make").html(resultData.vehicle_data.make);
-                    $("#model").html(resultData.vehicle_data.model);
-                    $("#fuel").html(resultData.vehicle_data.fuel_type);
-                    $("#chassi").html(resultData.vehicle_data.ChassisNo);
-                    $("#engNo").html(resultData.vehicle_data.EngineNo);
-                    $("#yom").html(resultData.vehicle_data.ManufactureYear);
-                    $("#color").html(resultData.vehicle_data.body_color);
+                    //
+                    // $("#contactName").html(resultData.vehicle_data.contactName);
+                    // $("#registerNo").html(resultData.vehicle_data.RegNo);
+                    // regNo = resultData.vehicle_data.RegNo;
+                    // $("#make").html(resultData.vehicle_data.make);
+                    // $("#model").html(resultData.vehicle_data.model);
+                    // $("#fuel").html(resultData.vehicle_data.fuel_type);
+                    // $("#chassi").html(resultData.vehicle_data.ChassisNo);
+                    // $("#engNo").html(resultData.vehicle_data.EngineNo);
+                    // $("#yom").html(resultData.vehicle_data.ManufactureYear);
+                    // $("#color").html(resultData.vehicle_data.body_color);
 
                     $("#cusCode").val(resultData.cus_data.CusCode);
                     $("#vehicleNo").val(resultData.job_data.JRegNo);
@@ -807,16 +806,16 @@ if(jobNo!=''){
                     $("#lblemail").html(resultData.cus_data.Email);
                     $("#lblCusName").html(resultData.cus_data.CusName);
                     
-                    $("#lblcusName").html(resultData.vehicle_data.contactName);
+                    // $("#lblcusName").html(resultData.vehicle_data.contactName);
                     
                     // $("#registerNo").html(resultData.vehicle_data.RegNo);
-                    $("#lblmake").html(resultData.vehicle_data.make);
-                    $("#lblmodel").html(resultData.vehicle_data.model);
-                    $("#lblFuelType").html(resultData.vehicle_data.fuel_type);
-                    $("#lblviNo").html(resultData.vehicle_data.ChassisNo);
+                    // $("#lblmake").html(resultData.vehicle_data.make);
+                    // $("#lblmodel").html(resultData.vehicle_data.model);
+                    // $("#lblFuelType").html(resultData.vehicle_data.fuel_type);
+                    // $("#lblviNo").html(resultData.vehicle_data.ChassisNo);
                     // $("#engNo").html(resultData.vehicle_data.EngineNo);
                     // $("#yom").html(resultData.vehicle_data.ManufactureYear);
-                    $("#lblcountry").html(resultData.vehicle_data.body_color);
+                    // $("#lblcountry").html(resultData.vehicle_data.body_color);
 
                     $("#lblcusCode").html(resultData.cus_data.CusCode);
                     $("#lblJobNo").html(resultData.job_data.JobCardNo);
