@@ -236,6 +236,17 @@ class Invoice extends Admin_Controller {
         die;
     }
 
+      public function loadproductjsonreturn() {
+    
+        $query = $_GET['q'];
+        $sup= $_REQUEST['nonRt'];
+        $inv= $_REQUEST['invNo'];
+        $pl=$_REQUEST['price_level'];
+        $invType=$_REQUEST['invoiceType'];
+        echo $this->Invoice_model->loadproductjsonreturn($query,$sup,$inv,$pl,$invType);
+        die;
+    }
+
     public function saveReturn() {
 
         $grnNo = $this->Invoice_model->get_max_code('Invoice Return');

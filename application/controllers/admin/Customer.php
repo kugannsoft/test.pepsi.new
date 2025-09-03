@@ -33,6 +33,7 @@ class Customer extends Admin_Controller {
         $this->page_title->push("All Outstanding Customers");
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
+         $this->data['salespersons'] = $this->db->select()->from('salespersons')->where('IsActive',1)->get()->result();
         $this->template->admin_render('customer/view_outstandingcustomer', $this->data);
     }//shalika
     public function customerreport() {
@@ -528,12 +529,33 @@ class Customer extends Admin_Controller {
 
     public function allCustomersjoin() {
         $this->load->library('Datatables');
-        $this->datatables->select('customer.CusCode,customer.CusName,customer.CusBookNo,customer.MobileNo,customer.CreditLimit,customer.IsActive,SUM(t2.CreditAmount)-SUM(t2.SettledAmount)-SUM(t2.returnAmount) AS Outstanding');
+
+        $salesperson = $this->input->post('salesperson');
+       
+        $routeAr = isset($_POST['route']) ? json_decode($_POST['route']) : NULL;
+        $customer = isset($_POST['customer']) ? json_decode($_POST['customer']) : NULL;
+
+        $this->datatables->select('customer.CusCode,customer.CusName,customer.CusBookNo,customer.MobileNo,customer.CreditLimit,customer.IsActive,
+        SUM(t2.CreditAmount)-SUM(t2.SettledAmount)-SUM(t2.returnAmount) AS Outstanding,customer_routes.name,customer.HandelBy');
         $this->datatables->from('customer');
-        $this->datatables->join('(SELECT creditinvoicedetails.CusCode as CreCusCode,creditinvoicedetails.CreditAmount,creditinvoicedetails.SettledAmount,creditinvoicedetails.returnAmount from creditinvoicedetails where creditinvoicedetails.IsCancel=0) t2', 'customer.CusCode=t2.CreCusCode');
+         $this->datatables->join('customer_routes', 'customer_routes.id = customer.RouteID', 'left');
+        $this->datatables->join('(SELECT creditinvoicedetails.CusCode as CreCusCode,creditinvoicedetails.CreditAmount,creditinvoicedetails.SettledAmount,
+        creditinvoicedetails.returnAmount from creditinvoicedetails where creditinvoicedetails.IsCancel=0) t2', 'customer.CusCode=t2.CreCusCode');
         $this->datatables->where('customer.IsActive',1);
         $this->datatables->group_by('customer.CusCode');
         $this->datatables->having('SUM(t2.CreditAmount)-SUM(t2.SettledAmount)>',0);
+
+         if (!empty($salesperson)) {
+            $this->datatables->where('customer.HandelBy', $salesperson);
+        }
+
+       if (!empty($routeAr)) {
+            $this->db->where_in('customer_routes.id', $routeAr);
+        }
+
+         if (!empty($customer)) {
+            $this->db->where_in('customer.CusCode', $customer);
+        }
         echo $this->datatables->generate();
         die();
     }
@@ -851,9 +873,9 @@ class Customer extends Admin_Controller {
         // exit();
         $routes = [];
 
-        // Check if any rows are returned
+        
         if ($query->num_rows() > 0) {
-            // Fetch the results and store route_id and route_name
+      
             foreach ($query->result() as $row) {
                 $routes[] = [
                     'route_id' => $row->route_id,
@@ -861,14 +883,14 @@ class Customer extends Admin_Controller {
                 ];
             }
 
-            // Encode the result to JSON and return it
+         
             echo json_encode($routes);
         } else {
-            // Return an empty array if no routes are found
+         
             echo json_encode([]);
         }
 
-        // Exit after outputting the response
+    
         exit();
 
     }

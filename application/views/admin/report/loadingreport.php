@@ -20,23 +20,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <option value="<?php echo $salesperson->RepID ?>"><?php echo $salesperson->RepName ?></option>
                                         <?php } ?>
                                     </select>
-                                    <!-- <input type="hidden" name="route_ar" id="route_ar"> -->
+                                    <!--  -->
                                 </div>
                                 <div class="col-md-2">
-                                    <select class="form-control" name="route" id="route" >
+                                    <select class="form-control" name="route" id="route" multiple>
                                         <option value="">--Select Route--</option>
                                       
                                     </select>
-                                    
+                                    <input type="hidden" name="route_ar" id="route_ar">
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="input-daterange input-group" id="datepicker">
-                                        <input type="text" class="form-control" name="startdate" value="<?php echo date("Y-m-d") ?>"/>
-                                        <span class="input-group-addon">to</span>
-                                        <input type="text" class="form-control" name="enddate"  id="enddate" value="<?php echo date("Y-m-d") ?>"/>
+                              <div class="input-daterange input-group" id="datepicker">
+                                        <input type="hidden" class="form-control" name="startdate" id="startdate" >
+                            
+                                        <input type="hidden" class="form-control" name="enddate" id="enddate" >
+                                    </div>
+                                <div class="col-lg-3">
+                                    <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                                        <i class="fa fa-calendar"></i>&nbsp;
+                                        <span></span> 
+                                        <i class="fa fa-caret-down"></i>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-2">
                                     <button type="submit" class="btn btn-flat btn-success">Show</button>
                                 </div>
@@ -58,8 +62,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <tr style="background-color: #1fbfb8">
                                 <td>Product Code</td>
                                 <td>Product Name</td>
+                                <td>Unit Per Case</td>
                                 <td>Qty</td>
-                                <td>free qty</td>
+                                <td>Free Qty</td>
                                 <td>Return Qty</td>
 
                                 <td> Total Qty Amount</td>
@@ -70,6 +75,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </tbody>
                             <tfoot>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -96,6 +102,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     $('.input-daterange').datepicker({
         autoclose: true,
         format: 'yyyy-mm-dd'
+    });
+
+     $("#route").select2({
+        placeholder: "Select a location"
+    });
+
+    var loc = [];
+    $("#route").change(function() {
+        loc.length = 0;
+
+        $("#route :selected").each(function() {
+            loc.push($(this).val());
+        });
+        $("#route_ar").val(JSON.stringify(loc));
     });
 
     $('#newsalesperson').on('change', function() {
@@ -148,6 +168,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <tr>
                                         <td>${item.SalesProductCode}</td>
                                         <td>${item.SalesProductName}</td>
+                                        <td>${item.Prd_UPC}</td>
                                         <td>${item.TotalSalesQty}</td>
                                         <td>${item.TotalSalesFreeQty}</td>
                                          <td>${item.SalesReturnQty}</td>
@@ -188,5 +209,33 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             title:'Daily Loading Report '+datebalance
         });
     }
+
+      $(function() {
+
+    var start = moment().subtract(29, 'days');
+    var end = moment();
+
+    function cb(start, end) {
+        $('#reportrange span').html(start.format('YYYY-MM-DD') + ' - ' + end.format('YYYY-MM-DD'));
+        $('#startdate').val(start.format('YYYY-MM-DD'));
+        $('#enddate').val(end.format('YYYY-MM-DD'));
+    }
+
+    $('#reportrange').daterangepicker({
+        startDate: start,
+        endDate: end,
+        ranges: {
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    }, cb);
+
+    cb(start, end);
+
+    });
     
 </script>

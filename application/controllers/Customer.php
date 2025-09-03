@@ -452,7 +452,8 @@ class Customer extends Admin_Controller {
 
     public function allCustomers() {
         $this->load->library('Datatables');
-        $this->datatables->select('customer.CusCode,customer.IsActive,customer.CusBookNo,customer.MobileNo,customer.CusName,customer.LastName,customer.CreditLimit,customeroutstanding.CusOustandingAmount');
+        $this->datatables->select('customer.CusCode,customer.IsActive,customer.CusBookNo,customer.MobileNo,customer.CusName,
+        customer.LastName,customer.CreditLimit,customeroutstanding.CusOustandingAmount');
         $this->datatables->from('customer');
         $this->datatables->join('customeroutstanding','customeroutstanding.CusCode=customer.CusCode');
         // $this->datatables->unset_column('customeroutstanding.CusCode');

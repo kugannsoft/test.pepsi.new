@@ -409,9 +409,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         row.append($("<td style='text-align: right;'>" + accounting.formatMoney(rowData[index].Prd_CostPrice * rowData[index].Stock) + "</td>"));
         row.append($("<td style='text-align: right;'>" + accounting.formatMoney((rowData[index].ProductPrice * rowData[index].Stock) - (rowData[index].Prd_CostPrice * rowData[index].Stock)) + "</td>"));
         row.append($("<td>" + rowData[index].SupName + "</td>"));
-        row.append($("<td>" + rowData[index].Damage + "</td>"));
-        row.append($("<td>" + rowData[index].Expired + "</td>"));
-        row.append($("<td>" + rowData[index].Expired + "</td>"));
+        row.append($("<td>" + (rowData[index].Damage != null ? rowData[index].Damage : 0) + "</td>"));
+        row.append($("<td>" + (rowData[index].Expired != null ? rowData[index].Expired : 0) + "</td>"));
+        row.append($("<td>" + (rowData[index].Expired != null ? rowData[index].Expired : 0) + "</td>"));
     }
     function printdiv() {
         $("#saletable").print({

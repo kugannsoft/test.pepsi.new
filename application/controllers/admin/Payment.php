@@ -84,6 +84,10 @@ class Payment extends Admin_Controller {
         // Get the customer code from the URL parameter
         $cus = isset($_GET['cus']) ? $_GET['cus'] : NULL;
         $this->data['customer'] = $cus;
+        $this->data['RouteId'] = $this->db->get_where('customer',['CusCode' =>$cus])->row()->RouteId;
+        
+        $this->data['HandelBy'] = $this->db->get_where('customer', ['CusCode' => $cus])->row()->HandelBy;
+        
     
         // Set page title and breadcrumbs
         $this->page_title->push(('Customer Payment'));
@@ -149,28 +153,28 @@ class Payment extends Admin_Controller {
                                                                           ->get()
                                                                           ->row()->ReturnAmount;
     
-            $this->data['selectedSalesperson'] = $this->db->select('SalesPerson')
-                                                          ->from('customerpaymenthed')
-                                                          ->where('CusCode', $cus)
-                                                          ->get()
-                                                          ->row()->SalesPerson;
-            $this->data['allsalespersonroute'] = $this->db->select('cr.id,cr.name')->from('employeeroutes')
-                                                        ->join('customer_routes cr', 'employeeroutes.route_id = cr.id') 
-                                                        ->where('employeeroutes.emp_id', $this->data['selectedSalesperson'])
-                                                        ->get()
-                                                        ->result();
-            $this->data['allroutecustomer'] = $this->db->select('c.CusCode,c.DisplayName')->from('employeeroutes')
-                                                        ->join('customer_routes cr', 'employeeroutes.route_id = cr.id') 
-                                                        ->join('customer c', 'cr.id = c.RouteId') 
-                                                        ->where('employeeroutes.emp_id', $this->data['selectedSalesperson'])
-                                                        ->get()
-                                                        ->result();
-            $this->data['selectedRoute'] = $this->db->select('RootNo')
-                                                     ->from('customerpaymenthed')
-                                                     ->where('CusCode', $cus)
-                                                     ->get()
-                                                     ->row()->RootNo;
-            $this->data['selectedcus'] = $cus;
+            // $this->data['selectedSalesperson'] = $this->db->select('SalesPerson')
+            //                                               ->from('customerpaymenthed')
+            //                                               ->where('CusCode', $cus)
+            //                                               ->get()
+            //                                               ->row()->SalesPerson;
+            // $this->data['allsalespersonroute'] = $this->db->select('cr.id,cr.name')->from('employeeroutes')
+            //                                             ->join('customer_routes cr', 'employeeroutes.route_id = cr.id') 
+            //                                             ->where('employeeroutes.emp_id', $this->data['selectedSalesperson'])
+            //                                             ->get()
+            //                                             ->result();
+            // $this->data['allroutecustomer'] = $this->db->select('c.CusCode,c.DisplayName')->from('employeeroutes')
+            //                                             ->join('customer_routes cr', 'employeeroutes.route_id = cr.id') 
+            //                                             ->join('customer c', 'cr.id = c.RouteId') 
+            //                                             ->where('employeeroutes.emp_id', $this->data['selectedSalesperson'])
+            //                                             ->get()
+            //                                             ->result();
+            // $this->data['selectedRoute'] = $this->db->select('RootNo')
+            //                                          ->from('customerpaymenthed')
+            //                                          ->where('CusCode', $cus)
+            //                                          ->get()
+            //                                          ->row()->RootNo;
+            // $this->data['selectedcus'] = $cus;
     
             // Set the edit flag
             $this->data['is_edit'] = true; // Flag to indicate that we are editing
@@ -207,7 +211,10 @@ class Payment extends Admin_Controller {
         $id3 = array('CompanyID' => $location);
         $this->data['company'] = $this->Pos_model->get_data_by_where('company', $id3);
         $this->data['salesperson'] = $this->db->select()->from('salespersons')->get()->result();
+        $this->data['routes'] = $this->db->select()->from('customer_routes')->get()->result();
+          $this->data['allroutecustomer'] = $this->db->select('CusCode,DisplayName')->from('customer')->get()->result();
         // Load the view with the prepared data
+       
         $this->template->admin_render('admin/payment/customer-payment', $this->data);
     }
     

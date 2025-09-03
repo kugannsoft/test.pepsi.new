@@ -198,10 +198,10 @@ class Salesinvoice_model extends CI_Model {
             }
             if($return_typeArr[$i] == 2){
                  $this->db->update('productstock',array('Damage'=>$qtyArr[$i]),array('ProductCode'=> $product_codeArr[$i],'Location'=> $location));
-                  $this->db->update('pricestock',array('Damage'=>$qtyArr[$i]),array('ProductCode'=> $product_codeArr[$i],'Price'=> $sell_priceArr[$i],'Location'=> $location));
+                  $this->db->update('pricestock',array('Damage'=>$qtyArr[$i]),array('PSCode'=> $product_codeArr[$i],'Price'=> $sell_priceArr[$i],'PSLocation'=> $location));
             }elseif($return_typeArr[$i] == 3){
                 $this->db->update('productstock',array('Expired'=>$qtyArr[$i]),array('ProductCode'=> $product_codeArr[$i],'Location'=> $location));
-                $this->db->update('pricestock',array('Expired'=>$qtyArr[$i]),array('ProductCode'=> $product_codeArr[$i],'Price'=> $sell_priceArr[$i],'Location'=> $location));
+                $this->db->update('pricestock',array('Expired'=>$qtyArr[$i]),array('PSCode'=> $product_codeArr[$i],'Price'=> $sell_priceArr[$i],'PSLocation'=> $location));
             }else{
                 //update stock
                 $this->db->query("CALL SPP_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$qtyArr[$i]','$price_levelArr[$i]','$cost_priceArr[$i]','$sellPrice','$location','$serial_noArr[$i]','$freeQtyArr[$i]','0','0')");
@@ -212,6 +212,7 @@ class Salesinvoice_model extends CI_Model {
                }
 
             }
+            $this->db->update('tempsalesinvoicehed',array('IsActive'=>0),array('tempInvNo'=>$customerPonumber));
          }
         
         $cashAmount = $_POST['cashAmount'];

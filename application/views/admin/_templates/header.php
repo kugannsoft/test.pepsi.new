@@ -379,6 +379,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         <?php if ($this->router->fetch_class() == 'customer'): ?>
             <script src="<?php echo base_url('assets/plugins/datepicker/bootstrap-datepicker.js'); ?>"></script>
+            <script src="<?php echo base_url($plugins_dir . '/select2/js/select2.min.js'); ?>"></script>
+            <script src="<?php echo base_url($plugins_dir . '/account/accounting.min.js'); ?>"></script>
+            <script src="<?php echo base_url($plugins_dir . '/tablefreez/jquery.freezeheader.js'); ?>"></script>
         <?php endif; ?>
 
         <!--report-->
@@ -390,6 +393,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <script src="<?php echo base_url($plugins_dir . '/tablefreez/jquery.freezeheader.js'); ?>"></script>
             <script src="<?php echo base_url('assets/plugins/daterangepicker/moment.min.js'); ?>"></script>
             <script src="<?php echo base_url('assets/plugins/daterangepicker/daterangepicker.js'); ?>"></script>
+            <script src="<?php echo base_url('assets/frameworks/pos/report.js'); ?>"></script>
              <link rel="stylesheet" href="<?php echo base_url('assets/plugins/daterangepicker/daterangepicker.css'); ?>">
         <?php endif; ?>
         <!--stock-->

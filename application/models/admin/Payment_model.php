@@ -67,10 +67,13 @@ class Payment_model extends CI_Model {
 
 
     public function getCustomersDataById($cusCode) {
-        return $this->db->select('customer.*,customeroutstanding.*')->from('customer')
-            ->where('customer.CusCode', $cusCode)
-            ->join('customeroutstanding', 'customer.CusCode = customeroutstanding.CusCode')
-            ->get()->row();
+        return $this->db->select('customer.*,customeroutstanding.*,customer_routes.name,salespersons.RepName')
+        ->from('customer')
+        ->join('customeroutstanding', 'customer.CusCode = customeroutstanding.CusCode')
+        ->join('salespersons', 'customer.HandelBy = salespersons.RepId')
+        ->join('customer_routes', 'customer.RouteId = customer_routes.id')
+        ->where('customer.CusCode', $cusCode)
+        ->get()->row();
     }
 
 
@@ -224,8 +227,13 @@ class Payment_model extends CI_Model {
 
 
     public function getActiveCusPayment($table, $q,$location,$cusCode) {
+        
         $this->db->select('CusPayNo');
-        $this->db->like('CusPayNo', $q)->where('IsCancel', 0)->where('CusCode', $cusCode)->where('Location', $location)->order_by('CusPayNo', 'DESC');
+        $this->db->like('CusPayNo', $q)
+        ->where('IsCancel', 0)
+        ->where('CusCode', $cusCode)
+        ->where('Location', $location)
+        ->order_by('CusPayNo', 'DESC');
 
         $query = $this->db->get($table);
         if ($query->num_rows() > 0) {

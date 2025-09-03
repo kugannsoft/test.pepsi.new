@@ -650,9 +650,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <li class="<?= active_link_function('salesbydate') ?>">
                                 <a href="<?php echo site_url('admin/report/salesbydate'); ?>">Date wise sale</a>
                             </li>
-                                 <li class="<?= active_link_function('directsalesbyproduct') ?>">
-                                                                <a href="<?php echo site_url('admin/report/directsalesbyproduct'); ?>">Product wise sale</a>
-                                                            </li>
+                            <li class="<?= active_link_function('directsalesbyproduct') ?>">
+                                <a href="<?php echo site_url('admin/report/directsalesbyproduct'); ?>">Product wise sale</a>
+                            </li>
+
+                           
+                                <li class="<?= active_link_function('loadingreport') ?>">
+                                    <a href="<?php echo site_url('admin/report/loadingreport'); ?>">Loading Report</a>
+                                </li>
+                         
                         </ul>
                     </li>
                 </ul>
@@ -807,11 +813,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <a href="<?php echo site_url('admin/report/monthwiseincomereport'); ?>">Monthly Transaction Report</a>
                                 </li>
                             </ul>
-                            <ul class="treeview-menu">
-                                <li class="<?= active_link_function('loadingreport') ?>">
-                                    <a href="<?php echo site_url('admin/report/loadingreport'); ?>">Loading Report</a>
-                                </li>
-                            </ul>
+                           
 <!--                            <ul class="treeview-menu">-->
 <!--                                <li class="--><?php //= active_link_function('routewisereport') ?><!--">-->
 <!--                                    <a href="--><?php //echo site_url('admin/report/routewisereport'); ?><!--">Route Wise Report</a>-->

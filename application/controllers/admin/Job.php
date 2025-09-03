@@ -715,7 +715,7 @@ class Job extends Admin_Controller {
 
         $customers = $this->db->select('customer.CusCode,customer.DisplayName')
             ->from('customer')
-            ->where('RouteId', $routeID)
+            ->where_in('RouteId', $routeID)
             ->where('HandelBy',$newsalesperson)
             ->get()
             ->result();

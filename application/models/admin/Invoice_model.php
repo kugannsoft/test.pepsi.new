@@ -216,9 +216,45 @@ class Invoice_model extends CI_Model {
                 }
                 $new_row['price'] = htmlentities(stripslashes($row['ProductPrice']));
                 $new_row['name'] = htmlentities(stripslashes($row['Prd_Description']));
-                $row_set[] = $new_row; //build an array
+                $row_set[] = $new_row; 
             }
-            echo json_encode($row_set); //format the array into json data
+            echo json_encode($row_set); 
+        }
+    }
+
+
+      public function loadproductjsonreturn($query, $sup, $inv, $pl,$invType) {
+       
+            $query1 = $this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice,product.Prd_UPC AS InvQty,productprice.PL_No,pricestock.Price,pricestock.Stock')
+                            ->from('product')
+                            ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                            ->join(' pricestock', 'pricestock.PSCode = product.ProductCode', 'INNER')
+                            ->where('productprice.PL_No',$pl)
+                            ->like("CONCAT(' ',product.ProductCode,product.Prd_Description)", $query, 'left')
+                            ->limit(50)->get();
+        
+        
+//        
+        if ($query1->num_rows() > 0) {
+            foreach ($query1->result_array() as $row) {
+                if ($row['IsSerial'] == 1) {
+                $new_row['label'] = htmlentities(stripslashes($row['Prd_Description'] . " = Rs." . $row['Price'] . " , Serial - " . $row['SalesSerialNo']));
+                $new_row['serial'] = htmlentities(stripslashes($row['SalesSerialNo']));
+                } else {
+                $new_row['label'] = htmlentities(stripslashes($row['Prd_Description'] . " = Rs." . $row['Price']));
+                }
+
+                $new_row['value'] = htmlentities(stripslashes($row['ProductCode']));
+                if ($sup == 1 && ($inv == '' || $inv == 0)) {
+                    $new_row['qty'] = htmlentities(stripslashes('All'));
+                } elseif ($sup == 0 && ($inv != '' || $inv != 0)) {
+                    $new_row['qty'] = htmlentities(stripslashes($row['InvQty']));
+                }
+                $new_row['price'] = htmlentities(stripslashes($row['Price']));
+                $new_row['name'] = htmlentities(stripslashes($row['Prd_Description']));
+                $row_set[] = $new_row; 
+            }
+            echo json_encode($row_set); 
         }
     }
 

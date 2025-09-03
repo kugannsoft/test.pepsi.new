@@ -44,12 +44,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label">Price Level</label>
                                     <div class="col-sm-7">
-                                            <select tabindex="7" class="form-control" id="priceLevel"> 
-                                                <?php foreach ($plv as $pl) {
-                                                    if ($pl->PL_No == 1) { ?>
-                                                        <option value="<?php echo $pl->PL_No; ?>" selected><?php echo $pl->PriceLevel; ?></option>
-                                                <?php } } ?>
-                                            </select>
+                                        <select tabindex="7" class="form-control" id="priceLevel">
+                                         <?php foreach ($plv as $pl) { ?>
+                                        <option value="<?php echo $pl->PL_No; ?>" <?php if ($pl->PL_No == 1) {echo 'selected';}?>><?php echo $pl->PriceLevel; ?></option>
+                                        <?php } ?></select>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -77,15 +75,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <label for="route" class="col-sm-4 control-label">Routes</label>
                                     <div class="col-sm-7">
                                         <select class="form-control" name="route" id="route" required>
-                                            <option value="">-Select a Route-</option>
-                                            <?php if (!empty($routes)) {
-                                                foreach ($routes as $route) { ?>
-                                                    <option value="<?php echo $route->id; ?>"
-                                                        <?php echo (isset($selectedRoute) && $route->id == $selectedRoute) ? 'selected' : ''; ?>>
-                                                        <?php echo $route->name; ?>
-                                                    </option>
-                                                <?php }
-                                            } ?>
+                                           
                                         </select>
                                     </div>
                                 </div>
@@ -116,10 +106,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <div class="input-group">
 <!--                                          <input type="text" tabindex="1" class="form-control" required="required"  name="customer" id="customer" placeholder="Customer" value="--><?php //echo $customer; ?><!--">-->
                                             <select class="form-control" required="required" name="customer" id="customer" placeholder="customer name">
-                                                <option value="">Select Customer</option>
-                                                <?php foreach ($customers as $customer): ?>
-                                                    <option value="<?= $customer->CusCode ?>"><?= $customer->DisplayName ?></option>
-                                                <?php endforeach; ?>
+                                              
                                             </select>
                                           <span class="input-group-btn">
                                             <button data-target="#customermodal"  id="addNewCustomer" class="btn btn-flat btn-primary pull-right" title="New Customer"><i class="fa fa-user-plus"></i></button>
@@ -439,10 +426,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <div class="form-group">
                                         <div>
                                             <label for="itemCode" class="col-sm-4 control-label"><span class="required"></span></label>
-                                             <div style="padding-left:210px;" class="col-sm-12">&nbsp;
+                                             <!-- <div style="padding-left:210px;" class="col-sm-12">&nbsp;
                                                 <span  style="font-size: 10px;font-weight: bold;">Discount Limit =</span>
                                                 <span id="prodiscountlimit" style="font-size: 10px;font-weight: bold;"></span>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                         <div class="form-group">
@@ -809,34 +796,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 
 
-     $('#newsalesperson').on('change', function() {
-         var salespersonID = $(this).val();
-         if (salespersonID != "0") {
-
-             $.ajax({
-                 url: "<?php echo base_url(); ?>" + "admin/customer/findemploeeroute",
-                 method: 'POST',
-                 data: { salespersonID: salespersonID },
-                 dataType: 'json',
-                 success: function(response) {
-
-                     $('#route').empty();
-                     $('#route').append('<option value="0">-Select-</option>');
-
-                     $.each(response, function(index, routeID) {
-                     console.log(routeID);
-                     $('#route').append('<option value="'+ routeID.route_id +'">'+ routeID.route_name +'</option>');
-                 });
-                 },
-                 error: function(xhr, status, error) {
-                     console.error('Error fetching routes:', error);
-                 }
-             });
-         } else {
-             $('#route').empty();
-             $('#route').append('<option value="0">-Select-</option>');
-         }
-     });
+    
 
 
 

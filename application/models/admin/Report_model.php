@@ -102,57 +102,58 @@ class Report_model extends CI_Model {
         return $this->db->get()->result();
     }
 
-    public function gensalesreportbyroute($startdate, $enddate, $location = NULL, $locationAr = NULL, $invtype, $salesperson = NULL) {
-        // Select columns
-        $this->db->select('customer.CusCode, customer.MobileNo, DATE(salesinvoicehed.SalesDate) AS InvDate, 
-                       salesinvoicedtl.SalesDisValue AS DisAmount, salesinvoicehed.SalesInvNo,
-                       salesinvoicedtl.SalesTotalAmount AS CashAmount,
-                       salesinvoicedtl.SalesVatAmount AS VatAmount,
-                       salesinvoicedtl.SalesNbtAmount AS NbtAmount,
-                       salesinvoicedtl.SalesInvNetAmount AS NetAmount,
-                       salesinvoicedtl.SalesCostPrice AS CostAmount,
-                       salesinvoicedtl.SalesProductCode AS ProCode,
-                       product.Prd_AppearName AS ProName,
-                       customer.CusName, customer.RespectSign');
+ 
+    public function gensalesreportbyroute($startdate, $enddate,$invtype,$salesperson,$routeAr,$customer) {
+      
+            $this->db->select('customer.CusCode,customer.MobileNo,DATE(salesinvoicehed.SalesDate) As InvDate,(salesinvoicehed.SalesDisAmount) AS DisAmount,salesinvoicehed.SalesInvNo,
+                                (salesinvoicehed.SalesCashAmount) AS CashAmount,
+                                (salesinvoicehed.SalesCCardAmount) AS CCardAmount,
+                                (salesinvoicehed.SalesCreditAmount) AS CreditAmount,
+                                (salesinvoicehed.SalesGiftVAmount) AS GiftVAmount,
+                                (salesinvoicehed.SalesLoyaltyAmount) AS LoyaltyAmount,
+                                (salesinvoicehed.SalesStarPoints) AS StarPoints,
+                                (salesinvoicehed.SalesChequeAmount) As ChequeAmount,
+                                (salesinvoicehed.SalesInvAmount) AS InvAmount,
+                                (salesinvoicehed.SalesVatAmount) AS VatAmount,
+                                (salesinvoicehed.SalesNbtAmount) AS NbtAmount,
+                                (salesinvoicehed.SalesNetAmount) AS NetAmount,
+                                (salesinvoicehed.SalesAdvancePayment) AS AdvanceAmount,
+                                (salesinvoicehed.SalesCustomerPayment) AS CustomerPayment,
+                                (salesinvoicehed.SalesCostAmount) AS CostAmount,
+                                (salesinvoicehed.SalesReturnAmount) AS ReturnAmount,customer.CusName,
+                                salesinvoicehed.SalesPerson,
+                                salesinvoicehed.RouteId,
+                                salesinvoicehed.SalesCustomer,
+                                customer.RespectSign,creditinvoicedetails.SettledAmount');
+            $this->db->from('salesinvoicehed');
+            $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
+            // $this->db->join('salesinvoicedtl', 'salesinvoicedtl.SalesInvNo = salesinvoicehed.SalesInvNo', 'INNER');
+            $this->db->join('creditinvoicedetails', 'creditinvoicedetails.InvoiceNo = salesinvoicehed.SalesInvNo', 'left');
+            $this->db->where('DATE(salesinvoicehed.SalesDate) <=', $enddate);
+            $this->db->where('DATE(salesinvoicehed.SalesDate) >=', $startdate);
+            
+            
+            $this->db->where('salesinvoicehed.InvIsCancel', 0);
+            if (isset($invtype) && $invtype != '') {
+                $this->db->where('salesinvoicehed.SalesInvType', $invtype);
+            }
+            
+            if (isset($salesperson) && $salesperson != '') {
+                $this->db->where('salesinvoicehed.SalesPerson', $salesperson);
+            }
 
-        // From tables
-        $this->db->from('salesinvoicehed');
-        $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
-        $this->db->join('salesinvoicedtl', 'salesinvoicedtl.SalesInvNo = salesinvoicehed.SalesInvNo', 'INNER');
-        $this->db->join('product', 'product.ProductCode = salesinvoicedtl.SalesProductCode', 'INNER');
-        $this->db->join('creditinvoicedetails', 'creditinvoicedetails.InvoiceNo = salesinvoicehed.SalesInvNo', 'LEFT');
+            if (isset($routeAr) && $routeAr != '') {
+                $this->db->where_in('salesinvoicehed.RouteId', $routeAr);
+            }
 
-        // Where conditions
-        $this->db->where('DATE(salesinvoicehed.SalesDate) <=', $enddate);
-        $this->db->where('DATE(salesinvoicehed.SalesDate) >=', $startdate);
-        $this->db->where_in('customer_routes.name', $locationAr);
-        $this->db->where('salesinvoicehed.InvIsCancel', 0);
+            if (isset($customer) && $customer != '') {
+                $this->db->where('salesinvoicehed.SalesCustomer', $customer);
+            }
 
-        // Filter by invoice type if provided
-        if (!empty($invtype)) {
-            $this->db->where('salesinvoicehed.SalesInvType', $invtype);
-        }
-
-        // Filter by salesperson if provided
-        if (!empty($salesperson)) {
-            // First, get all customers handled by the specified salesperson
-            $this->db->where('customer.Handelby', $salesperson);
-        }
-
-        if (!empty($route)) {
-            // First, get all customers handled by the specified salesperson
-            $this->db->where('customer.Handelby', $salesperson);
-        }
-
-        // Filter by product if provided
-        if (!empty($product)) {
-            $this->db->where('salesinvoicedtl.SalesProductCode', $product);
-        }
-
-        // Order by SalesDate in descending order
-        $this->db->order_by('salesinvoicehed.SalesDate', 'DESC');
-
-        // Execute query and return results
+            // $this->db->group_by('DATE(SalesInvNo)');
+             $this->db->order_by('salesinvoicehed.SalesDate', 'DESC');
+            // $this->db->limit(50);
+        
         return $this->db->get()->result();
     }
 
@@ -168,6 +169,7 @@ class Report_model extends CI_Model {
                        salesinvoicedtl.SalesCostPrice AS CostAmount,
                        salesinvoicedtl.SalesProductCode AS ProCode,
                        product.Prd_AppearName AS ProName,
+                        salesinvoicedtl.SalesQty AS SalesQty,
                        customer.CusName, customer.RespectSign');
 
         // From tables
@@ -1691,8 +1693,10 @@ class Report_model extends CI_Model {
                             product.Prd_CostPrice,
                             location.location,
                             pricestock.Stock,
-                            
-                            pricestock.Price,pricestock.Expired,pricestock.Damage,
+                            pricestock.UnitCost,
+                            pricestock.Price,
+                            pricestock.Expired,
+                            pricestock.Damage,
                             supplier.SupName');
         $this->db->from('product');
         $this->db->join('supplier', 'supplier.SupCode = product.Prd_Supplier', 'INNER');
@@ -2268,7 +2272,7 @@ foreach($row as $country => $cities) {
         return $list;
     }
 
-    public function customercredit($startdate, $enddate, $route = NULL, $isall,$customer) {
+    public function customercredit($startdate, $enddate, $route, $isall,$customer,$salesperson) {
         
             $this->db->select('customer.MobileNo,creditinvoicedetails.CusCode,
                             DATE(creditinvoicedetails.InvoiceDate) AS InvoiceDate,
@@ -2278,9 +2282,10 @@ foreach($row as $country => $cities) {
                             creditinvoicedetails.SettledAmount,
                             SUM(creditinvoicedetails.returnAmount) AS ReturnAmount,
                             customer.CusName,
-                            
+                            customer.RouteId,
                             customer.Address01,
                             salespersons.RepName,
+                            salespersons.RepID,
                             customer.Address02,
                             jobinvoicehed.JobCardNo,
                             jobinvoicehed.JRegNo');
@@ -2298,8 +2303,11 @@ foreach($row as $country => $cities) {
                 $this->db->where('DATE(creditinvoicedetails.InvoiceDate) >=', $startdate);
                 }
 
+                if (isset($salesperson) && $salesperson != '' ) {
+                $this->db->where('salespersons.RepID',$salesperson);
+                 }
                  if (isset($route) && $route != '' ) {
-                $this->db->where('creditinvoicedetails.Location',$route);
+                $this->db->where_in('customer.RouteId',$route);
                  }
                   if (isset($customer) && $customer != '' ) {
                 $this->db->where('creditinvoicedetails.CusCode',$customer);
@@ -2354,7 +2362,7 @@ foreach($row as $country => $cities) {
               return $this->db->get()->result();
     }
 
-    public function customerpayment($startdate, $enddate, $route = NULL,$isall,$customer) {
+    public function customerpayment($startdate, $enddate, $route ,$isall,$customer,$salesperson) {
         
             $this->db->select('customerpaymenthed.CusPayNo,
                             customerpaymenthed.CusCode,
@@ -2371,10 +2379,13 @@ foreach($row as $country => $cities) {
                             customer.RespectSign,
                             customer.Address01,
                             customer.Address02,
-                            bank.BankName');
+                             customer.RouteId,
+                            bank.BankName,
+                            salespersons.RepID');
                 $this->db->from('customerpaymenthed');
                 $this->db->join('customerpaymentdtl','customerpaymentdtl.CusPayNo=customerpaymenthed.CusPayNo');
                 $this->db->join('customer','customerpaymenthed.CusCode = customer.CusCode');
+                 $this->db->join('salespersons','customerpaymenthed.SalesPerson = salespersons.RepID');
                 $this->db->join('bank','customerpaymentdtl.BankNo = bank.BankCode','left');
                  $this->db->where('customerpaymenthed.IsCancel',0);
 
@@ -2387,10 +2398,13 @@ foreach($row as $country => $cities) {
                 }
             }
                  if (isset($route) && $route != '' ) {
-                $this->db->where('customerpaymenthed.Location',$route);
+                $this->db->where_in(' customer.RouteId',$route);
                  }
                   if (isset($customer) && $customer != '' ) {
                 $this->db->where('customerpaymenthed.CusCode',$customer);
+                  }
+                 if (isset($salesperson) && $salesperson != '' ) {
+                $this->db->where(' salespersons.RepID',$salesperson);
                   }
                    
               return $this->db->get()->result();
@@ -2566,7 +2580,7 @@ foreach($row as $country => $cities) {
 
     ///////////////////////////////////////////////////////////////////////////////////////
 
-    public function customercreditsummary($startdate, $enddate, $route = NULL,$isall,$customer) {
+    public function customercreditsummary($startdate, $enddate, $route,$isall,$customer,$newsalesperson) {
         
             $this->db->select('customer.MobileNo,creditinvoicedetails.CusCode,
                             DATE(creditinvoicedetails.InvoiceDate) AS InvoiceDate,
@@ -2576,12 +2590,13 @@ foreach($row as $country => $cities) {
                             SUM(creditinvoicedetails.SettledAmount) AS SettledAmount,
                             SUM(creditinvoicedetails.returnAmount) AS ReturnAmount,
                             customer.CusName,
-                            
+                            customer.RespectSign,
                             customer.Address01,
                             customer.Address02,
                             jobinvoicehed.JobCardNo,
                             jobinvoicehed.JRegNo,
-                            salespersons.RepName');
+                            salespersons.RepName,
+                            customer.RouteId');
                 $this->db->from('creditinvoicedetails');
                 $this->db->join('jobinvoicehed','creditinvoicedetails.InvoiceNo=jobinvoicehed.JobInvNo','left');
                 $this->db->join('customer','creditinvoicedetails.CusCode = customer.CusCode');
@@ -2590,19 +2605,23 @@ foreach($row as $country => $cities) {
                  $this->db->where('creditinvoicedetails.IsCancel',0);
 //                 $this->db->where('creditinvoicedetails.Type!=',2);
                 if (isset($isall) && $isall == 0 ) {
-                if (isset($enddate) && $enddate != '' ) {
-                $this->db->where('DATE(creditinvoicedetails.InvoiceDate) <=', $enddate);
+                    if (isset($enddate) && $enddate != '' ) {
+                    $this->db->where('DATE(creditinvoicedetails.InvoiceDate) <=', $enddate);
+                    }
+                    if (isset($startdate) && $startdate != '' ) {
+                    $this->db->where('DATE(creditinvoicedetails.InvoiceDate) >=', $startdate);
+                    }
                 }
-                if (isset($startdate) && $startdate != '' ) {
-                $this->db->where('DATE(creditinvoicedetails.InvoiceDate) >=', $startdate);
-                }
-                }
-                 if (isset($route) && $route != '' ) {
-                $this->db->where('creditinvoicedetails.Location',$route);
+                if (isset($newsalesperson) && $newsalesperson != '' ) {
+                    $this->db->where('salespersons.RepID',$newsalesperson);
                  }
-                  if (isset($customer) && $customer != '' ) {
-                $this->db->where('creditinvoicedetails.CusCode',$customer);
-                  } 
+
+                 if (isset($route) && $route != '' ) {
+                    $this->db->where_in(' customer.RouteId',$route);
+                 }
+                if (isset($customer) && $customer != '' ) {
+                    $this->db->where('creditinvoicedetails.CusCode',$customer);
+                } 
 //                $this->db->where('creditinvoicedetails.CreditAmount !=creditinvoicedetails.SettledAmount');
                 $this->db->group_by('creditinvoicedetails.CusCode');
                 $this->db->order_by('customer.CusName', 'ASC');

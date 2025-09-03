@@ -242,7 +242,7 @@ $("#supplier").select2({
         row.append($("<td>" + rowData[index].ProductCode + "</td>"));
         row.append($("<td>" + rowData[index].Prd_Description + "</td>"));
         row.append($("<td>" + rowData[index].location + "</td>"));
-        row.append($("<td>" + rowData[index].Prd_CostPrice + "</td>"));
+        row.append($("<td>" + rowData[index].UnitCost + "</td>"));
         row.append($("<td>" + rowData[index].Price + "</td>"));
         row.append($("<td>" + rowData[index].SupName + "</td>"));
         row.append($("<td>" + rowData[index].Stock + "</td>"));
@@ -253,7 +253,7 @@ $("#supplier").select2({
     function printdiv() {
         $("#saletable").print({
             prepend: "<h3 style='text-align:center'>Product Detail Report</h3><hr/>",
-            title: 'Date vise Sales Report'
+            title: 'Product Detail Report'
         });
     }
 </script>

@@ -200,7 +200,7 @@ class Product extends Admin_Controller {
         $pl = $_POST['prlevel'];
         $location = $_POST['location'];
         $locationS = $_SESSION['location'];
-         $price = $_POST['price'];
+        $price = $_POST['price'];
         $arr['product'] = $this->Product_model->loadproductbypcode($dep, $pl);
         $arr['productstock']  = $this->Product_model->loadproductstockbyid($dep,$locationS);
         $arr['serial'] = $this->Product_model->loadproductbyserialArrayByCode($dep, $pl,$location);

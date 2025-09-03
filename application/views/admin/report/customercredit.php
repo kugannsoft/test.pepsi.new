@@ -16,19 +16,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                         <form id="filterform">
                             <div class="row">
-                                <div class="col-md-3">
-                                    <select class="form-control" name="customer" id="customer">
-                                        <option value="">--select customer--</option>
-                                    </select>
-                                    <input type="hidden" name="route_ar" id="route_ar">
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <label for="isall" class="control-label">
-                                            <input class="rpt_icheck" type="checkbox" name="isall">
-                                            All
-                                        </label>
+                                <div class="col-lg-3">
+                                    <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                                        <i class="fa fa-calendar"></i>&nbsp;
+                                        <span></span>
+                                        <i class="fa fa-caret-down"></i>
                                     </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <select class="form-control" name="newsalesperson" id="newsalesperson">
+                                        <option value="">--select salesperson--</option>
+                                        <?php foreach ($salespersons AS $loc) { ?>
+                                            <option value="<?php echo $loc->RepID ?>"><?php echo $loc->RepName ?>
+                                        </option>
+                                        <?php } ?>
+                                    </select>
                                 </div>
                                 <div class="input-daterange input-group" id="datepicker">
                                     <input type="hidden" class="form-control" name="startdate" id="startdate" >
@@ -36,11 +38,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <input type="hidden" class="form-control" name="enddate" id="enddate" >
                                 </div>
 
-                                <div class="col-lg-3">
-                                    <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-                                        <i class="fa fa-calendar"></i>&nbsp;
-                                        <span></span>
-                                        <i class="fa fa-caret-down"></i>
+                                
+
+
+                                <div class="col-md-2">
+                                    <select class="form-control" name="route" id="route" multiple>
+                                      
+                                    </select>
+                                    <input type="hidden" name="route_ar" id="route_ar">
+                                </div>
+
+                                 <div class="col-md-2">
+                                    <select class="form-control" name="customer" id="customer">
+                                       
+                                    </select>
+                                    
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <label for="isall" class="control-label">
+                                            <input class="rpt_icheck" type="checkbox" name="isall">
+                                            All
+                                        </label>
                                     </div>
                                 </div>
 <!--                                <div class="col-md-2">-->
@@ -197,7 +216,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     });
 
     $("#route").select2({
-        placeholder: "Select a location"
+        placeholder: "Select a Route"
     });
     var loc = [];
     $("#route").change(function() {
@@ -219,11 +238,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             data: $(this).serialize(),
             success: function (data) {
                 $('#saletable tbody').empty();
-                $("#cusName,#address1,#address2,#totalpr,#totalcred,#totalset,totalret,totalret").empty();
+                $("#cusName,#address1,#address2,#totalpr,#totalcred,#totalset,#totalret,#totalout").empty();
                 if(data){
                     var res=JSON.parse(data);
                     drawTable(res.cr);
-                    $('#cusName').html(res.cr[0].CusName);$('#address1').html(res.cr[0].Address01);
+                    $('#cusName').html(res.cr[0].CusName);
+                    $('#address1').html(res.cr[0].Address01);
                     $('#address2').html(res.cr[0].Address02);
                     $('#totalcred').html(accounting.formatMoney(sumcolumn('costamount')));
                     $('#totalset').html(accounting.formatMoney(sumcolumn('totalamount')));

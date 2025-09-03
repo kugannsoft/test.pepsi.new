@@ -125,18 +125,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td>Customer</td>
                                 <td>Inv No</td>
                                 <td>Product</td>
-<!--                                <td>Total Amount</td>-->
+                                <td>Qty</td>
                                 <td>Total Amount</td>
                                 <td>Dis Amount</td>
-<!--                                <td>Vat Amount</td>-->
-<!--                                <td>Nbt Amount</td>-->
-                                <td>net Amount</td>
-<!--                                <td>Card Amount</td>-->
-<!--                                <td>Cheque Amount</td>-->
-<!--                                <td>Advance Amount</td>-->
-<!--                                <td>Credit Amount</td>-->
-<!--                                <td>Return</td>-->
-<!--                                <td>Settled Amount</td>-->
+
+                                <td>Net Amount</td>
+
                             </tr>
                             </thead>
                             <tbody>
@@ -147,19 +141,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <th></th>
                                 <th></th>
                                 <th></th>
-<!--                                <th id="totala" style="text-align: right;color: #00aaf1;"></th>-->
+                                 <th></th>
                                 <th id="totalca" style="text-align: right;color: #00aaf1;"></th>
-                                <th id="totaldia" style="text-align: right;color: #00aaf1;"></th>
-<!--                                <th id="totalvata" style="text-align: right;color: #00aaf1;"></th>-->
-<!--                                <th id="totalnbta" style="text-align: right;color: #00aaf1;"></th>                               -->
+                                <th id="totaldia" style="text-align: right;color: #00aaf1;"></th>                
                                 <th id="totalneta" style="text-align: right;color: #00aaf1;"></th>
                               
-<!--                                <th id="totalcrda" style="text-align: right;color: #00aaf1;"></th>-->
-<!--                                <th id="totalcha" style="text-align: right;color: #00aaf1;"></th>-->
-<!--                                <th id="totalada" style="text-align: right;color: #00aaf1;"></th>-->
-<!--                                <th id="totalcra" style="text-align: right;color: #00aaf1;"></th>-->
-<!--                                <th id="totalrt" style="text-align: right;color: #00aaf1;"></th>-->
-<!--                                <th id="totalsettlle" style="text-align: right;color: #00aaf1;"></th>-->
+
 
                             </tr>
                             <tr>
@@ -168,13 +155,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td></td>
                                 <td></td>
                                 <td></td>
-<!--                                <td></td>-->
-<!--                                <td></td>-->
-<!--                                <td></td>-->
-<!--                                <td></td>-->
-<!--                                <td></td>-->
-<!--                                <td></td>-->
-<!--                                <td></td>-->
+                                 <th></th>
                                 <td colspan="4"></td>
                                 <td id="totalDue" style="color:#f00;font-weight:bold" colspan="2"></td>
                             </tr>
@@ -273,7 +254,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
         row.append($("<td><a href='<?php echo base_url() ?>admin/Salesinvoice/view_sales_invoice/"+Base64.encode(rowData.SalesInvNo)+"' >" + rowData.SalesInvNo + "</a></td>"));
         row.append($("<td class='' align='right'>" + rowData.ProName + "</td>"));
-
+         row.append($("<td class='' align='right'>" + rowData.SalesQty + "</td>"));
         row.append($("<td class='cashamount' align='right'>" + accounting.formatMoney(rowData.CashAmount) + "</td>"));
         row.append($("<td class='disamount' align='right'>" + accounting.formatMoney(rowData.DisAmount) + "</td>"));
 

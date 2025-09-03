@@ -16,14 +16,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             ?>
                             <!-- <b><span class="alert alert-success pull-left" id="lastProduct"></span></b>
                             <a href="<?php echo base_url('admin/Salesinvoice/job_invoice'); ?>"
-                               class="btn btn-flat btn-primary pull-right">Add New Invoice</a> -->
-                        <?php } ?>
+                            class="btn btn-flat btn-primary pull-right">Add New Invoice</a> -->
+                            <?php } ?>
+                        </div>
                     </div>
                 </div>
             </div>
+        </section>
+        <section class="content">
+        <div class="row" style="margin-bottom:10px;">
+            <div class="col-md-3">
+               
+                <select id="filter_salesperson" class="form-control">
+                    <option value="">-- All Salespersons --</option>
+                    <?php foreach ($salespersons as $sp) { ?>
+                        <option value="<?= $sp->RepID ?>"><?= $sp->RepName ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+            <div class="col-md-2">
+                    <select class="form-control" name="route" id="route" multiple>
+                        <option value="">--Select Route--</option>
+                                      
+                    </select>
+                <input type="hidden" name="route_ar" id="route_ar">
+            </div>
         </div>
-    </section>
-    <section class="content">
         <div class="row">
             <div class="col-md-12">
                 <table class="table table-bordered" id="invoicetbl">
@@ -52,58 +70,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 </div>
 
 
-<!--<script type="text/javascript">-->
-<!--	var invoicetbl = $('#invoicetbl').dataTable({-->
-<!--        "processing": true,-->
-<!--        "serverSide": true,-->
-<!--        "searching": true,-->
-<!--        "order": [[6, "desc"]],-->
-<!--        "language": {-->
-<!--            "processing": "<div class='overlay'><i class='fa fa-refresh fa-spin'></i></div>"-->
-<!--        },-->
-<!--        "ajax": {-->
-<!--            "url": "../Salesinvoice/loadallpreorders",-->
-<!--            "type": "POST",-->
-<!--        },-->
-<!--        "columns": [-->
-<!--            {"data": "tempInvNo","visible": true,"searchable": true},-->
-<!--            {"data": "date","visible": true,"searchable": true},-->
-<!--            {"data": "RepName","visible": true,"searchable": true},-->
-<!--            {"data": "name","visible": true,"searchable": true},-->
-<!--            -->
-<!--            {"data": "grossAmount","visible": true,"searchable": false},-->
-<!--            {"data": "isActive",-->
-<!--                "render": function (data, type, row) {-->
-<!--                    return data == 1 ? '<label class="label label-danger">pending</label>'-->
-<!--                                    : '<label class="label label-success">Active</label>';-->
-<!--                }-->
-<!--            },-->
-<!--            {-->
-<!--                "data": "tempInvNo",-->
-<!--                "render": function (data, type, row) {-->
-<!--                    var encodedId = Base64.encode(data ? data.toString() : "");-->
-<!--                    var disabled = --><?php //echo (in_array("SM42", $blockView) || $blockView == null) ? "false" : "true"; ?>//;
-<!--//                    return `<a href="../Salesinvoice/view_sales_pre_orders/${encodedId}" class="btn btn-xs btn-default" ${disabled ? 'disabled="disabled"' : ''}>View</a>`;-->
-<!--//                }-->
-<!--//            }-->
-<!--//        ]-->
-<!--//    });-->
-<!--//-->
-<!--</script> -->
-
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var invoicetbl = $('#invoicetbl').dataTable({
+        var invoicetbl = $('#invoicetbl').DataTable({
             "processing": true,
             "serverSide": true,
+            "searching": false,
             "order": [[0, "desc"]],
             "language": {
                 "processing": "<div class='overlay'><i class='fa fa-refresh fa-spin'></i></div>"
             },
             "ajax": {
                 "url": "../Salesinvoice/loadallpreorders",
-                "type": "POST"
+                "type": "POST",
+                "data": function(d) {
+                    d.salesperson = $('#filter_salesperson').val();
+                    d.route = $('#route_ar').val();
+                }
             },
             "columns":
                 [
@@ -152,56 +136,104 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                 ]
         });
+        $('#filter_salesperson').on('change', function () {
+                invoicetbl.ajax.reload();
+            });
+
+      
+            
+          $('#filter_salesperson').on('change', function() {
+        
+             var salespersonID = $(this).val();
+             if (salespersonID != "0") {
+    
+                 $.ajax({
+                    
+                     url:  "../../admin/customer/findemploeeroute",
+                     method: 'POST',
+                     data: { salespersonID: salespersonID },
+                     dataType: 'json',
+                     success: function(response) {
+    
+                         $('#route').empty();
+                         $('#route').append('<option value="0">-Select-</option>');   url: "../Admin/Controller/Product.php",
+    
+                         $.each(response, function(index, routeID) {
+                         console.log(routeID);
+                         $('#route').append('<option value="'+ routeID.route_id +'">'+ routeID.route_name +'</option>');
+                     });
+                     },
+                     error: function(xhr, status, error) {
+                         console.error('Error fetching routes:', error);
+                     }
+                 });
+             } else {
+                 $('#route').empty();
+                 $('#route').append('<option value="0">-Select-</option>');
+             }
+         });
+
+
+    $("#route").select2({
+        placeholder: "Select a Route"
     });
 
+    var loc = [];
+    $("#route").change(function() {
+        loc.length = 0;
 
-
-
-    var Base64 = {
+        $("#route :selected").each(function() {
+            loc.push($(this).val());
+        });
+        $("#route_ar").val(JSON.stringify(loc));
+        invoicetbl.ajax.reload();
+    });
+            
+            var Base64 = {
         _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
         encode: function(input) {
             var output = "";
             var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
             var i = 0;
-
+            
             input = Base64._utf8_encode(input);
-
+            
             while (i < input.length) {
-
+                
                 chr1 = input.charCodeAt(i++);
                 chr2 = input.charCodeAt(i++);
                 chr3 = input.charCodeAt(i++);
-
+                
                 enc1 = chr1 >> 2;
                 enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
                 enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
                 enc4 = chr3 & 63;
-
+                
                 if (isNaN(chr2)) {
                     enc3 = enc4 = 64;
                 } else if (isNaN(chr3)) {
                     enc4 = 64;
                 }
-
+                
                 output = output +
-                    this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-                    this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-
+                this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
+                this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+                
             }
-
+            
             return output;
         },
-
+        
         decode: function(input) {
             var output = "";
             var chr1, chr2, chr3;
             var enc1, enc2, enc3, enc4;
             var i = 0;
-
+            
             input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-
+            
             while (i < input.length) {
-
+                
                 enc1 = this._keyStr.indexOf(input.charAt(i++));
                 enc2 = this._keyStr.indexOf(input.charAt(i++));
                 enc3 = this._keyStr.indexOf(input.charAt(i++));
@@ -210,32 +242,32 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 chr1 = (enc1 << 2) | (enc2 >> 4);
                 chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
                 chr3 = ((enc3 & 3) << 6) | enc4;
-
+                
                 output = output + String.fromCharCode(chr1);
-
+                
                 if (enc3 != 64) {
                     output = output + String.fromCharCode(chr2);
                 }
                 if (enc4 != 64) {
                     output = output + String.fromCharCode(chr3);
                 }
-
+                
             }
-
+            
             output = Base64._utf8_decode(output);
-
+            
             return output;
-
+            
         },
-
+        
         _utf8_encode: function(string) {
             string = string.replace(/\r\n/g, "\n");
             var utftext = "";
-
+            
             for (var n = 0; n < string.length; n++) {
-
+                
                 var c = string.charCodeAt(n);
-
+                
                 if (c < 128) {
                     utftext += String.fromCharCode(c);
                 }
@@ -248,21 +280,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     utftext += String.fromCharCode(((c >> 6) & 63) | 128);
                     utftext += String.fromCharCode((c & 63) | 128);
                 }
-
+                
             }
-
+            
             return utftext;
         },
-
+        
         _utf8_decode: function(utftext) {
             var string = "";
             var i = 0;
             var c = c1 = c2 = 0;
-
+            
             while (i < utftext.length) {
-
+                
                 c = utftext.charCodeAt(i);
-
+                
                 if (c < 128) {
                     string += String.fromCharCode(c);
                     i++;
@@ -278,12 +310,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
                     i += 3;
                 }
-
+                
             }
-
+            
             return string;
         }
-
+        
     };
-
+    
+    
+    
+    
+});
 </script>

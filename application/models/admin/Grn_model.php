@@ -54,22 +54,23 @@ class Grn_model extends CI_Model {
 
      public function loadproductjson($query,$sup,$supCode,$pLevel) {
             if($sup!=0){
-                $query1 =$this->db->select('product.ProductCode,product.Prd_Description,pricestock.Price,pricestock.Stock')
+                $query1 =$this->db->select('product.ProductCode,product.Prd_Description,pricestock.Price,pricestock.Stock,productprice.PL_No')
                         ->from('product')
-                        //->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                        ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
                         ->join(' pricestock', 'pricestock.PSCode = product.ProductCode', 'INNER')
                         ->where('product.Prd_Supplier', $supCode)
-                        ->where('pricestock.PSPriceLevel', $pLevel)
+                        ->where('productprice.PL_No', $pLevel)
                         ->like("CONCAT(' ',product.ProductCode,product.Prd_Description,product.BarCode)", $query ,'left')
                         ->where('pricestock.Stock !=', 0)
                         ->limit(50)->get();
         
             }else{
+                
                 $query1 =$this->db->select('product.ProductCode,product.Prd_Description,pricestock.Price,pricestock.Stock')
                 ->from('product')
-                //->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
                 ->join(' pricestock', 'pricestock.PSCode = product.ProductCode', 'INNER')
-                ->where('pricestock.PSPriceLevel', $pLevel)
+                ->where('productprice.PL_No', $pLevel)
                 ->like("CONCAT(' ',product.ProductCode,product.Prd_Description,product.BarCode)", $query ,'left')
                 ->where('pricestock.Stock !=', 0)
                 ->limit(50)->get();
@@ -300,17 +301,33 @@ for ($i = 0; $i < count($product_codeArr); $i++) {
     }
     
     public function getActiveGrns($table, $q,$location) {
-        $this->db->select('GRN_No');
-        $this->db->like('GRN_No', $q)->where('GRN_IsCancel', 0)->where('GRN_Location', $location)->order_by('GRN_No', 'DESC');
+   
+        // $this->db->select('GRN_No');
+        // $this->db->like('GRN_No', $q)
+        // ->where('GRN_IsCancel', 0)
+        // ->where('GRN_Location', $location)
+        // ->order_by('GRN_No', 'DESC');
         
-        $query = $this->db->get($table);
+        // $query = $this->db->get($table);
+
+        $this->db->select('goodsreceivenotehed.*,creditgrndetails.IsCloseGRN');
+        $this->db->from('goodsreceivenotehed');
+        $this->db->join('creditgrndetails', 'creditgrndetails.GRNNo = goodsreceivenotehed.GRN_No', 'left');
+        $this->db->like('goodsreceivenotehed.GRN_No', $q);
+        $this->db->where('goodsreceivenotehed.GRN_IsCancel', 0);
+        $this->db->where('goodsreceivenotehed.GRN_Location', $location);
+         $this->db->where('creditgrndetails.IsCloseGRN', 0);
+        $this->db->order_by('goodsreceivenotehed.GRN_No', 'DESC');
+
+    $query = $this->db->get();
+   
         if ($query->num_rows() > 0) {
             foreach ($query->result_array() as $row) {
                 $new_row['label'] = htmlentities(stripslashes($row['GRN_No']));
                 $new_row['value'] = htmlentities(stripslashes($row['GRN_No']));
-                $row_set[] = $new_row; //build an array
+                $row_set[] = $new_row; 
             }
-            echo json_encode($row_set); //format the array into json data
+            echo json_encode($row_set); 
         }
     }
 

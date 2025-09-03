@@ -140,6 +140,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <input type="hidden" tabindex="5" name="vididateCreditLimit" id="vididateCreditLimit" class="form-control" />
                                         <input type="hidden" tabindex="6"  min="0" step="200" name="additional" value="0" id="additional" class="form-control" />
                                         <input type="hidden" tabindex="5" name="discountLimit" id="discountLimit" class="form-control" />
+                                         <input type="hidden" tabindex="5" name="newsalesperson" id="newsalesperson" class="form-control" />
+                                        <input type="hidden" tabindex="5" name="route" id="route" class="form-control" />
                                     </div>
                                     <div class="col-sm-4">
                                         Credit Limit : <span id="creditLimit"></span><br>
@@ -147,8 +149,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         Available Limit : <span id="availableCreditLimit"></span>
                                     </div>
                                     <div class="col-sm-4">
-                                        Salesperson : <span id="newsalesperson"></span><br>
-                                        Route : <span id="route"></span> <br>
+                                        Salesperson : <span id="hnewsalesperson"></span><br>
+                                        Route : <span id="hroute"></span> <br>
 
                                     </div>
                                 </div>

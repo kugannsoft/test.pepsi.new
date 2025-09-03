@@ -7,6 +7,7 @@ class Salesinvoice extends Admin_Controller {
         /* Load :: Common */
         $this->load->helper('number');
         $this->load->model('admin/Job_model');
+        $this->load->model('admin/Report_model');
         date_default_timezone_set("Asia/Colombo");
          $this->load->library('Datatables');
 
@@ -486,6 +487,7 @@ class Salesinvoice extends Admin_Controller {
                  ->where('salesinvoicedtl.SalesInvNo', $invNo)
                  ->order_by('salesinvoicedtl.SalesInvLineNo','ASC')
                  ->get()->result();
+            
              //invoice cancel
              $this->data['invCancel']=$this->db->select('cancelsalesinvoice.*,users.first_name,users.last_name')->from('cancelsalesinvoice')->join('users', 'cancelsalesinvoice.CancelUser = users.id', 'INNER')->where('cancelsalesinvoice.SalesInvoiceNo', $invNo)->order_by('CancelDate','DESC')->get()->row();
 
@@ -543,11 +545,24 @@ class Salesinvoice extends Admin_Controller {
             
 
             $this->data['invType']= $this->db->select('SalesInvType')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row();
-            $this->data['SalesPerson']= $this->db->select('SalesPerson')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row();
+            $this->data['SalesPerson']= $this->db->select('salesinvoicehed.SalesPerson,salespersons.RepName,customer_routes.name')
+            ->from('salesinvoicehed')
+            ->join('salespersons','salespersons.RepId = salesinvoicehed.SalesPerson','left')
+            ->join('customer_routes','customer_routes.id = salesinvoicehed.RouteId','left')
+            ->where('SalesInvNo',$invNo)->get()->row();
+            
+      
+
+             $this->data['itemCount'] = $this->db
+            ->where('SalesInvNo', $invNo)
+            ->count_all_results('salesinvoicedtl');
 
             $this->data['invHed']= $this->db->select('salesinvoicehed.*,users.first_name,users.last_name,users.last_name ,vehicle_company.VComName')
-                ->from('salesinvoicehed')->join('users','salesinvoicehed.SalesInvUser=users.id','left')->join('vehicle_company','vehicle_company.VComId=salesinvoicehed.SalesInsCompany','left')
+                ->from('salesinvoicehed')
+                ->join('users','salesinvoicehed.SalesInvUser=users.id','left')
+                ->join('vehicle_company','vehicle_company.VComId=salesinvoicehed.SalesInsCompany','left')
                 ->where('SalesInvNo',$invNo)->get()->row();
+
             $IsPayment =  $this->db->select('InvNo')->from('invoicesettlementdetails')->where('InvNo',$invNo)->get()->num_rows();
             if($IsPayment>0){
                  $this->data['ispayment']=$IsPayment;
@@ -556,12 +571,30 @@ class Salesinvoice extends Admin_Controller {
             }
             $cusCode =  $this->db->select('SalesCustomer')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row()->SalesCustomer;
             $regNo =  $this->db->select('SalesVehicle')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row()->SalesVehicle;
-                
+            
+            $this->data['creditInvoiceList'] = $this->db->select('*')
+            ->from('creditinvoicedetails')
+            ->where('CusCode', $cusCode)
+            ->where('IsCancel', 0)
+            ->where('creditinvoicedetails.InvoiceNo <', $invNo) 
+            ->order_by('InvoiceDate', 'DESC')
+            ->get()
+            ->result();
+
+        
+        $this->data['cusOutstanding'] = $this->db->select('*')
+            ->from('customeroutstanding')
+            ->where('CusCode', $cusCode)
+            ->get()
+            ->row();
+
+
             $this->data['invCus']= $this->db->select('customer.*')->from('customer')->where('customer.CusCode',$cusCode)->get()->row();
             $this->data['invVehi']= $this->db->select('vehicledetail.ChassisNo,vehicledetail.contactName,make.make,model.model')->from('vehicledetail')->join('make','make.make_id=vehicledetail.Make','left')->join('model','model.model_id=vehicledetail.Model','left')->where('CusCode',$cusCode)->where('vehicledetail.RegNo',$regNo)->get()->row();
 
             $this->data['invSales']= $this->db->select('salespersons.RepName')
-                ->from('salesinvoicedtl')->join('salespersons', 'salesinvoicedtl.SalesPerson = salespersons.RepID', 'left')->where('salesinvoicedtl.SalesInvNo',$invNo)->get()->row();
+                ->from('salesinvoicedtl')->join('salespersons', 'salesinvoicedtl.SalesPerson = salespersons.RepID', 'left')
+                ->where('salesinvoicedtl.SalesInvNo',$invNo)->get()->row();
 
                 $this->data['invDtl']=$this->db->select('salesinvoicedtl.*,product.*,warranty_typs.*')
                     ->from('salesinvoicedtl')
@@ -570,6 +603,7 @@ class Salesinvoice extends Admin_Controller {
                     ->where('salesinvoicedtl.SalesInvNo', $invNo)
                     ->order_by('salesinvoicedtl.SalesInvLineNo','ASC')
                     ->get()->result();
+                   
              //invoice cancel
              $this->data['invCancel']=$this->db->select('cancelsalesinvoice.*,users.first_name,users.last_name')->from('cancelsalesinvoice')->join('users', 'cancelsalesinvoice.CancelUser = users.id', 'INNER')->where('cancelsalesinvoice.SalesInvoiceNo', $invNo)->order_by('CancelDate','DESC')->get()->row();
 
@@ -579,7 +613,10 @@ class Salesinvoice extends Admin_Controller {
             $this->data['invDtlArr']=$this->Salesinvoice_model->getSalesInvoiceDtlbyid($invNo);
             $this->data['returnDtlArr']=$this->Salesinvoice_model->getSalesReturnDtlbyid($invNo);
 
-             $this->data['sale']=$this->db->select('salesinvoicehed.*,salesinvoicepaydtl.*')->from('salesinvoicehed')->join('salesinvoicepaydtl','salesinvoicepaydtl.SalesInvNo=salesinvoicehed.SalesInvNo')->where('salesinvoicehed.SalesCustomer',$cusCode)->where('salesinvoicehed.InvIsCancel',0)->get()->result();
+             $this->data['sale']=$this->db->select('salesinvoicehed.*,salesinvoicepaydtl.*')
+             ->from('salesinvoicehed')
+             ->join('salesinvoicepaydtl','salesinvoicepaydtl.SalesInvNo=salesinvoicehed.SalesInvNo')
+             ->where('salesinvoicehed.SalesCustomer',$cusCode)->where('salesinvoicehed.InvIsCancel',0)->get()->result();
 // print_r($this->data['returnDtlArr']);die;
            // $this->data['invType']= $this->db->select('SalesInvType')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->result();
             
@@ -893,7 +930,8 @@ class Salesinvoice extends Admin_Controller {
     public function loadproductjson() {
         
         $query = $_GET['q'];
-        $sup= 0;$supCode= '';
+        $sup= 0;
+        $supCode= '';
         $pl = $_GET['price_level'];
          $this->load->model('admin/Grn_model');
         echo $this->Grn_model->loadproductjson($query,$sup,$supCode,$pl);
@@ -1570,6 +1608,7 @@ $arr[] =null;
                         'JobLocation'=> $location,
                         'JobDescription' => $descArr[$i],
                         'SalesSerialNo' => $serialArray[$i],
+                        'JobQty' => $qtyArr[$i],
                         'JobQty' => $qtyArr[$i],
                         'JobPrice' => $sell_priceArr[$i],
                         'JobCost' => $costPriceArr[$i],
@@ -2891,7 +2930,7 @@ $arr[] =null;
     }
 
     public function saveNewSalesInvoice() {
-
+      
         $location=$_SESSION['location'];
         $this->load->model('admin/Salesinvoice_model');
 
@@ -3272,11 +3311,12 @@ $arr[] =null;
                             }
 
                             $proCode = $row['SalesProductCode'];
-                            $totalGrnQty = $row['SalesQty'];
+                            $totalGrnQty = $row['SalesQty'] + $row['SalesFreeQty'];
                             $loc = $row['SalesInvLocation'];
                             $pl = $row['SalesPriceLevel'];
                             $costp = $row['SalesCostPrice'];
                             $selp = $row['SalesUnitPrice'];
+                         
 
                             //update price stock
                             $this->db->query("CALL SPT_UPDATE_PRICE_STOCK('$proCode','$totalGrnQty','$pl','$costp','$selp','$loc')");
@@ -3369,11 +3409,12 @@ $arr[] =null;
                                 }
 
                                 $proCode = $row['SalesProductCode'];
-                                $totalGrnQty = $row['SalesQty'];
+                                $totalGrnQty = $row['SalesQty'] + $row['SalesFreeQty'];
                                 $loc = $row['SalesInvLocation'];
                                 $pl = $row['SalesPriceLevel'];
                                 $costp = $row['SalesCostPrice'];
                                 $selp = $row['SalesUnitPrice'];
+                              
 
                                 //update price stock
                                 $this->db->query("CALL SPT_UPDATE_PRICE_STOCK('$proCode','$totalGrnQty','$pl','$costp','$selp','$loc')");
@@ -4350,6 +4391,8 @@ public function all_delivery_note() {
         $this->breadcrumbs->unshift(1, 'Job Card', 'admin/job/view_job');
         $this->breadcrumbs->unshift(1, 'Create Job Card', 'admin/Job/index');
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
+         $this->data['salespersons'] = $this->Report_model->loademployee();
+         
 
         $location = $_SESSION['location'];
 
@@ -4376,12 +4419,23 @@ public function all_delivery_note() {
 
     public function loadallpreorders() {
         $this->load->library('Datatables');
+        $salesperson = $this->input->post('salesperson');
+       
+        $routeAr = isset($_POST['route']) ? json_decode($_POST['route']) : NULL;
 
-        $this->datatables->select('tempsalesinvoicehed.*, salespersons.RepName, customer_routes.name');
+        $this->datatables->select('tempsalesinvoicehed.*, salespersons.RepName, customer_routes.name,customer_routes.id');
         $this->datatables->from('tempsalesinvoicehed');
         $this->datatables->join('customer', 'customer.CusCode = tempsalesinvoicehed.customerId');
         $this->datatables->join('customer_routes', 'customer_routes.id = customer.RouteId');
         $this->datatables->join('salespersons', 'salespersons.RepID = customer.HandelBy');
+        $this->datatables->where('tempsalesinvoicehed.IsActive',1);
+         if (!empty($salesperson)) {
+            $this->datatables->where('salespersons.RepID', $salesperson);
+        }
+
+       if (!empty($routeAr)) {
+            $this->db->where_in('customer_routes.id', $routeAr);
+        }
 
         echo $this->datatables->generate();
         die();
@@ -4477,9 +4531,12 @@ public function all_delivery_note() {
 
         $orderNo = $this->input->post('customerOderNo');
 
-        $arr['orderHed'] = $this->db->select('tempsalesinvoicehed.*,customer.CusCode,customer.DisplayName,customer.MobileNo,customer.LanLineNo')
+        $arr['orderHed'] = $this->db->select('tempsalesinvoicehed.*,customer.CusCode,customer.DisplayName,customer.MobileNo,customer.LanLineNo,
+        salespersons.RepName,customer_routes.name,salespersons.RepId,customer_routes.id')
                             ->from('tempsalesinvoicehed')
                             ->join('customer', 'customer.CusCode = tempsalesinvoicehed.customerId')
+                            ->join('salespersons', 'salespersons.RepId = customer.HandelBy')
+                            ->join('customer_routes', 'customer_routes.id = customer.RouteId')
                             ->where('tempInvNo', $orderNo)
                             ->get()
                             ->row();

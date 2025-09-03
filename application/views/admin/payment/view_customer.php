@@ -109,9 +109,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                         <?php if ($cus->IsActive == 1) { ?>
 <!--                                            <a class="list-group-item" href="--><?php //echo base_url('admin/Salesinvoice/addSalesInvoice?cus=').$cus->CusCode; ?><!--" class="btn btn-xs btn-default"><b>Sales Invoice</b> <span class="pull-right"><i class="fa fa-plus "></i></span></a>-->
-<!---->
-<!--                                            <a class="list-group-item" href="--><?php //echo base_url('admin/payment/cus_payment?cus=').$cus->CusCode; ?><!--" class="btn btn-xs btn-default">Payment <span class="pull-right"><i class="fa fa-plus "></i></span></a>-->
-                                            <a class="list-group-item" href="<?php echo base_url('admin/payment/customer_statement?CusCode=').$cus->CusCode; ?>" class="btn btn-xs btn-default">Statement <span class="pull-right"><i class="glyphicon glyphicon-eye-open"></i></span></a>
+
+                                            <a class="list-group-item" href="<?php echo base_url('admin/payment/cus_payment?cus=').$cus->CusCode; ?>" class="btn btn-xs btn-default">Payment <span class="pull-right"><i class="fa fa-plus "></i></span></a>
+                                            <!-- <a class="list-group-item" href="<?php echo base_url('admin/payment/customer_statement?CusCode=').$cus->CusCode; ?>" class="btn btn-xs btn-default">Statement <span class="pull-right"><i class="glyphicon glyphicon-eye-open"></i></span></a> -->
                                             <!-- <a class="list-group-item" href="#" class="btn btn-xs btn-default"  data-target="#vehiclemodal"  id="addNewVehicle" >New Vehicle <span class="pull-right"><i class="fa fa-car"></i></span></a> -->
                                         <?php } ?>
 

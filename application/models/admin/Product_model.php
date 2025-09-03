@@ -383,12 +383,12 @@ class Product_model extends CI_Model {
        public function loadpricestockbyid($product,$location,$price,$pl)
     {
        
-            return $this->db->select('Stock,Price,UnitCost')
+            return $this->db->select('Stock,Price,UnitCost,WholesalesPrice')
             ->from('pricestock')
             ->where('PSCode', $product)
             ->where('PSLocation', $location)
             ->where('Price', $price)
-            ->where('PSPriceLevel', $pl)
+            // ->where('PSPriceLevel', $pl)
             ->get()->row();
         
         

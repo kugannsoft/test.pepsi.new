@@ -1,3 +1,3 @@
 Company,ProductCode,ProductName,Price
 
-Sathutu Lanka (Pvt) Ltd,100037,KUGAN PRO,400
+Sathutu Lanka (Pvt) Ltd,100020,MIRINDA - 400ML,165
