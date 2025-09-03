@@ -1,0 +1,38 @@
+.productmaparea{
+    padding: 10px;
+    background: #bcddff;
+}
+.pricelevelarea{
+    padding: 10px;
+    background: #D0D0D0;
+}
+ /*scrollbar touch support*/
+.nscroll::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+    background-color: #F5F5F5;
+}
+
+.nscroll::-webkit-scrollbar
+{
+    width: 40px;
+    background-color: #F5F5F5;
+}
+
+.nscroll::-webkit-scrollbar-thumb
+{
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #999;
+}
+.myclose {
+    color: #E13300;
+    font-size: 35px;
+}
+.stockout{
+    background: #e4b9c0;
+}
+.select2-container{
+    width: 100% !important;
+}

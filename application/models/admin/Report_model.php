@@ -102,178 +102,120 @@ class Report_model extends CI_Model {
         return $this->db->get()->result();
     }
 
-    public function gensalesreportbyroute($startdate, $enddate, $location = NULL,$locationAr = NULL,$invtype,$salesperson= NULL) {
-        if (isset($location) && $location != '') {
-            $this->db->select('customer.CusCode,customer.MobileNo,DATE(salesinvoicehed.SalesDate) As InvDate,(salesinvoicehed.SalesDisAmount) AS DisAmount,salesinvoicehed.SalesInvNo,
-                                (salesinvoicehed.SalesCashAmount) AS CashAmount,
-                                (salesinvoicehed.SalesCCardAmount) AS CCardAmount,
-                                (salesinvoicehed.SalesCreditAmount) AS CreditAmount,
-                                (salesinvoicehed.SalesGiftVAmount) AS GiftVAmount,
-                                (salesinvoicehed.SalesLoyaltyAmount) AS LoyaltyAmount,
-                                (salesinvoicehed.SalesStarPoints) AS StarPoints,
-                                (salesinvoicehed.SalesChequeAmount) As ChequeAmount,
-                                (salesinvoicehed.SalesInvAmount) AS InvAmount,
-                                (salesinvoicehed.SalesVatAmount) AS VatAmount,
-                                (salesinvoicehed.SalesNbtAmount) AS NbtAmount,
-                                (salesinvoicehed.SalesNetAmount) AS NetAmount,
-                                (salesinvoicehed.SalesAdvancePayment) AS AdvanceAmount,
-                                (salesinvoicehed.SalesCustomerPayment) AS CustomerPayment,
-                                (salesinvoicehed.SalesCostAmount) AS CostAmount,
-                                (salesinvoicehed.SalesReturnAmount) AS ReturnAmount,customer.CusName,
-                                customer.RespectSign,creditinvoicedetails.SettledAmount');
-            $this->db->from('salesinvoicehed');
-            $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
-            // $this->db->join('salesinvoicedtl', 'salesinvoicedtl.SalesInvNo = salesinvoicehed.SalesInvNo', 'INNER');
-            $this->db->join('creditinvoicedetails', 'creditinvoicedetails.InvoiceNo = salesinvoicehed.SalesInvNo', 'left');
-            $this->db->where('DATE(salesinvoicehed.SalesDate) <=', $enddate);
-            $this->db->where('DATE(salesinvoicehed.SalesDate) >=', $startdate);
-            $this->db->where_in('salesinvoicehed.SalesLocation', $locationAr);
-            $this->db->where('salesinvoicehed.InvIsCancel', 0);
-            if (isset($invtype) && $invtype != '') {
-                $this->db->where('salesinvoicehed.SalesInvType', $invtype);
-            }
-            
-            if (isset($salesperson) && $salesperson != '') {
-                $this->db->where('salesinvoicehed.SalesPerson', $salesperson);
-            }
+    public function gensalesreportbyroute($startdate, $enddate, $location = NULL, $locationAr = NULL, $invtype, $salesperson = NULL) {
+        // Select columns
+        $this->db->select('customer.CusCode, customer.MobileNo, DATE(salesinvoicehed.SalesDate) AS InvDate, 
+                       salesinvoicedtl.SalesDisValue AS DisAmount, salesinvoicehed.SalesInvNo,
+                       salesinvoicedtl.SalesTotalAmount AS CashAmount,
+                       salesinvoicedtl.SalesVatAmount AS VatAmount,
+                       salesinvoicedtl.SalesNbtAmount AS NbtAmount,
+                       salesinvoicedtl.SalesInvNetAmount AS NetAmount,
+                       salesinvoicedtl.SalesCostPrice AS CostAmount,
+                       salesinvoicedtl.SalesProductCode AS ProCode,
+                       product.Prd_AppearName AS ProName,
+                       customer.CusName, customer.RespectSign');
 
-            // $this->db->group_by('DATE(SalesInvNo)');
-             $this->db->order_by('salesinvoicehed.SalesDate', 'DESC');
-            // $this->db->limit(50);
-        } else {
-            $this->db->select('customer.MobileNo,customer.CusCode,DATE(salesinvoicehed.SalesDate) As InvDate,(salesinvoicehed.SalesDisAmount) AS DisAmount,salesinvoicehed.SalesInvNo,
-                                (salesinvoicehed.SalesCashAmount) AS CashAmount,
-                                (salesinvoicehed.SalesCCardAmount) AS CCardAmount,
-                                (salesinvoicehed.SalesCreditAmount) AS CreditAmount,
-                                (salesinvoicehed.SalesGiftVAmount) AS GiftVAmount,
-                                (salesinvoicehed.SalesLoyaltyAmount) AS LoyaltyAmount,
-                                (salesinvoicehed.SalesStarPoints) AS StarPoints,
-                                (salesinvoicehed.SalesChequeAmount) As ChequeAmount,
-                                (salesinvoicehed.SalesInvAmount) AS InvAmount,
-                                (salesinvoicehed.SalesVatAmount) AS VatAmount,
-                                (salesinvoicehed.SalesNbtAmount) AS NbtAmount,
-                                (salesinvoicehed.SalesNetAmount) AS NetAmount,
-                                (salesinvoicehed.SalesAdvancePayment) AS AdvanceAmount,
-                                (salesinvoicehed.SalesCustomerPayment) AS CustomerPayment,
-                                (salesinvoicehed.SalesCostAmount) AS CostAmount,
-                                (salesinvoicehed.SalesReturnAmount) AS ReturnAmount,customer.CusName,
-                                customer.RespectSign,creditinvoicedetails.SettledAmount');
-            $this->db->from('salesinvoicehed');
-            $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
-            // $this->db->join('salesinvoicedtl', 'salesinvoicedtl.SalesInvNo = salesinvoicehed.SalesInvNo', 'INNER');
-            $this->db->join('creditinvoicedetails', 'creditinvoicedetails.InvoiceNo = salesinvoicehed.SalesInvNo', 'left');
-            $this->db->where('DATE(salesinvoicehed.SalesDate) <=', $enddate);
-            $this->db->where('DATE(salesinvoicehed.SalesDate) >=', $startdate);
-            $this->db->where('salesinvoicehed.InvIsCancel', 0);
-            if (isset($invtype) && $invtype != '') {
-                $this->db->where('salesinvoicehed.SalesInvType', $invtype);
-            }
+        // From tables
+        $this->db->from('salesinvoicehed');
+        $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
+        $this->db->join('salesinvoicedtl', 'salesinvoicedtl.SalesInvNo = salesinvoicehed.SalesInvNo', 'INNER');
+        $this->db->join('product', 'product.ProductCode = salesinvoicedtl.SalesProductCode', 'INNER');
+        $this->db->join('creditinvoicedetails', 'creditinvoicedetails.InvoiceNo = salesinvoicehed.SalesInvNo', 'LEFT');
 
-            if (isset($salesperson) && $salesperson != '') {
-                $this->db->where('salesinvoicehed.SalesPerson', $salesperson);
-            }
-            
-            
-             $this->db->order_by('salesinvoicehed.SalesDate', 'DESC');
-            // $this->db->group_by('salesinvoicehed.SalesInvNo');
-            // $this->db->order_by('SalesDate', 'DESC');
-            // $this->db->limit(50);
+        // Where conditions
+        $this->db->where('DATE(salesinvoicehed.SalesDate) <=', $enddate);
+        $this->db->where('DATE(salesinvoicehed.SalesDate) >=', $startdate);
+        $this->db->where_in('customer_routes.name', $locationAr);
+        $this->db->where('salesinvoicehed.InvIsCancel', 0);
+
+        // Filter by invoice type if provided
+        if (!empty($invtype)) {
+            $this->db->where('salesinvoicehed.SalesInvType', $invtype);
         }
+
+        // Filter by salesperson if provided
+        if (!empty($salesperson)) {
+            // First, get all customers handled by the specified salesperson
+            $this->db->where('customer.Handelby', $salesperson);
+        }
+
+        if (!empty($route)) {
+            // First, get all customers handled by the specified salesperson
+            $this->db->where('customer.Handelby', $salesperson);
+        }
+
+        // Filter by product if provided
+        if (!empty($product)) {
+            $this->db->where('salesinvoicedtl.SalesProductCode', $product);
+        }
+
+        // Order by SalesDate in descending order
+        $this->db->order_by('salesinvoicehed.SalesDate', 'DESC');
+
+        // Execute query and return results
         return $this->db->get()->result();
     }
 
-    public function gensalesreportbyrouteforproduct($startdate, $enddate, $location = NULL,$locationAr = NULL,$invtype,$salesperson= NULL,$product= NULL,$department= NULL,$subdepartment= NULL) {
-//       var_dump($department,$subdepartment);die();
-        if (isset($location) && $location != '') {
-            $this->db->select('customer.MobileNo,customer.CusCode,DATE(salesinvoicehed.SalesDate) As InvDate,(salesinvoicedtl.SalesDisValue) AS DisAmount,salesinvoicehed.SalesInvNo,
-                                (salesinvoicedtl.SalesTotalAmount) AS CashAmount,
-                                (salesinvoicedtl.SalesVatAmount) AS VatAmount,
-                                (salesinvoicedtl.SalesNbtAmount) AS NbtAmount,
-                                (salesinvoicedtl.SalesInvNetAmount) AS NetAmount,
-                                (salesinvoicedtl.SalesCostPrice) AS CostAmount,
-                                (salesinvoicedtl.SalesProductCode) AS ProCode,
-                                (product.Prd_AppearName) AS ProName,
-                                customer.CusName,
-                                customer.RespectSign');
-            $this->db->from('salesinvoicehed');
-            $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
-             $this->db->join('salesinvoicedtl', 'salesinvoicedtl.SalesInvNo = salesinvoicehed.SalesInvNo', 'INNER');
-            $this->db->join('product', 'product.ProductCode = salesinvoicedtl.SalesProductCode', 'INNER');
-            $this->db->join('creditinvoicedetails', 'creditinvoicedetails.InvoiceNo = salesinvoicehed.SalesInvNo', 'left');
-            $this->db->where('DATE(salesinvoicehed.SalesDate) <=', $enddate);
-            $this->db->where('DATE(`salesinvoicehed`.SalesDate) >=', $startdate);
-            $this->db->where_in('salesinvoicehed.SalesLocation', $locationAr);
-            $this->db->where('salesinvoicehed.InvIsCancel', 0);
-            if (isset($invtype) && $invtype != '') {
-                $this->db->where('salesinvoicehed.SalesInvType', $invtype);
-            }
 
-            if (isset($salesperson) && $salesperson != '') {
-                $this->db->where('salesinvoicehed.SalesPerson', $salesperson);
-            }
+    public function gensalesreportbyrouteforproduct($startdate, $enddate, $location = NULL, $locationAr = NULL, $invtype, $salesperson = NULL, $product = NULL, $department = NULL, $subdepartment = NULL) {
+        // Select columns
+        $this->db->select('customer.CusCode, customer.MobileNo, DATE(salesinvoicehed.SalesDate) AS InvDate, 
+                       salesinvoicedtl.SalesDisValue AS DisAmount, salesinvoicehed.SalesInvNo,
+                       salesinvoicedtl.SalesTotalAmount AS CashAmount,
+                       salesinvoicedtl.SalesVatAmount AS VatAmount,
+                       salesinvoicedtl.SalesNbtAmount AS NbtAmount,
+                       salesinvoicedtl.SalesInvNetAmount AS NetAmount,
+                       salesinvoicedtl.SalesCostPrice AS CostAmount,
+                       salesinvoicedtl.SalesProductCode AS ProCode,
+                       product.Prd_AppearName AS ProName,
+                       customer.CusName, customer.RespectSign');
 
-            if (isset($product) && $product != '') {
-                $this->db->where('salesinvoicedtl.SalesProductCode', $product);
-            }
+        // From tables
+        $this->db->from('salesinvoicehed');
+        $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
+        $this->db->join('salesinvoicedtl', 'salesinvoicedtl.SalesInvNo = salesinvoicehed.SalesInvNo', 'INNER');
+        $this->db->join('product', 'product.ProductCode = salesinvoicedtl.SalesProductCode', 'INNER');
+        $this->db->join('creditinvoicedetails', 'creditinvoicedetails.InvoiceNo = salesinvoicehed.SalesInvNo', 'LEFT');
 
-            if (isset($department) && $department != '') {
-                $this->db->where('product.DepCode', $department);
-            }
+        // Where conditions
+        $this->db->where('DATE(salesinvoicehed.SalesDate) <=', $enddate);
+        $this->db->where('DATE(salesinvoicehed.SalesDate) >=', $startdate);
+        $this->db->where_in('salesinvoicehed.SalesLocation', $locationAr);
+        $this->db->where('salesinvoicehed.InvIsCancel', 0);
 
-            if (isset($subdepartment) && $subdepartment != '') {
-                $this->db->where('product.SubDepCode', $subdepartment);
-            }
-
-            // $this->db->group_by('DATE(SalesInvNo)');
-            $this->db->order_by('salesinvoicehed.SalesDate', 'DESC');
-            // $this->db->limit(50);
-        } else {
-            $this->db->select('customer.MobileNo,customer.CusCode,DATE(salesinvoicehed.SalesDate) As InvDate,(salesinvoicedtl.SalesDisValue) AS DisAmount,salesinvoicehed.SalesInvNo,
-                                (salesinvoicedtl.SalesTotalAmount) AS CashAmount,
-                                (salesinvoicedtl.SalesVatAmount) AS VatAmount,
-                                (salesinvoicedtl.SalesNbtAmount) AS NbtAmount,
-                                (salesinvoicedtl.SalesInvNetAmount) AS NetAmount,
-                                (salesinvoicedtl.SalesCostPrice) AS CostAmount,
-                                (salesinvoicedtl.SalesProductCode) AS ProCode,
-                                (product.Prd_AppearName) AS ProName,
-                                customer.CusName,
-                                customer.RespectSign');
-            $this->db->from('salesinvoicehed');
-            $this->db->join('customer', 'customer.CusCode = salesinvoicehed.SalesCustomer', 'INNER');
-             $this->db->join('salesinvoicedtl', 'salesinvoicedtl.SalesInvNo = salesinvoicehed.SalesInvNo', 'INNER');
-            $this->db->join('product', 'product.ProductCode = salesinvoicedtl.SalesProductCode', 'INNER');
-            $this->db->join('creditinvoicedetails', 'creditinvoicedetails.InvoiceNo = salesinvoicehed.SalesInvNo', 'left');
-            $this->db->where('DATE(salesinvoicehed.SalesDate) <=', $enddate);
-            $this->db->where('DATE(salesinvoicehed.SalesDate) >=', $startdate);
-            $this->db->where('salesinvoicehed.InvIsCancel', 0);
-            if (isset($invtype) && $invtype != '') {
-                $this->db->where('salesinvoicehed.SalesInvType', $invtype);
-            }
-
-            if (isset($salesperson) && $salesperson != '') {
-                $this->db->where('salesinvoicehed.SalesPerson', $salesperson);
-            }
-
-            if (isset($product) && $product != '') {
-                $this->db->where('salesinvoicedtl.SalesProductCode', $product);
-            }
-
-            if (isset($department) && $department != '') {
-                $this->db->where('product.DepCode', $department);
-            }
-
-            if (isset($subdepartment) && $subdepartment != '') {
-                $this->db->where('product.SubDepCode', $subdepartment);
-            }
-
-            $this->db->order_by('salesinvoicehed.SalesDate', 'DESC');
-            // $this->db->group_by('salesinvoicehed.SalesInvNo');
-            // $this->db->order_by('SalesDate', 'DESC');
-            // $this->db->limit(50);
+        // Filter by invoice type if provided
+        if (!empty($invtype)) {
+            $this->db->where('salesinvoicehed.SalesInvType', $invtype);
         }
+
+        // Filter by salesperson if provided
+        if (!empty($salesperson)) {
+            // First, get all customers handled by the specified salesperson
+            $this->db->where('customer.Handelby', $salesperson);
+        }
+
+        // Filter by product if provided
+        if (!empty($product)) {
+            $this->db->where('salesinvoicedtl.SalesProductCode', $product);
+        }
+
+        // Filter by department if provided
+        if (!empty($department)) {
+            $this->db->where('product.DepCode', $department);
+        }
+
+        // Filter by subdepartment if provided
+        if (!empty($subdepartment)) {
+            $this->db->where('product.SubDepCode', $subdepartment);
+        }
+
+        // Order by SalesDate in descending order
+        $this->db->order_by('salesinvoicehed.SalesDate', 'DESC');
+
+        // Execute query and return results
         return $this->db->get()->result();
     }
-    
+
     public function genreportbyroute($startdate, $enddate, $location = NULL,$locationAr = NULL) {
         if (isset($location) && $location != '') {
             $this->db->select('DATE(InvDate) As InvDate,SUM(InvDisAmount) AS DisAmount,
@@ -1270,11 +1212,11 @@ class Report_model extends CI_Model {
         $this->db->join('salesinvoicehed', 'salesinvoicehed.SalesInvNo = salesinvoicedtl.SalesInvNo', 'INNER');
         $this->db->join('product', 'product.ProductCode = salesinvoicedtl.SalesProductCode', 'left');
         $this->db->where('DATE(salesinvoicehed.SalesDate) =', $enddate);
-        // $this->db->where('DATE(invoicehed.InvDate) >=', $startdate);
+       
         $this->db->where('salesinvoicehed.InvIsCancel', 0);
-        if (isset($location) && $location != '') {
-            $this->db->where_in('salesinvoicehed.SalesLocation', $locationAr);
-        }
+        // if (isset($location) && $location != '') {
+        //     $this->db->where_in('salesinvoicehed.SalesLocation', $locationAr);
+        // }
         $this->db->group_by('salesinvoicehed.SalesDate');
         $this->db->order_by('salesinvoicehed.SalesDate');
         $result=$this->db->get()->result();
@@ -1549,26 +1491,24 @@ class Report_model extends CI_Model {
         return $this->db->get()->result();
     }
     
-    public function searchsubdepartment($q,$cat) {
-        $this->db->select('subdepartment.SubDepCode AS id,subdepartment.Description AS text');
+    public function searchsubdepartment($q) {
+        $this->db->select('SubDepCode AS id,Description AS text');
         $this->db->from('subdepartment');
-        $this->db->where('subdepartment.DepCode', $cat);
-        $this->db->join('department', 'department.DepCode = subdepartment.DepCode', 'INNER');
-        $this->db->like('CONCAT(subdepartment.SubDepCode,subdepartment.Description)', $q, 'left');
-        $this->db->group_by('subdepartment.Description');
+        $this->db->like('CONCAT(SubDepCode,Description)', $q, 'left');
+        $this->db->group_by('Description');
         $this->db->limit(50);
         return $this->db->get()->result();
     }
     
     public function searchsubcategory($q,$cat,$cat2) {
-        $this->db->select('subcategory.SubCategoryCode AS id,subcategory.Description AS text');
+
+        $this->db->select('SubCategoryCode AS id,Description AS text');
         $this->db->from('subcategory');
-        $this->db->where('subcategory.DepCode', $cat);
-        $this->db->where('subcategory.SubDepCode', $cat2);
-        $this->db->like('CONCAT(subcategory.SubCategoryCode,subcategory.Description)', $q);
-        $this->db->group_by('subcategory.Description');
+        $this->db->like('CONCAT(SubCategoryCode,Description)', $q, 'left');
+        $this->db->group_by('Description');
         $this->db->limit(50);
         return $this->db->get()->result();
+
     }
 
     public function searchcustomer($q) {
@@ -1603,110 +1543,136 @@ class Report_model extends CI_Model {
     }
 
 
-    public function productdetail($route, $isall, $product = NULL,$dep,$subdep,$sup,$subcat) {
+    public function productdetail($route, $isall, $product = NULL, $dep = NULL, $subdep = NULL, $sup = NULL, $subcat = NULL) {
+        $this->db->select('product.ProductCode,
+                       product.Prd_Description,
+                       product.Prd_CostPrice,
+                       product.SubDepCode,
+                       product.Prd_ROL,
+                       product.Prd_ROQ,
+                       department.Description,
+                       location.location,
+                       productstock.Stock,
+                       productstock.Expired,
+                       productstock.Damage,
+                       productprice.ProductPrice,
+                       productprice.PL_No,
+                       supplier.SupName');
+
+        $this->db->from('product');
+        $this->db->join('supplier', 'supplier.SupCode = product.Prd_Supplier', 'LEFT');
+        $this->db->join('productstock', 'productstock.ProductCode = product.ProductCode', 'LEFT');
+        $this->db->join('department', 'department.DepCode = product.DepCode', 'INNER');
+        $this->db->join('productprice', 'productprice.ProductCode = product.ProductCode', 'LEFT');
+        $this->db->join('subcategory', 'subcategory.SubCategoryCode = product.SubCategoryCode', 'LEFT');
+        $this->db->join('location', 'location.location_id = productstock.Location', 'INNER');
+        $this->db->where('productprice.PL_No', 1);
+        $this->db->where('product.Prd_IsActive', 1);
+
+
+
+        // Apply filters regardless of isall
+        if (!empty($route)) {
+            $this->db->where_in('productstock.Location', $route);
+        }
+        if (!empty($dep)) {
+            $this->db->where_in('product.DepCode', $dep);
+        }
+        if (!empty($subdep)) {
+            $this->db->where_in('product.SubDepCode', $subdep);
+        }
+        if (!empty($subcat)) {
+            $this->db->where_in('product.SubCategoryCode', $subcat);
+        }
+        if (!empty($sup)) {
+            $this->db->where('product.Prd_Supplier', $sup);
+        }
+        if (!empty($product) && $isall == 1) {
+            $this->db->where('product.ProductCode', $product);
+        }
+
+        // If isall == 0 and no filters applied at all, return empty result
+        $noFilters = empty($route) && empty($product) && empty($dep) && empty($subdep) && empty($sup) && empty($subcat);
+        if ($isall == 1 && $noFilters) {
+            return []; // No data to return when filters are missing
+        }
+
+        // Order results
+        $this->db->order_by('product.DepCode', 'ASC');
+        $this->db->order_by('product.SubDepCode', 'ASC');
+        $this->db->order_by('product.CategoryCode', 'ASC');
+        $this->db->order_by('subcategory.Description', 'ASC');
+
+        $result = $this->db->get();
+
+        $list = array();
+        foreach ($result->result() as $row) {
+            $list[$row->Description][] = $row;
+        }
+
+        return $list;
+    }
+
+
+    public function lowproductdetail($route, $isall, $product = NULL,$dep,$subdep,$sup,$subcat) {
         $this->db->select('product.ProductCode,
                            product.Prd_Description,
                            product.Prd_CostPrice,
                            product.SubDepCode,
                            product.Prd_ROL,
                            product.Prd_ROQ,
-                           subdepartment.Description,
+                           department.Description,
                            location.location,
                            productstock.Stock,
+                           productstock.Expired,
+                            productstock.Damage,
+                  
                            productprice.ProductPrice,
                            supplier.SupName');
         $this->db->from('product');
         $this->db->join('supplier', 'supplier.SupCode = product.Prd_Supplier', 'LEFT');
         $this->db->join('productstock', 'productstock.ProductCode = product.ProductCode', 'LEFT');
-        $this->db->join('subdepartment', 'subdepartment.SubDepCode = product.SubDepCode', 'INNER');
+        $this->db->join('department', 'department.DepCode = product.DepCode', 'INNER');
         $this->db->join('productprice', 'productprice.ProductCode = product.ProductCode', 'LEFT');
         $this->db->join('subcategory', 'subcategory.SubCategoryCode = product.SubCategoryCode', 'left');
         $this->db->join('location', 'location.location_id = productstock.Location', 'INNER');
+        $this->db->where('productstock.Stock < product.Prd_ROL');
         $this->db->where('product.Prd_IsActive', 1);
         if (isset($route) && $route != '') {
             $this->db->where_in('productstock.Location', $route);
         }
-        if (isset($product) && $product != '' && $isall == 0) {
+        if (isset($product) && $isall == 1) {
             $this->db->where('product.ProductCode', $product);
+        }
+        // If isall == 0 and no filters applied at all, return empty result
+        $noFilters = empty($route) && empty($product) && empty($dep) && empty($subdep) && empty($sup) && empty($subcat);
+        if ($isall == 1 && $noFilters) {
+            return []; // No data to return when filters are missing
         }
         if (isset($dep) && $dep != '' ) {
             $this->db->where_in('product.DepCode', $dep);
         }
-        
+
         if (isset($subdep) && $subdep != '' ) {
             $this->db->where_in('product.SubDepCode', $subdep);
         }
-        
+
         if ( isset($subcat) && $subcat != '' && count($subcat) != 0) {
             $this->db->where_in('product.SubCategoryCode', $subcat);
         }
-        
+
         if (isset($sup) && $sup != '') {
             $this->db->where('product.Prd_Supplier', $sup);
         }
+
         $this->db->order_by('product.DepCode', 'ASC');
         $this->db->order_by('product.SubDepCode', 'ASC');
         $this->db->order_by('product.CategoryCode', 'ASC');
 //        $this->db->order_by('product.SubCategoryCode', 'ASC');
         $this->db->order_by('subcategory.Description', 'ASC');
-        
+
         $result=$this->db->get();
-        
-        $list = array();
-        foreach ($result->result() as $row) {
-            $list[$row->Description][] = $row;
-        }
-        return $list;
-    }
-    
-    public function lowproductdetail($route, $isall, $product = NULL,$dep,$subdep,$sup,$subcat) {
-        $this->db->select('product.ProductCode,
-                            product.Prd_Description,
-                            product.Prd_CostPrice,
-                            product.SubDepCode,
-                             product.Prd_ROL,
-                              product.Prd_ROQ,
-                            subdepartment.Description,
-                            location.location,
-                            productstock.Stock,
-                            supplier.SupName');
-        $this->db->from('product');
-        $this->db->join('supplier', 'supplier.SupCode = product.Prd_Supplier', 'INNER');
-        $this->db->join('productstock', 'productstock.ProductCode = product.ProductCode', 'LEFT');
-        $this->db->join('subdepartment', 'subdepartment.SubDepCode = product.SubDepCode', 'INNER');
-        $this->db->join('subcategory', 'subcategory.SubCategoryCode = product.SubCategoryCode', 'INNER');
-        $this->db->join('location', 'location.location_id = productstock.Location', 'INNER');
-        $this->db->where('productstock.Stock < product.Prd_ROL');
-        $this->db->where('product.Prd_IsActive', 1);
-        
-        if (isset($route) && $route != '') {
-            $this->db->where_in('productstock.Location', $route);
-        }
-        if (isset($product) && $product != '' && $isall == 0) {
-            $this->db->where('product.ProductCode', $product);
-        }
-        if (isset($dep) && $dep != '' ) {
-            $this->db->where_in('product.DepCode', $dep);
-        }
-        
-        if (isset($dep) && $dep != '' && isset($subdep) && $subdep != '' ) {
-            $this->db->where_in('product.SubDepCode', $subdep);
-        }
-        
-        if ( isset($subcat) && $subcat != '' && count($subcat) != 0) {
-            $this->db->where_in('product.SubCategoryCode', $subcat);
-        }
-        
-        if (isset($sup) && $sup != '') {
-            $this->db->where('product.Prd_Supplier', $sup);
-        }
-        $this->db->order_by('product.DepCode', 'ASC');
-        $this->db->order_by('product.SubDepCode', 'ASC');
-        $this->db->order_by('product.CategoryCode', 'ASC');
-        $this->db->order_by('product.SubCategoryCode', 'ASC');
-//        $this->db->order_by('subcategory.Description', 'ASC');
-        $result=$this->db->get();
-        
+
         $list = array();
         foreach ($result->result() as $row) {
             $list[$row->Description][] = $row;
@@ -1718,11 +1684,15 @@ class Report_model extends CI_Model {
         $this->db->select('product.ProductCode,
                             product.Prd_Description,
                             product.SubDepCode,
+                            product.Prd_ROL,
+                             product.Prd_ROQ,
+                             product.Prd_SetAPrice,
                             subdepartment.Description,
                             product.Prd_CostPrice,
                             location.location,
                             pricestock.Stock,
-                            pricestock.Price,
+                            
+                            pricestock.Price,pricestock.Expired,pricestock.Damage,
                             supplier.SupName');
         $this->db->from('product');
         $this->db->join('supplier', 'supplier.SupCode = product.Prd_Supplier', 'INNER');
@@ -1740,7 +1710,7 @@ class Report_model extends CI_Model {
         if (isset($dep) && $dep != '' ) {
             $this->db->where('product.DepCode', $dep);
         }
-        
+
         if (isset($dep) && $dep != '' && isset($subdep) && $subdep != '' ) {
             $this->db->where('product.SubDepCode', $subdep);
         }
@@ -2121,9 +2091,10 @@ class Report_model extends CI_Model {
     
     public function cashinoutbyroute($startdate, $enddate, $location = NULL,$locationAr = NULL,$emp,$type) {
         
-            $this->db->select('cashinout.*,users.first_name');
+            $this->db->select('cashinout.*,transactiontypes.TransactionName,users.first_name');
             $this->db->from('cashinout');
             $this->db->join('users', 'users.id = cashinout.SystemUser', 'INNER');
+            $this->db->join('transactiontypes', 'cashinout.TransCode = transactiontypes.TransactionCode','INNER');
             $this->db->where('DATE(InOutDate) <=', $enddate);
             $this->db->where('DATE(InOutDate) >=', $startdate);
             $this->db->where_in('cashinout.Location', $locationAr);
@@ -2297,7 +2268,7 @@ foreach($row as $country => $cities) {
         return $list;
     }
 
-    public function customercredit($startdate, $enddate, $route = NULL,$isall,$customer) {
+    public function customercredit($startdate, $enddate, $route = NULL, $isall,$customer) {
         
             $this->db->select('customer.MobileNo,creditinvoicedetails.CusCode,
                             DATE(creditinvoicedetails.InvoiceDate) AS InvoiceDate,
@@ -2307,7 +2278,7 @@ foreach($row as $country => $cities) {
                             creditinvoicedetails.SettledAmount,
                             SUM(creditinvoicedetails.returnAmount) AS ReturnAmount,
                             customer.CusName,
-                            customer.RespectSign,
+                            
                             customer.Address01,
                             salespersons.RepName,
                             customer.Address02,
@@ -2326,13 +2297,14 @@ foreach($row as $country => $cities) {
                 if (isset($startdate) && $startdate != '' ) {
                 $this->db->where('DATE(creditinvoicedetails.InvoiceDate) >=', $startdate);
                 }
-            }
+
                  if (isset($route) && $route != '' ) {
                 $this->db->where('creditinvoicedetails.Location',$route);
                  }
                   if (isset($customer) && $customer != '' ) {
                 $this->db->where('creditinvoicedetails.CusCode',$customer);
                   }
+            }
                  // $this->db->where('creditinvoicedetails.CreditAmount !=creditinvoicedetails.SettledAmount');
                   $this->db->group_by('creditinvoicedetails.InvoiceDate');
                   $this->db->order_by('creditinvoicedetails.InvoiceDate');
@@ -2405,6 +2377,7 @@ foreach($row as $country => $cities) {
                 $this->db->join('customer','customerpaymenthed.CusCode = customer.CusCode');
                 $this->db->join('bank','customerpaymentdtl.BankNo = bank.BankCode','left');
                  $this->db->where('customerpaymenthed.IsCancel',0);
+
             if (isset($isall) && $isall == 0 ) {
                 if (isset($enddate) && $enddate != '' ) {
                 $this->db->where('DATE(customerpaymenthed.PayDate) <=', $enddate);
@@ -2603,7 +2576,7 @@ foreach($row as $country => $cities) {
                             SUM(creditinvoicedetails.SettledAmount) AS SettledAmount,
                             SUM(creditinvoicedetails.returnAmount) AS ReturnAmount,
                             customer.CusName,
-                            customer.RespectSign,
+                            
                             customer.Address01,
                             customer.Address02,
                             jobinvoicehed.JobCardNo,

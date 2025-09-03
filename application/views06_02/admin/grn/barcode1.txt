@@ -1,0 +1,19 @@
+Company,ProductCode,ProductName,Price
+
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120
+Sathutu Lanka (Pvt) Ltd,100053,ABCD,120

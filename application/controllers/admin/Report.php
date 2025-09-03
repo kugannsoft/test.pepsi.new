@@ -2,29 +2,33 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Report extends Admin_Controller {
+class Report extends Admin_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
-        if (!$this->ion_auth->logged_in() OR ! $this->ion_auth->is_admin()) {
+        if (!$this->ion_auth->logged_in() or !$this->ion_auth->is_admin()) {
             redirect('auth/login', 'refresh');
         }
         $this->load->model('admin/Report_model');
         date_default_timezone_set("Asia/Colombo");
     }
 
-    public function index() {
-        
+    public function index()
+    {
+
     }
 
-    public function salesbydate() {
+    public function salesbydate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Sale by date'));
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
-        $this->data['staff'] = $this->db->select()->from('salespersons')->where('RepType',6)->get()->result();
+        $this->data['staff'] = $this->db->select()->from('salespersons')->where('RepType', 6)->get()->result();
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -34,7 +38,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function easybydate() {
+    public function easybydate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Easy payment by date'));
@@ -50,7 +55,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function easypaymentnydate() {
+    public function easypaymentnydate()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -59,12 +65,14 @@ class Report extends Admin_Controller {
         $salesperson = isset($_POST['salesperson']) ? $_POST['salesperson'] : 0;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
 //        $result = $this->Report_model->gensalesreportbyroute($startdate, $enddate, $route,$routeAr,$invtype,$salesperson);
-        $result      = $this->Report_model->totaleasycuspaymentsummarydaterange($startdate, $enddate, $route,$routeAr,1);
+        $result = $this->Report_model->totaleasycuspaymentsummarydaterange($startdate, $enddate, $route, $routeAr, 1);
 //var_dump($result);die();
-        echo json_encode($result);die;
+        echo json_encode($result);
+        die;
     }
 
-  public function easySummeryByDate() {
+    public function easySummeryByDate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Easy', 'admin/report/easySummeryByDate');
         $this->page_title->push(('Easy payment Summery By Date'));
@@ -80,7 +88,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function easypaymentnsummerybydate() {
+    public function easypaymentnsummerybydate()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -88,13 +97,15 @@ class Report extends Admin_Controller {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $salesperson = isset($_POST['salesperson']) ? $_POST['salesperson'] : 0;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result['invHead']     = $this->Report_model->totaleasycuspaymentsummarybydate($startdate, $enddate, $route,$routeAr,1);
-        $result['paidDetails']     = $this->Report_model->totaleasycuspaymentsummarybydatepaydetails($enddate, $route,$routeAr,1);
+        $result['invHead'] = $this->Report_model->totaleasycuspaymentsummarybydate($startdate, $enddate, $route, $routeAr, 1);
+        $result['paidDetails'] = $this->Report_model->totaleasycuspaymentsummarybydatepaydetails($enddate, $route, $routeAr, 1);
 //var_dump($result['paidDetails']);die();
-        echo json_encode($result);die;
+        echo json_encode($result);
+        die;
     }
 
-    public function orderbydate() {
+    public function orderbydate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Order by date'));
@@ -106,11 +117,12 @@ class Report extends Admin_Controller {
 //        if (in_array($_SESSION['user_id'], $people)) {
 //            $this->template->admin_render('admin/report/salesbydate2', $this->data);
 //        } else {
-            $this->template->admin_render('admin/report/orderbydate', $this->data);
+        $this->template->admin_render('admin/report/orderbydate', $this->data);
 //        }
     }
 
-    public function directsalesbyproduct() {
+    public function directsalesbyproduct()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Sale by product'));
@@ -118,6 +130,7 @@ class Report extends Admin_Controller {
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
         $this->data['products'] = $this->Report_model->loadproduct();
+        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive', 1)->get()->result();
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -127,7 +140,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function salesbydatePos() {
+    public function salesbydatePos()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Sale by date'));
@@ -139,7 +153,7 @@ class Report extends Admin_Controller {
 //        if (in_array($_SESSION['user_id'], $people)) {
 //            $this->template->admin_render('admin/report/salesbydate2', $this->data);
 //        } else {
-            $this->template->admin_render('admin/report/salesbydatePos', $this->data);
+        $this->template->admin_render('admin/report/salesbydatePos', $this->data);
 //        }
     }
 
@@ -150,13 +164,14 @@ class Report extends Admin_Controller {
         $startdate = $_POST['startdate'];
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->genreportbyroute($startdate, $enddate, $route,$routeAr);
+        $result = $this->Report_model->genreportbyroute($startdate, $enddate, $route, $routeAr);
         echo json_encode($result);
         die;
     }
 
 
-    public function salesbyproduct() {
+    public function salesbyproduct()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbyproduct');
         $this->page_title->push(('Sale by Product'));
@@ -173,7 +188,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function psalesbydate() {
+    public function psalesbydate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Sale by date'));
@@ -189,7 +205,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function psalesbyproduct() {
+    public function psalesbyproduct()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbyproduct');
         $this->page_title->push(('Sale by Product'));
@@ -206,7 +223,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function serialstock() {
+    public function serialstock()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/serialreport');
         $this->page_title->push(('Product Serial Stock'));
@@ -217,17 +235,18 @@ class Report extends Admin_Controller {
 
         $role = $_SESSION['role'];
 
-        if ($role == 1){
+        if ($role == 1) {
 
-        $this->template->admin_render('admin/report/serialreport', $this->data);
+            $this->template->admin_render('admin/report/serialreport', $this->data);
         } else {
 
-        $this->template->admin_render('admin/report/serialreport_without_cost', $this->data);
+            $this->template->admin_render('admin/report/serialreport_without_cost', $this->data);
         }
     }
 
-    public function productreport() {
-         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+    public function productreport()
+    {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/productreport');
         $this->page_title->push(('Product Stock'));
         $this->data['pagetitle'] = $this->page_title->show();
@@ -236,16 +255,17 @@ class Report extends Admin_Controller {
 
         $role = $_SESSION['role'];
 
-        if ($role == 1){
+        if ($role == 1) {
 
-        $this->template->admin_render('admin/report/productreport', $this->data);
+            $this->template->admin_render('admin/report/productreport', $this->data);
         } else {
 
-        $this->template->admin_render('admin/report/productreport_without_cost', $this->data);
+            $this->template->admin_render('admin/report/productreport_without_cost', $this->data);
         }
     }
 
-    public function pricereport() {
+    public function pricereport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/pricereport');
         $this->page_title->push(('Product Price  Stock'));
@@ -255,7 +275,8 @@ class Report extends Admin_Controller {
         $this->template->admin_render('admin/report/pricereport', $this->data);
     }
 
-    public function dailyfinalreport() {
+    public function dailyfinalreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/dailyfinalreport');
         $this->page_title->push(('Daily Phone Stock'));
@@ -265,8 +286,9 @@ class Report extends Admin_Controller {
         $this->data['products'] = $this->Report_model->loadSerialProduct();
         $this->template->admin_render('admin/report/dailyfinalreport', $this->data);
     }
-    
-    public function lowstockreport() {
+
+    public function lowstockreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/lowstockreport');
         $this->page_title->push(('Minimum Stock Summery'));
@@ -277,16 +299,17 @@ class Report extends Admin_Controller {
 
         $role = $_SESSION['role'];
 
-        if ($role == 1){
+        if ($role == 1) {
 
-        $this->template->admin_render('admin/report/lowstockreport', $this->data);
+            $this->template->admin_render('admin/report/lowstockreport', $this->data);
         } else {
 
-        $this->template->admin_render('admin/report/lowstockreport_without_cost', $this->data);
+            $this->template->admin_render('admin/report/lowstockreport_without_cost', $this->data);
         }
     }
-    
-    public function trasferreport() {
+
+    public function trasferreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Stock Tranfer Detail'));
@@ -297,7 +320,8 @@ class Report extends Admin_Controller {
         $this->template->admin_render('admin/report/trasferreport', $this->data);
     }
 
-    public function grnreport() {
+    public function grnreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'GRN', 'admin/report/Vastage Report');
         $this->page_title->push(('Good Received Detail'));
@@ -308,7 +332,7 @@ class Report extends Admin_Controller {
 
         $role = $_SESSION['role'];
 
-        if ($role == 1){
+        if ($role == 1) {
 
             $this->template->admin_render('admin/report/grnreport', $this->data);
         } else {
@@ -316,8 +340,9 @@ class Report extends Admin_Controller {
             $this->template->admin_render('admin/report/grnreport_without_cost', $this->data);
         }
     }
-    
-    public function cashfloat() {
+
+    public function cashfloat()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Expenses/ Earninig'));
@@ -327,110 +352,116 @@ class Report extends Admin_Controller {
         $this->data['products'] = $this->Report_model->loadproduct();
         $this->template->admin_render('admin/report/cashfloatreport', $this->data);
     }
-    
-    public function cashinout() {
+
+    public function cashinout()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Cash Float In Out'));
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
-        $this->data['products'] =  $this->Report_model->loadproduct();
+        $this->data['products'] = $this->Report_model->loadproduct();
         $this->data['transType'] = $this->db->get_where('transactiontypes', array('IsActive' => 1))->result();
-        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive',1)->get()->result();
-            
+        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive', 1)->get()->result();
+
         $this->template->admin_render('admin/report/cashinoutreport', $this->data);
     }
-    
-    public function dailycashturnover() {
+
+    public function dailycashturnover()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
-        $this->page_title->push(('Cash Turn Over - Direct Sale/ Customer Order/ Easy Payment'));
+        $this->page_title->push(('All Earns'));
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
-        $this->data['products'] =  $this->Report_model->loadproduct();
+        $this->data['products'] = $this->Report_model->loadproduct();
         $this->data['transType'] = $this->db->get_where('transactiontypes', array('IsActive' => 1))->result();
-        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive',1)->get()->result();
+        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive', 1)->get()->result();
 
         $this->template->admin_render('admin/report/cashturnover', $this->data);
     }
-    
-     public function monthwiseincomereport() {
+
+    public function monthwiseincomereport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Monthly Transaction'));
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
-        $this->data['products'] =  $this->Report_model->loadproduct();
+        $this->data['products'] = $this->Report_model->loadproduct();
         $this->data['transType'] = $this->db->get_where('transactiontypes', array('IsActive' => 1))->result();
-        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive',1)->get()->result();
+        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive', 1)->get()->result();
 
         $this->template->admin_render('admin/report/monhwisereport', $this->data);
     }
 
-     public function loadmonthlywisereport() {
+    public function loadmonthlywisereport()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
 
-        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('JobLocation',$route)->where('date(JobInvoiceDate)<',$enddate)->get()->row()->baldate;
+        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('JobLocation', $route)->where('date(JobInvoiceDate)<', $enddate)->get()->row()->baldate;
 
 
-        $result['pro']         = $this->Report_model->genjobdaysalesumreportbypayment($startdate, $enddate, $route,$routeAr);
-        $result['cash']        = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevcash']    = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['expenses']    = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
-        $result['earn']        = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-        $result['inout']       = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route,$routeAr,12);
-        $result['salary']      = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route,$routeAr,12);
-        $result['procash']     = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['product']     = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route,$routeAr);
-        $result['suppay']      = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route,$routeAr);
-        $result['advance']     = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route,$routeAr,2);
-        $result['cuspay']      = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route,$routeAr,1);
+        $result['pro'] = $this->Report_model->genjobdaysalesumreportbypayment($startdate, $enddate, $route, $routeAr);
+        $result['cash'] = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevcash'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['expenses'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 1);
+        $result['earn'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 0);
+        $result['inout'] = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['salary'] = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['procash'] = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['product'] = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route, $routeAr);
+        $result['suppay'] = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route, $routeAr);
+        $result['advance'] = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route, $routeAr, 2);
+        $result['cuspay'] = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route, $routeAr, 1);
 
-        $result['easy']        = $this->Report_model->monthlyreportbydateeasy($startdate, $enddate, $route,$routeAr);
-        $result['easycuspay']      = $this->Report_model->monthlyreportbydateeasypay($startdate, $enddate, $route,$routeAr);
-        $result['cusodercuspay']      = $this->Report_model->monthlyreportbydatecustomerorderpayment($startdate, $enddate, $route,$routeAr);
-        $result['part']        = $this->Report_model->monthlyreportbydate($startdate, $enddate, $route,$routeAr);
-        $result['expearn']     = $this->Report_model->monthlyreportbyexpensess($startdate, $enddate, $route,$routeAr);
-        $result['coder']        = [];
+        $result['easy'] = $this->Report_model->monthlyreportbydateeasy($startdate, $enddate, $route, $routeAr);
+        $result['easycuspay'] = $this->Report_model->monthlyreportbydateeasypay($startdate, $enddate, $route, $routeAr);
+        $result['cusodercuspay'] = $this->Report_model->monthlyreportbydatecustomerorderpayment($startdate, $enddate, $route, $routeAr);
+        $result['part'] = $this->Report_model->monthlyreportbydate($startdate, $enddate, $route, $routeAr);
+        $result['expearn'] = $this->Report_model->monthlyreportbyexpensess($startdate, $enddate, $route, $routeAr);
+        $result['coder'] = [];
 
         $query = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$enddate','$route','')");
-        $result['bal'] =$query->result();
+        $result['bal'] = $query->result();
 
         echo json_encode($result);
         die;
     }
 
-    public function dailycashturnoversummary() {
+    public function dailycashturnoversummary()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Cash Turn Over - Direct Sale/ Customer Order/ Easy Payment'));
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
         $this->data['locations'] = $this->Report_model->loadroot();
-        $this->data['products'] =  $this->Report_model->loadproduct();
+        $this->data['products'] = $this->Report_model->loadproduct();
         $this->data['transType'] = $this->db->get_where('transactiontypes', array('IsActive' => 1))->result();
-        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive',1)->get()->result();
+        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('IsActive', 1)->get()->result();
 
         $this->template->admin_render('admin/report/dailycashturnoversummary', $this->data);
     }
 
-    public function loadreportturnoversummery() {
+    public function loadreportturnoversummery()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
 //        var_dump($enddate,$startdate);die();
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
 
-        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('JobLocation',$route)->where('date(JobInvoiceDate)<',$enddate)->get()->row()->baldate;
+        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('JobLocation', $route)->where('date(JobInvoiceDate)<', $enddate)->get()->row()->baldate;
 
 
         // echo json_encode($result);
@@ -443,26 +474,26 @@ class Report extends Admin_Controller {
 //        $result['overjob']      =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation',$route)->where('DATE(appoimnetDate)=',$enddate)->where('DATE(deliveryDate)<',$enddate)->where('IsCompelte',0)->get()->row()->new;
         // $result['cashier'] =  $this->db->select('users.first_name')->from('cashflot')->join('users','users.id=cashflot.SystemUser')->where('DATE(FlotDate)',date("Y-m-d"))->get()->row()->first_name;
 
-        $result['pro']         = $this->Report_model->genjobdaysalesumreportbypayment($startdate, $enddate, $route,$routeAr);
-        $result['cash']        = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevcash']    = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['expenses']    = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
-        $result['earn']        = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-        $result['inout']       = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route,$routeAr,12);
-        $result['salary']      = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route,$routeAr,12);
-        $result['expearn']     = $this->Report_model->cashfloatbytype($startdate, $enddate, $route,$routeAr,12,'');
-        $result['procash']     = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['product']     = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route,$routeAr);
-        $result['suppay']      = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route,$routeAr);
-        $result['advance']     = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route,$routeAr,2);
-        $result['cuspay']      = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route,$routeAr,1);
+        $result['pro'] = $this->Report_model->genjobdaysalesumreportbypayment($startdate, $enddate, $route, $routeAr);
+        $result['cash'] = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevcash'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['expenses'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 1);
+        $result['earn'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 0);
+        $result['inout'] = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['salary'] = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['expearn'] = $this->Report_model->cashfloatbytype($startdate, $enddate, $route, $routeAr, 12, '');
+        $result['procash'] = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['product'] = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route, $routeAr);
+        $result['suppay'] = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route, $routeAr);
+        $result['advance'] = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route, $routeAr, 2);
+        $result['cuspay'] = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route, $routeAr, 1);
 
-        $result['easy']        = $this->Report_model->gencashreportbyeasydaterangesummary($startdate, $enddate, $route,$routeAr);
-        $result['easycuspay']      = $this->Report_model->totaleasycuspaymentsummarydaterangesummery($startdate, $enddate, $route,$routeAr,1);
-        $result['cusodercuspay']      = $this->Report_model->totalcusodercuspaymentsummarydaterangesummery($startdate, $enddate, $route,$routeAr,1);
-        $result['part']        = $this->Report_model->gencashreportbypartdaterangesummery($startdate, $enddate, $route,$routeAr);
-        $result['coder']        = $this->Report_model->gencashreportbycoderdaterange($startdate, $enddate, $route,$routeAr);
+        $result['easy'] = $this->Report_model->gencashreportbyeasydaterangesummary($startdate, $enddate, $route, $routeAr);
+        $result['easycuspay'] = $this->Report_model->totaleasycuspaymentsummarydaterangesummery($startdate, $enddate, $route, $routeAr, 1);
+        $result['cusodercuspay'] = $this->Report_model->totalcusodercuspaymentsummarydaterangesummery($startdate, $enddate, $route, $routeAr, 1);
+        $result['part'] = $this->Report_model->gencashreportbypartdaterangesummery($startdate, $enddate, $route, $routeAr);
+        $result['coder'] = $this->Report_model->gencashreportbycoderdaterange($startdate, $enddate, $route, $routeAr);
 
 //        $isEnd = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('Location',$route)->where('DATE(BalanceDate)=' ,$enddate)->get()->num_rows();
 //        if($isEnd>0){
@@ -488,7 +519,7 @@ class Report extends Admin_Controller {
         // $result['cashier']     = $this->db->select('first_name')->from('cashierbalancesheet')->join('users','users.id=cashierbalancesheet.SystemUser')->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->first_name;
 
         $query = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$enddate','$route','')");
-        $result['bal'] =$query->result();
+        $result['bal'] = $query->result();
 
         // $query2 = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$bal_date','$route','')");
         // $result['lastbal'] =$query2->result();
@@ -497,8 +528,9 @@ class Report extends Admin_Controller {
         echo json_encode($result);
         die;
     }
-    
-    public function salebyinvoice() {
+
+    public function salebyinvoice()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Invoice Detail'));
@@ -510,7 +542,8 @@ class Report extends Admin_Controller {
     }
 
     /*job sales*/
-    public function jobsalesbydate() {
+    public function jobsalesbydate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Job Sale by date'));
@@ -526,7 +559,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function jobsalesumbydate() {
+    public function jobsalesumbydate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Job Sale Summery by date'));
@@ -542,7 +576,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function jobsaledaysumbydate() {
+    public function jobsaledaysumbydate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Daily Cash Balance'));
@@ -558,7 +593,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function dailybalance() {
+    public function dailybalance()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Daily Cash Report'));
@@ -574,7 +610,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function dailybalancedetail() {
+    public function dailybalancedetail()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Daily Cash Summary Detail Report'));
@@ -590,7 +627,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function monthlybalancedetail() {
+    public function monthlybalancedetail()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/salesbydate');
         $this->page_title->push(('Monthly Cash Summary Detail Report'));
@@ -606,7 +644,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function jobsalesbyproduct() {
+    public function jobsalesbyproduct()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/jobsalesbyproduct');
         $this->page_title->push(('Job Sale by Product'));
@@ -623,7 +662,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function jobsalesbyservice() {
+    public function jobsalesbyservice()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/jobsalesbyservice');
         $this->page_title->push(('Job Sale by Services'));
@@ -640,7 +680,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function jobsalesbymake() {
+    public function jobsalesbymake()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/jobsalesbyservice');
         $this->page_title->push(('Job Sale by Make'));
@@ -659,7 +700,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function jobsalesbyinvoice() {
+    public function jobsalesbyinvoice()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/jobsalesbyservice');
         $this->page_title->push(('Job Sale by Invoices'));
@@ -676,7 +718,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function jobpaymentbyinvoice() {
+    public function jobpaymentbyinvoice()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/jobsalesbyservice');
         $this->page_title->push(('Job Payments by Invoices'));
@@ -693,7 +736,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function jobdelivery() {
+    public function jobdelivery()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Sales', 'admin/report/jobdelivery');
         $this->page_title->push(('Job Delivery Date Exceed report'));
@@ -711,19 +755,23 @@ class Report extends Admin_Controller {
     }
 
 //    services------------------------------------------------------------------
-    public function loadreport1() {
+    public function loadreport1()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
-         $invtype = isset($_POST['inv_type']) ? $_POST['inv_type'] : 0;
-        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $route = $_POST['RouteId'];
+        $invtype = isset($_POST['inv_type']) ? $_POST['inv_type'] : 0;
+//        $location = isset($_POST['route']) ? $_POST['route'] : NULL;
         $salesperson = isset($_POST['salesperson']) ? $_POST['salesperson'] : 0;
-        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->gensalesreportbyroute($startdate, $enddate, $route,$routeAr,$invtype,$salesperson);
-        echo json_encode($result);die;
+//        $locationAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $result = $this->Report_model->gensalesreportbyroute($startdate, $enddate, $location,$route, $locationAr, $invtype, $salesperson);
+        echo json_encode($result);
+        die;
     }
 
-    public function loadorederdataby() {
+    public function loadorederdataby()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -731,11 +779,13 @@ class Report extends Admin_Controller {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $salesperson = isset($_POST['salesperson']) ? $_POST['salesperson'] : 0;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->orderreportbydatewise($startdate, $enddate, $route,$routeAr,$invtype,$salesperson);
-        echo json_encode($result);die;
+        $result = $this->Report_model->orderreportbydatewise($startdate, $enddate, $route, $routeAr, $invtype, $salesperson);
+        echo json_encode($result);
+        die;
     }
 
-    public function loadreportdirectproductby() {
+    public function loadreportdirectproductby()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -747,11 +797,13 @@ class Report extends Admin_Controller {
         $subdepartment = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : 0;
         $subcategory_ar = isset($_POST['subcategory_ar']) ? $_POST['subcategory_ar'] : 0;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->gensalesreportbyrouteforproduct($startdate, $enddate, $route,$routeAr,$invtype,$salesperson,$product,$department,$subdepartment);
-        echo json_encode($result);die;
+        $result = $this->Report_model->gensalesreportbyrouteforproduct($startdate, $enddate, $route, $routeAr, $invtype, $salesperson, $product, $department, $subdepartment);
+        echo json_encode($result);
+        die;
     }
 
-    public function loadreport2() {
+    public function loadreport2()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -761,52 +813,61 @@ class Report extends Admin_Controller {
         $dep = isset($_POST['department']) ? $_POST['department'] : NULL;
         $subdep = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
-        $result['pro'] = $this->Report_model->genreportbyproduct($startdate, $enddate, $route, $product,$routeAr,$dep,$subdep,$subcat);
-        $result['dis'] = $this->Report_model->genreporttotalDiscountbyproduct($startdate, $enddate, $route, $product,$routeAr,$dep,$subdep,$subcat);
-        $result['expenses'] = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
-        $result['earn'] = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-        echo json_encode($result);die;
+        $result['pro'] = $this->Report_model->genreportbyproduct($startdate, $enddate, $route, $product, $routeAr, $dep, $subdep, $subcat);
+        $result['dis'] = $this->Report_model->genreporttotalDiscountbyproduct($startdate, $enddate, $route, $product, $routeAr, $dep, $subdep, $subcat);
+        $result['expenses'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 1);
+        $result['earn'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 0);
+        echo json_encode($result);
+        die;
     }
 
-    public function loadreport3() {
+    public function loadreport5()
+    {
         $product = isset($_POST['productsearch']) ? $_POST['productsearch'] : NULL;
-        $isall = isset($_POST['isall']) ? 1 : 0;
-        // $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $isall = isset($_POST['isall']) ? 0 : 1;
+         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $dep = isset($_POST['dep_ar']) ? json_decode($_POST['dep_ar']) : NULL;
         $subdep = isset($_POST['subdep_ar']) ? json_decode($_POST['subdep_ar']) : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
-         $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
-         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->productdetail($routeAr, $isall, $product,$dep,$subdep,$sup,$subcat);
-        echo json_encode($result);die;
+        $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+
+        $result = $this->Report_model->productdetail($routeAr, $isall, $product, $dep, $subdep, $sup, $subcat);
+        echo json_encode($result);
+        die;
     }
 
-    public function loadreport4() {
+    public function loadreport4()
+    {
         $product = isset($_POST['productsearch']) ? $_POST['productsearch'] : NULL;
         $isall = isset($_POST['isall']) ? $_POST['isall'] : 'all';
         // $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $dep = isset($_POST['dep_ar']) ? json_decode($_POST['dep_ar']) : NULL;
         $subdep = isset($_POST['subdep_ar']) ? json_decode($_POST['subdep_ar']) : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
-         $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
-         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-         $transfer = isset($_POST['transfer']) ? $_POST['transfer'] : NULL;
-        $result = $this->Report_model->productdetailserial($transfer,$routeAr, $isall, $product,$dep,$subdep,$sup,$subcat);
-        echo json_encode($result);die;
+        $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $transfer = isset($_POST['transfer']) ? $_POST['transfer'] : NULL;
+        $result = $this->Report_model->productdetailserial($transfer, $routeAr, $isall, $product, $dep, $subdep, $sup, $subcat);
+        echo json_encode($result);
+        die;
     }
 
-    public function loadreport5() {
+    public function loadreport3()
+    {
         $product = isset($_POST['productsearch']) ? $_POST['productsearch'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $dep = isset($_POST['department']) ? $_POST['department'] : NULL;
         $subdep = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : NULL;
-         $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
-        $result = $this->Report_model->priceproductdetail($route, $isall, $product,$dep,$subdep,$sup);
-        echo json_encode($result);die;
+        $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
+        $result = $this->Report_model->priceproductdetail($route, $isall, $product, $dep, $subdep, $sup);
+        echo json_encode($result);
+        die;
     }
 
-    public function loadreport6() {
+    public function loadreport6()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -819,12 +880,14 @@ class Report extends Admin_Controller {
         $dep = isset($_POST['department']) ? $_POST['department'] : NULL;
         $subdep = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : NULL;
         $subcat = isset($_POST['subcategory']) ? $_POST['subcategory'] : NULL;
-         $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
-        $result = $this->Report_model->productdailyfinalstock($startdate, $enddate, $route, $product,$dep,$subdep,$subcat);
-        echo json_encode($result);die;
+        $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
+        $result = $this->Report_model->productdailyfinalstock($startdate, $enddate, $route, $product, $dep, $subdep, $subcat);
+        echo json_encode($result);
+        die;
     }
-    
-    public function loadreport7() {
+
+    public function loadreport7()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -835,35 +898,40 @@ class Report extends Admin_Controller {
             $product = $_POST['product'];
         }
         $result = $this->Report_model->productdailyfinalstock($startdate, $enddate, $route, $product);
-        echo json_encode($result);die;
+        echo json_encode($result);
+        die;
     }
-    
-    public function loadreport8() {
+
+    public function loadreport8()
+    {
         $product = isset($_POST['productsearch']) ? $_POST['productsearch'] : NULL;
-        $isall = isset($_POST['isall']) ? $_POST['isall'] : 'all';
+        $isall = isset($_POST['isall']) ? 0 : 1;
         // $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $dep = isset($_POST['dep_ar']) ? json_decode($_POST['dep_ar']) : NULL;
         $subdep = isset($_POST['subdep_ar']) ? json_decode($_POST['subdep_ar']) : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
         $sup = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->lowproductdetail($routeAr, $isall, $product,$dep,$subdep,$sup,$subcat);
-        echo json_encode($result);die;
+        $result = $this->Report_model->lowproductdetail($routeAr, $isall, $product, $dep, $subdep, $sup, $subcat);
+        echo json_encode($result);
+        die;
     }
-    
-    public function loadreport9() {
+
+    public function loadreport9()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->cashfloatbyroute($startdate, $enddate, $route,$routeAr);
+        $result = $this->Report_model->cashfloatbyroute($startdate, $enddate, $route, $routeAr);
 //        var_dump($result);die();
         echo json_encode($result);
         die;
     }
-    
-    public function loadreport10() {
+
+    public function loadreport10()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $emp = $_POST['emp'];
@@ -871,20 +939,21 @@ class Report extends Admin_Controller {
         $startdate = $_POST['startdate'];
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->cashinoutbyroute($startdate, $enddate, $route,$routeAr,$emp,$type);
+        $result = $this->Report_model->cashinoutbyroute($startdate, $enddate, $route, $routeAr, $emp, $type);
         echo json_encode($result);
         die;
     }
-    
-    public function loadreportturnover() {
+
+    public function loadreportturnover()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
 //        var_dump($enddate,$startdate);die();
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
 
-        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('JobLocation',$route)->where('date(JobInvoiceDate)<',$enddate)->get()->row()->baldate;
+        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('JobLocation', $route)->where('date(JobInvoiceDate)<', $enddate)->get()->row()->baldate;
 
 
         // echo json_encode($result);
@@ -897,26 +966,26 @@ class Report extends Admin_Controller {
 //        $result['overjob']      =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation',$route)->where('DATE(appoimnetDate)=',$enddate)->where('DATE(deliveryDate)<',$enddate)->where('IsCompelte',0)->get()->row()->new;
         // $result['cashier'] =  $this->db->select('users.first_name')->from('cashflot')->join('users','users.id=cashflot.SystemUser')->where('DATE(FlotDate)',date("Y-m-d"))->get()->row()->first_name;
 
-        $result['pro']         = $this->Report_model->genjobdaysalesumreportbypayment($startdate, $enddate, $route,$routeAr);
-        $result['cash']        = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevcash']    = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['expenses']    = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
-        $result['earn']        = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-        $result['inout']       = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route,$routeAr,12);
-        $result['salary']      = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route,$routeAr,12);
-        $result['expearn']     = $this->Report_model->cashfloatbytype($startdate, $enddate, $route,$routeAr,12,'');
-        $result['procash']     = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['product']     = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route,$routeAr);
-        $result['suppay']      = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route,$routeAr);
-        $result['advance']     = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route,$routeAr,2);
-        $result['cuspay']      = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route,$routeAr,1);
+        $result['pro'] = $this->Report_model->genjobdaysalesumreportbypayment($startdate, $enddate, $route, $routeAr);
+        $result['cash'] = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevcash'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['expenses'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 1);
+        $result['earn'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 0);
+        $result['inout'] = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['salary'] = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['expearn'] = $this->Report_model->cashfloatbytype($startdate, $enddate, $route, $routeAr, 12, '');
+        $result['procash'] = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['product'] = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route, $routeAr);
+        $result['suppay'] = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route, $routeAr);
+        $result['advance'] = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route, $routeAr, 2);
+        $result['cuspay'] = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route, $routeAr, 1);
 
-        $result['easy']        = $this->Report_model->gencashreportbyeasydaterange($startdate, $enddate, $route,$routeAr);
-        $result['easycuspay']      = $this->Report_model->totaleasycuspaymentsummarydaterange($startdate, $enddate, $route,$routeAr,1);
-        $result['cusodercuspay']      = $this->Report_model->totalcusodercuspaymentsummarydaterange($startdate, $enddate, $route,$routeAr,1);
-        $result['part']        = $this->Report_model->gencashreportbypartdaterange($startdate, $enddate, $route,$routeAr);
-        $result['coder']        = $this->Report_model->gencashreportbycoderdaterange($startdate, $enddate, $route,$routeAr);
+        $result['easy'] = $this->Report_model->gencashreportbyeasydaterange($startdate, $enddate, $route, $routeAr);
+        $result['easycuspay'] = $this->Report_model->totaleasycuspaymentsummarydaterange($startdate, $enddate, $route, $routeAr, 1);
+        $result['cusodercuspay'] = $this->Report_model->totalcusodercuspaymentsummarydaterange($startdate, $enddate, $route, $routeAr, 1);
+        $result['part'] = $this->Report_model->gencashreportbypartdaterange($startdate, $enddate, $route, $routeAr);
+        $result['coder'] = $this->Report_model->gencashreportbycoderdaterange($startdate, $enddate, $route, $routeAr);
 
 //        $isEnd = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('Location',$route)->where('DATE(BalanceDate)=' ,$enddate)->get()->num_rows();
 //        if($isEnd>0){
@@ -942,7 +1011,7 @@ class Report extends Admin_Controller {
         // $result['cashier']     = $this->db->select('first_name')->from('cashierbalancesheet')->join('users','users.id=cashierbalancesheet.SystemUser')->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->first_name;
 
         $query = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$enddate','$route','')");
-        $result['bal'] =$query->result();
+        $result['bal'] = $query->result();
 
         // $query2 = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$bal_date','$route','')");
         // $result['lastbal'] =$query2->result();
@@ -951,8 +1020,9 @@ class Report extends Admin_Controller {
         echo json_encode($result);
         die;
     }
-    
-    public function productjson() {
+
+    public function productjson()
+    {
         if (isset($_GET['q'])) {
             $q = strtolower($_GET['q']);
             $result = $this->Report_model->searchproduct($q);
@@ -960,8 +1030,9 @@ class Report extends Admin_Controller {
             die;
         }
     }
-    
-    public function supplierjson() {
+
+    public function supplierjson()
+    {
         if (isset($_GET['q'])) {
             $q = strtolower($_GET['q']);
             $result = $this->Report_model->searchsupplier($q);
@@ -969,8 +1040,9 @@ class Report extends Admin_Controller {
             die;
         }
     }
-    
-    public function departmentjson() {
+
+    public function departmentjson()
+    {
         if (isset($_GET['q'])) {
             $q = strtolower($_GET['q']);
             $result = $this->Report_model->searchdepartment($q);
@@ -978,39 +1050,43 @@ class Report extends Admin_Controller {
             die;
         }
     }
-    
-    public function subdepartmentjson() {
+
+    public function subdepartmentjson()
+    {
         if (isset($_GET['q'])) {
             $q = strtolower($_GET['q']);
             $cat = ($_GET['dep']);
-            $result = $this->Report_model->searchsubdepartment($q,$cat);
-            echo json_encode($result);
-            die;
-        }
-    }
-    
-    public function categoryjson() {
-        if (isset($_GET['q'])) {
-            $q = strtolower($_GET['q']);
-            $cat = ($_GET['dep']);
-            $result = $this->Report_model->searchcategory($q,$cat,$cat2);
-            echo json_encode($result);
-            die;
-        }
-    }
-    
-    public function subcategoryjson() {
-        if (isset($_GET['q'])) {
-            $q = strtolower($_GET['q']);
-            $cat = ($_GET['dep']);
-            $cat2 = ($_GET['subdep']);
-            $result = $this->Report_model->searchsubcategory($q,$cat,$cat2);
+            $result = $this->Report_model->searchsubdepartment($q, $cat);
             echo json_encode($result);
             die;
         }
     }
 
-    public function customerjson() {
+    public function categoryjson()
+    {
+        if (isset($_GET['q'])) {
+            $q = strtolower($_GET['q']);
+            $cat = ($_GET['dep']);
+            $result = $this->Report_model->searchcategory($q, $cat, $cat2);
+            echo json_encode($result);
+            die;
+        }
+    }
+
+    public function subcategoryjson()
+    {
+        if (isset($_GET['q'])) {
+            $q = strtolower($_GET['q']);
+            $cat = ($_GET['dep']);
+            $cat2 = ($_GET['subdep']);
+            $result = $this->Report_model->searchsubcategory($q, $cat, $cat2);
+            echo json_encode($result);
+            die;
+        }
+    }
+
+    public function customerjson()
+    {
         if (isset($_GET['q'])) {
             $q = strtolower($_GET['q']);
             $result = $this->Report_model->searchcustomer($q);
@@ -1019,7 +1095,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function vehiclejson() {
+    public function vehiclejson()
+    {
         if (isset($_GET['q'])) {
             $q = strtolower($_GET['q']);
             $result = $this->Report_model->searchvehicle($q);
@@ -1028,7 +1105,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function makejson() {
+    public function makejson()
+    {
         if (isset($_GET['q'])) {
             $q = strtolower($_GET['q']);
             $result = $this->Report_model->searchmake($q);
@@ -1037,7 +1115,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function trasferreportjson() {
+    public function trasferreportjson()
+    {
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
@@ -1046,239 +1125,245 @@ class Report extends Admin_Controller {
         $pro = isset($_POST['productsearch']) ? $_POST['productsearch'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-       $this->db->select('stocktransferdtl.*,product.Prd_Description,users.first_name,stocktransferhed.TransIsInProcess,stocktransferhed.IsCancel,(stocktransferhed.TransDateORG) AS TransDate');
-                $this->db->from('stocktransferdtl');
-                if (isset($enddate) && $enddate != '' ) {
-                $this->db->where('DATE(stocktransferdtl.TrnsDate) <=', $enddate);
-                }
-                if (isset($startdate) && $startdate != '' ) {
-                $this->db->where('DATE(stocktransferdtl.TrnsDate) >=', $startdate);
-                }
-                 if (isset($from) && $from != '' ) {
-                $this->db->where('stocktransferhed.FromLocation',$from);
-                 }
-                  if (isset($to) && $to != '' ) {
-                $this->db->where('stocktransferhed.ToLocation',$to);
-                  }
-                   if (isset($isall) && $isall == 0 ) {
-                $this->db->where('stocktransferhed.IsCancel',0);
-                  }
-                  if (isset($pro) && $pro != '' ) {
-                $this->db->where('stocktransferdtl.ProductCode',$pro);
-                  }
-                $this->db->join('product', 'product.ProductCode=stocktransferdtl.ProductCode');
-                $this->db->join('stocktransferhed', 'stocktransferhed.TrnsNo=stocktransferdtl.TrnsNo');
-                $this->db->join('users','users.id=stocktransferhed.TransUser');
-               $data = $this->db->get();
-        
+        $this->db->select('stocktransferdtl.*,product.Prd_Description,users.first_name,stocktransferhed.TransIsInProcess,stocktransferhed.IsCancel,(stocktransferhed.TransDateORG) AS TransDate');
+        $this->db->from('stocktransferdtl');
+        if (isset($enddate) && $enddate != '') {
+            $this->db->where('DATE(stocktransferdtl.TrnsDate) <=', $enddate);
+        }
+        if (isset($startdate) && $startdate != '') {
+            $this->db->where('DATE(stocktransferdtl.TrnsDate) >=', $startdate);
+        }
+        if (isset($from) && $from != '') {
+            $this->db->where('stocktransferhed.FromLocation', $from);
+        }
+        if (isset($to) && $to != '') {
+            $this->db->where('stocktransferhed.ToLocation', $to);
+        }
+        if (isset($isall) && $isall == 0) {
+            $this->db->where('stocktransferhed.IsCancel', 0);
+        }
+        if (isset($pro) && $pro != '') {
+            $this->db->where('stocktransferdtl.ProductCode', $pro);
+        }
+        $this->db->join('product', 'product.ProductCode=stocktransferdtl.ProductCode');
+        $this->db->join('stocktransferhed', 'stocktransferhed.TrnsNo=stocktransferdtl.TrnsNo');
+        $this->db->join('users', 'users.id=stocktransferhed.TransUser');
+        $data = $this->db->get();
+
         $list = array();
         foreach ($data->result() as $row) {
             $list[$row->TrnsNo][] = $row;
         }
         echo json_encode($list);
         die;
-        
+
     }
-    
-    public function invoicereportjson() {
+
+    public function invoicereportjson()
+    {
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $pro = isset($_POST['productsearch']) ? $_POST['productsearch'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-       $this->db->select('invoicedtl.*,product.Prd_Description,users.first_name,invoicehed.IsComplete,invoicehed.InvIsCancel,DATE(invoicehed.InvDate) AS InvDate,invoicehed.InvDisAmount,invoicehed.InvNetAmount AS TotalNetAmount');
-                $this->db->from('invoicedtl');
-                if (isset($enddate) && $enddate != '' ) {
-                $this->db->where('DATE(invoicedtl.InvDate) <=', $enddate);
-                }
-                if (isset($startdate) && $startdate != '' ) {
-                $this->db->where('DATE(invoicedtl.InvDate) >=', $startdate);
-                }
-                if (isset($route) && $route != '' ) {
-                $this->db->where('invoicehed.InvLocation',$route);
-                }
-                 
-                if (isset($isall) && $isall == 0 ) {
-                $this->db->where('invoicehed.InvIsCancel',0);
-                }
-                if (isset($pro) && $pro != '' ) {
-                $this->db->where('invoicedtl.InvProductCode',$pro);
-                }
-                $this->db->join('product', 'product.ProductCode=invoicedtl.InvProductCode');
-                $this->db->join('invoicehed', 'invoicehed.InvNo=invoicedtl.InvNo');
-                $this->db->join('users','users.id=invoicehed.InvUser');
-               $data = $this->db->get();
-        
+        $this->db->select('invoicedtl.*,product.Prd_Description,users.first_name,invoicehed.IsComplete,invoicehed.InvIsCancel,DATE(invoicehed.InvDate) AS InvDate,invoicehed.InvDisAmount,invoicehed.InvNetAmount AS TotalNetAmount');
+        $this->db->from('invoicedtl');
+        if (isset($enddate) && $enddate != '') {
+            $this->db->where('DATE(invoicedtl.InvDate) <=', $enddate);
+        }
+        if (isset($startdate) && $startdate != '') {
+            $this->db->where('DATE(invoicedtl.InvDate) >=', $startdate);
+        }
+        if (isset($route) && $route != '') {
+            $this->db->where('invoicehed.InvLocation', $route);
+        }
+
+        if (isset($isall) && $isall == 0) {
+            $this->db->where('invoicehed.InvIsCancel', 0);
+        }
+        if (isset($pro) && $pro != '') {
+            $this->db->where('invoicedtl.InvProductCode', $pro);
+        }
+        $this->db->join('product', 'product.ProductCode=invoicedtl.InvProductCode');
+        $this->db->join('invoicehed', 'invoicehed.InvNo=invoicedtl.InvNo');
+        $this->db->join('users', 'users.id=invoicehed.InvUser');
+        $data = $this->db->get();
+
         $list = array();
         foreach ($data->result() as $row) {
             $list[$row->InvNo][] = $row;
         }
         echo json_encode($list);
         die;
-        
+
     }
 
-    public function loadjobdatesale() {
+    public function loadjobdatesale()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result    = $this->Report_model->genjobreportbyroute($startdate, $enddate, $route,$routeAr);
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $result = $this->Report_model->genjobreportbyroute($startdate, $enddate, $route, $routeAr);
         echo json_encode($result);
         die;
     }
 
-    public function loadjobdatesalesum() {
+    public function loadjobdatesalesum()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result    = $this->Report_model->genjobsumreportbyroute($startdate, $enddate, $route,$routeAr);
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $result = $this->Report_model->genjobsumreportbyroute($startdate, $enddate, $route, $routeAr);
         echo json_encode($result);
         die;
     }
 
-    public function loadjobdaysalesum() {
+    public function loadjobdaysalesum()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
 
-        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('date(JobInvoiceDate)<',$enddate)->get()->row()->baldate;
-      
-        $result['pro']         = $this->Report_model->genjobdaysumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['cash']        = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevcash']    = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['expenses']    = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
-        $result['earn']        = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-       $result['inout']       = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route,$routeAr,12);
-        $result['salary']      = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route,$routeAr,12);
-        $result['procash']     = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['product']     = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route,$routeAr);
-        
+        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('date(JobInvoiceDate)<', $enddate)->get()->row()->baldate;
+
+        $result['pro'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['cash'] = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevcash'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['expenses'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 1);
+        $result['earn'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 0);
+        $result['inout'] = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['salary'] = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['procash'] = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['product'] = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route, $routeAr);
+
         $query = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$bal_date','$route','')");
-        $result['bal'] =$query->result();
+        $result['bal'] = $query->result();
         echo json_encode($result);
         die;
     }
 
-    public function loaddailybalance() {
+    public function loaddailybalance()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
 
-        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('date(JobInvoiceDate)<',$enddate)->get()->row()->baldate;
-        
-        
+        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('date(JobInvoiceDate)<', $enddate)->get()->row()->baldate;
+
+
         // echo json_encode($result);
         // die;
-        $result['newcus']       =  $this->db->select('Count(CusCode) as new')->from('customer')->where('DATE(JoinDate)',$enddate)->where('IsActive',1)->get()->row()->new;
-        $result['repcus']       = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->join('customer','customer.CusCode=jobcardhed.JCustomer')->where('DATE(appoimnetDate)',$enddate)->where('DATE(customer.JoinDate)!=',$enddate)->get()->row()->new;
-        $result['newjobs']      =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)',$enddate)->get()->row()->new;
-        $result['completejobs'] =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)',$enddate)->where('IsCompelte',2)->get()->row()->new;
-        $result['pendingjob']   =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)',$enddate)->where('IsCompelte',0)->get()->row()->new;
-        $result['overjob']      =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)=',$enddate)->where('DATE(deliveryDate)<',$enddate)->where('IsCompelte',0)->get()->row()->new;
+        $result['newcus'] = $this->db->select('Count(CusCode) as new')->from('customer')->where('DATE(JoinDate)', $enddate)->where('IsActive', 1)->get()->row()->new;
+        $result['repcus'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->join('customer', 'customer.CusCode=jobcardhed.JCustomer')->where('DATE(appoimnetDate)', $enddate)->where('DATE(customer.JoinDate)!=', $enddate)->get()->row()->new;
+        $result['newjobs'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)', $enddate)->get()->row()->new;
+        $result['completejobs'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)', $enddate)->where('IsCompelte', 2)->get()->row()->new;
+        $result['pendingjob'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)', $enddate)->where('IsCompelte', 0)->get()->row()->new;
+        $result['overjob'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)=', $enddate)->where('DATE(deliveryDate)<', $enddate)->where('IsCompelte', 0)->get()->row()->new;
         // $result['cashier'] =  $this->db->select('users.first_name')->from('cashflot')->join('users','users.id=cashflot.SystemUser')->where('DATE(FlotDate)',date("Y-m-d"))->get()->row()->first_name;
-        
-        $result['pro']         = $this->Report_model->genjobdaysumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['cash']        = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevcash']    = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['expenses']    = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
-        $result['earn']        = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-        $result['inout']       = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route,$routeAr,12);
-        $result['salary']      = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route,$routeAr,12);
-        $result['expearn']     = $this->Report_model->cashfloatbytype($startdate, $enddate, $route,$routeAr,12,'');
-        $result['procash']     = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['product']     = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route,$routeAr);
-        $result['suppay']      = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route,$routeAr);
-        $result['advance']     = $this->Report_model->totalcuspayment($startdate, $enddate, $route,$routeAr,2);
-        $result['cuspay']      = $this->Report_model->totalcuspayment($startdate, $enddate, $route,$routeAr,1);
-        $result['lastbal']     = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)<' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->EndFlot;
-        
+
+        $result['pro'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['cash'] = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevcash'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['expenses'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 1);
+        $result['earn'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 0);
+        $result['inout'] = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['salary'] = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['expearn'] = $this->Report_model->cashfloatbytype($startdate, $enddate, $route, $routeAr, 12, '');
+        $result['procash'] = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['product'] = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route, $routeAr);
+        $result['suppay'] = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route, $routeAr);
+        $result['advance'] = $this->Report_model->totalcuspayment($startdate, $enddate, $route, $routeAr, 2);
+        $result['cuspay'] = $this->Report_model->totalcuspayment($startdate, $enddate, $route, $routeAr, 1);
+        $result['lastbal'] = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)<', $enddate)->order_by('BalanceDate', 'desc')->limit(1)->get()->row()->EndFlot;
+
 
         $query = $this->db->query("CALL SPR_DAILY_CASH_BALANCE_SHEET('$enddate','$route','')");
-        $result['bal'] =$query->result();
+        $result['bal'] = $query->result();
 
         // $query2 = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$bal_date','$route','')");
         // $result['lastbal'] =$query2->result();
-        
+
         echo json_encode($result);
         die;
     }
 
-    public function loaddailybalancedetail() {
+    public function loaddailybalancedetail()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
 
-        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('JobLocation',$route)->where('date(JobInvoiceDate)<',$enddate)->get()->row()->baldate;
-        
-        
+        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('JobLocation', $route)->where('date(JobInvoiceDate)<', $enddate)->get()->row()->baldate;
+
+
         // echo json_encode($result);
         // die;
-        $result['newcus']       =  $this->db->select('Count(CusCode) as new')->from('customer')->where('DATE(JoinDate)',$enddate)->where('IsActive',1)->get()->row()->new;
-        $result['repcus']       = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->join('customer','customer.CusCode=jobcardhed.JCustomer')->where('JLocation',$route)->where('DATE(appoimnetDate)',$enddate)->where('DATE(customer.JoinDate)!=',$enddate)->get()->row()->new;
-        $result['newjobs']      =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation',$route)->where('JLocation',$route)->where('DATE(appoimnetDate)',$enddate)->get()->row()->new;
-        $result['completejobs'] =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation',$route)->where('DATE(appoimnetDate)',$enddate)->where('IsCompelte',2)->get()->row()->new;
-        $result['pendingjob']   =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation',$route)->where('DATE(appoimnetDate)',$enddate)->where('IsCompelte',0)->get()->row()->new;
-        $result['overjob']      =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation',$route)->where('DATE(appoimnetDate)=',$enddate)->where('DATE(deliveryDate)<',$enddate)->where('IsCompelte',0)->get()->row()->new;
+        $result['newcus'] = $this->db->select('Count(CusCode) as new')->from('customer')->where('DATE(JoinDate)', $enddate)->where('IsActive', 1)->get()->row()->new;
+        $result['repcus'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->join('customer', 'customer.CusCode=jobcardhed.JCustomer')->where('JLocation', $route)->where('DATE(appoimnetDate)', $enddate)->where('DATE(customer.JoinDate)!=', $enddate)->get()->row()->new;
+        $result['newjobs'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation', $route)->where('JLocation', $route)->where('DATE(appoimnetDate)', $enddate)->get()->row()->new;
+        $result['completejobs'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation', $route)->where('DATE(appoimnetDate)', $enddate)->where('IsCompelte', 2)->get()->row()->new;
+        $result['pendingjob'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation', $route)->where('DATE(appoimnetDate)', $enddate)->where('IsCompelte', 0)->get()->row()->new;
+        $result['overjob'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('JLocation', $route)->where('DATE(appoimnetDate)=', $enddate)->where('DATE(deliveryDate)<', $enddate)->where('IsCompelte', 0)->get()->row()->new;
         // $result['cashier'] =  $this->db->select('users.first_name')->from('cashflot')->join('users','users.id=cashflot.SystemUser')->where('DATE(FlotDate)',date("Y-m-d"))->get()->row()->first_name;
-        
-        $result['pro']         = $this->Report_model->genjobdaysalesumreportbypayment($startdate, $enddate, $route,$routeAr);
-        $result['cash']        = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevcash']    = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['expenses']    = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
-        $result['earn']        = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-        $result['inout']       = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route,$routeAr,12);
-        $result['salary']      = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route,$routeAr,12);
-        $result['expearn']     = $this->Report_model->cashfloatbytype($startdate, $enddate, $route,$routeAr,12,'');
-        $result['procash']     = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['product']     = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route,$routeAr);
-        $result['part']        = $this->Report_model->gencashreportbypart($startdate, $enddate, $route,$routeAr);
-        $result['suppay']      = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route,$routeAr);
-        $result['advance']     = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route,$routeAr,2);
-        $result['cuspay']      = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route,$routeAr,1);
-        $result['easy']        = $this->Report_model->gencashreportbyeasy($startdate, $enddate, $route,$routeAr);
-        $result['coder']        = $this->Report_model->gencashreportbycoder($startdate, $enddate, $route,$routeAr);
-        $result['easycuspay']      = $this->Report_model->totaleasycuspaymentsummary($startdate, $enddate, $route,$routeAr,1);
-        $result['cusodercuspay']      = $this->Report_model->totalcusodercuspaymentsummary($startdate, $enddate, $route,$routeAr,1);
 
-        $isEnd = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('Location',$route)->where('DATE(BalanceDate)=' ,$enddate)->get()->num_rows();
-        if($isEnd>0){
-            $result['lastbal']     = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('Location',$route)->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->EndFlot;
-        }else{
-            $result['lastbal']     = 0;
+        $result['pro'] = $this->Report_model->genjobdaysalesumreportbypayment($startdate, $enddate, $route, $routeAr);
+        $result['cash'] = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevcash'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['expenses'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 1);
+        $result['earn'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 0);
+        $result['inout'] = $this->Report_model->cashinoutbyroutebytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['salary'] = $this->Report_model->cashinoutsalarybytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['expearn'] = $this->Report_model->cashfloatbytype($startdate, $enddate, $route, $routeAr, 12, '');
+        $result['procash'] = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['product'] = $this->Report_model->gencashreportbyproduct($startdate, $enddate, $route, $routeAr);
+        $result['part'] = $this->Report_model->gencashreportbypart($startdate, $enddate, $route, $routeAr);
+        $result['suppay'] = $this->Report_model->totalsupplierpayment($startdate, $enddate, $route, $routeAr);
+        $result['advance'] = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route, $routeAr, 2);
+        $result['cuspay'] = $this->Report_model->totalcuspaymentsummary($startdate, $enddate, $route, $routeAr, 1);
+        $result['easy'] = $this->Report_model->gencashreportbyeasy($startdate, $enddate, $route, $routeAr);
+        $result['coder'] = $this->Report_model->gencashreportbycoder($startdate, $enddate, $route, $routeAr);
+        $result['easycuspay'] = $this->Report_model->totaleasycuspaymentsummary($startdate, $enddate, $route, $routeAr, 1);
+        $result['cusodercuspay'] = $this->Report_model->totalcusodercuspaymentsummary($startdate, $enddate, $route, $routeAr, 1);
+
+        $isEnd = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('Location', $route)->where('DATE(BalanceDate)=', $enddate)->get()->num_rows();
+        if ($isEnd > 0) {
+            $result['lastbal'] = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('Location', $route)->where('DATE(BalanceDate)=', $enddate)->order_by('BalanceDate', 'desc')->limit(1)->get()->row()->EndFlot;
+        } else {
+            $result['lastbal'] = 0;
         }
 
-        $isStart = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('Location',$route)->where('DATE(BalanceDate)=' ,$enddate)->get()->num_rows();
-        if($isStart>0){
-            $result['startbal']     = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('Location',$route)->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->StartFlot;
-        }else{
-            $result['startbal']     = 0;
+        $isStart = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('Location', $route)->where('DATE(BalanceDate)=', $enddate)->get()->num_rows();
+        if ($isStart > 0) {
+            $result['startbal'] = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('Location', $route)->where('DATE(BalanceDate)=', $enddate)->order_by('BalanceDate', 'desc')->limit(1)->get()->row()->StartFlot;
+        } else {
+            $result['startbal'] = 0;
         }
 
-        $isCash = $this->db->select('SystemUser')->from('cashierbalancesheet')->where('Location',$route)->where('DATE(BalanceDate)=' ,$enddate)->get()->num_rows();
-        if($isCash>0){
-            $result['cashier']     = $this->db->select('first_name')->from('cashierbalancesheet')->join('users','users.id=cashierbalancesheet.SystemUser')->where('cashierbalancesheet.Location',$route)->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->first_name;
-        }else{
-            $result['cashier']     = '';
+        $isCash = $this->db->select('SystemUser')->from('cashierbalancesheet')->where('Location', $route)->where('DATE(BalanceDate)=', $enddate)->get()->num_rows();
+        if ($isCash > 0) {
+            $result['cashier'] = $this->db->select('first_name')->from('cashierbalancesheet')->join('users', 'users.id=cashierbalancesheet.SystemUser')->where('cashierbalancesheet.Location', $route)->where('DATE(BalanceDate)=', $enddate)->order_by('BalanceDate', 'desc')->limit(1)->get()->row()->first_name;
+        } else {
+            $result['cashier'] = '';
         }
         // $result['startbal']    = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->StartFlot;
         // $result['cashier']     = $this->db->select('first_name')->from('cashierbalancesheet')->join('users','users.id=cashierbalancesheet.SystemUser')->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->first_name;
 
         $query = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$enddate','$route','')");
-        $result['bal'] =$query->result();
+        $result['bal'] = $query->result();
 
         // $query2 = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$bal_date','$route','')");
         // $result['lastbal'] =$query2->result();
@@ -1288,87 +1373,90 @@ class Report extends Admin_Controller {
         die;
     }
 
-    public function loadmonthlybalancedetail() {
+    public function loadmonthlybalancedetail()
+    {
         $this->output->set_content_type('application_json');
-        $enddate   = $_POST['enddate'];
+        $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
-        $route     = isset($_POST['route']) ? $_POST['route'] : NULL;
-        $routeAr   = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
+        $route = isset($_POST['route']) ? $_POST['route'] : NULL;
+        $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
 
-        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('date(JobInvoiceDate)<',$enddate)->get()->row()->baldate;
-        
-        
+        $bal_date = $this->db->select('MAX(date(JobInvoiceDate)) As baldate')->from('jobinvoicehed')->where('date(JobInvoiceDate)<', $enddate)->get()->row()->baldate;
+
+
         // echo json_encode($result);
         // die;
-        $result['newcus']       = $this->db->select('Count(CusCode) as new')->from('customer')->where('DATE(JoinDate) <=',$enddate)->where('DATE(JoinDate) >=',$startdate)->where('IsActive',1)->get()->row()->new;
-        $result['repcus']       = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->join('customer','customer.CusCode=jobcardhed.JCustomer')->where('DATE(appoimnetDate)<=',$enddate)->where('DATE(appoimnetDate)>=',$startdate)->where('DATE(customer.JoinDate)<',$startdate)->get()->row()->new;
-        $result['newjobs']      =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)<=',$enddate)->where('DATE(appoimnetDate)>=',$startdate)->get()->row()->new;
-        $result['completejobs'] =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)<=',$enddate)->where('DATE(appoimnetDate)>=',$startdate)->where('IsCompelte',2)->get()->row()->new;
-        $result['pendingjob']   =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)<=',$enddate)->where('DATE(appoimnetDate)>=',$startdate)->where('IsCompelte',0)->get()->row()->new;
-        $result['overjob']      =  $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)<=',$enddate)->where('DATE(appoimnetDate)>=',$startdate)->where('DATE(deliveryDate)<',$startdate)->where('IsCompelte',0)->get()->row()->new;
+        $result['newcus'] = $this->db->select('Count(CusCode) as new')->from('customer')->where('DATE(JoinDate) <=', $enddate)->where('DATE(JoinDate) >=', $startdate)->where('IsActive', 1)->get()->row()->new;
+        $result['repcus'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->join('customer', 'customer.CusCode=jobcardhed.JCustomer')->where('DATE(appoimnetDate)<=', $enddate)->where('DATE(appoimnetDate)>=', $startdate)->where('DATE(customer.JoinDate)<', $startdate)->get()->row()->new;
+        $result['newjobs'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)<=', $enddate)->where('DATE(appoimnetDate)>=', $startdate)->get()->row()->new;
+        $result['completejobs'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)<=', $enddate)->where('DATE(appoimnetDate)>=', $startdate)->where('IsCompelte', 2)->get()->row()->new;
+        $result['pendingjob'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)<=', $enddate)->where('DATE(appoimnetDate)>=', $startdate)->where('IsCompelte', 0)->get()->row()->new;
+        $result['overjob'] = $this->db->select('Count(JobCardNo) as new')->from('jobcardhed')->where('DATE(appoimnetDate)<=', $enddate)->where('DATE(appoimnetDate)>=', $startdate)->where('DATE(deliveryDate)<', $startdate)->where('IsCompelte', 0)->get()->row()->new;
         // $result['cashier'] =  $this->db->select('users.first_name')->from('cashflot')->join('users','users.id=cashflot.SystemUser')->where('DATE(FlotDate)',date("Y-m-d"))->get()->row()->first_name;
-        
-        $result['pro']         = $this->Report_model->genjobmonthsalesumreportbypayment($startdate, $enddate, $route,$routeAr);
-        $result['cash']        = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevcash']    = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['expenses']    = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
-        $result['earn']        = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-        $result['inout']       = $this->Report_model->cashinoutmonthbyroutebytype($startdate, $enddate, $route,$routeAr,12);
-        $result['salary']      = $this->Report_model->cashinoutmonthsalarybytype($startdate, $enddate, $route,$routeAr,12);
-        $result['expearn']     = $this->Report_model->cashfloatbytype($startdate, $enddate, $route,$routeAr,12,'');
-        $result['procash']     = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route,$routeAr);
-        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route,$routeAr);
-        $result['product']     = $this->Report_model->gencashmonthreportbyproduct($startdate, $enddate, $route,$routeAr);
-        $result['suppay']      = $this->Report_model->totalmonthsupplierpayment($startdate, $enddate, $route,$routeAr);
-        $result['advance']     = $this->Report_model->totalcusmonthpaymentsummary($startdate, $enddate, $route,$routeAr,2);
-        $result['cuspay']      = $this->Report_model->totalcusmonthpaymentsummary($startdate, $enddate, $route,$routeAr,1);
-        $isEnd = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=' ,$enddate)->get()->num_rows();
-        if($isEnd>0){
-            $result['lastbal']     = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->EndFlot;
-        }else{
-            $result['lastbal']     = 0;
+
+        $result['pro'] = $this->Report_model->genjobmonthsalesumreportbypayment($startdate, $enddate, $route, $routeAr);
+        $result['cash'] = $this->Report_model->genjobdaycashsumreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevcash'] = $this->Report_model->genjobdaysumreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['expenses'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 1);
+        $result['earn'] = $this->Report_model->expensesbydate($routeAr, $startdate, $enddate, 0);
+        $result['inout'] = $this->Report_model->cashinoutmonthbyroutebytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['salary'] = $this->Report_model->cashinoutmonthsalarybytype($startdate, $enddate, $route, $routeAr, 12);
+        $result['expearn'] = $this->Report_model->cashfloatbytype($startdate, $enddate, $route, $routeAr, 12, '');
+        $result['procash'] = $this->Report_model->gencashreportbyroute($startdate, $enddate, $route, $routeAr);
+        $result['prevprocash'] = $this->Report_model->gencashreportbyroute($startdate, $bal_date, $route, $routeAr);
+        $result['product'] = $this->Report_model->gencashmonthreportbyproduct($startdate, $enddate, $route, $routeAr);
+        $result['suppay'] = $this->Report_model->totalmonthsupplierpayment($startdate, $enddate, $route, $routeAr);
+        $result['advance'] = $this->Report_model->totalcusmonthpaymentsummary($startdate, $enddate, $route, $routeAr, 2);
+        $result['cuspay'] = $this->Report_model->totalcusmonthpaymentsummary($startdate, $enddate, $route, $routeAr, 1);
+        $isEnd = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=', $enddate)->get()->num_rows();
+        if ($isEnd > 0) {
+            $result['lastbal'] = $this->db->select('EndFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=', $enddate)->order_by('BalanceDate', 'desc')->limit(1)->get()->row()->EndFlot;
+        } else {
+            $result['lastbal'] = 0;
         }
 
-        $isStart = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=' ,$startdate)->get()->num_rows();
-        if($isStart>0){
-            $result['startbal']     = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=' ,$startdate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->StartFlot;
-        }else{
-            $result['startbal']     = 0;
+        $isStart = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=', $startdate)->get()->num_rows();
+        if ($isStart > 0) {
+            $result['startbal'] = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=', $startdate)->order_by('BalanceDate', 'desc')->limit(1)->get()->row()->StartFlot;
+        } else {
+            $result['startbal'] = 0;
         }
 
-        $isCash = $this->db->select('SystemUser')->from('cashierbalancesheet')->where('DATE(BalanceDate)=' ,$enddate)->get()->num_rows();
-        if($isCash>0){
-            $result['cashier']     = $this->db->select('first_name')->from('cashierbalancesheet')->join('users','users.id=cashierbalancesheet.SystemUser')->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->first_name;
-        }else{
-            $result['cashier']     = '';
+        $isCash = $this->db->select('SystemUser')->from('cashierbalancesheet')->where('DATE(BalanceDate)=', $enddate)->get()->num_rows();
+        if ($isCash > 0) {
+            $result['cashier'] = $this->db->select('first_name')->from('cashierbalancesheet')->join('users', 'users.id=cashierbalancesheet.SystemUser')->where('DATE(BalanceDate)=', $enddate)->order_by('BalanceDate', 'desc')->limit(1)->get()->row()->first_name;
+        } else {
+            $result['cashier'] = '';
         }
         // $result['startbal']    = $this->db->select('StartFlot')->from('cashierbalancesheet')->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->StartFlot;
         // $result['cashier']     = $this->db->select('first_name')->from('cashierbalancesheet')->join('users','users.id=cashierbalancesheet.SystemUser')->where('DATE(BalanceDate)=' ,$enddate)->order_by('BalanceDate','desc')->limit(1)->get()->row()->first_name;
-        
+
 
         $query = $this->db->query("CALL SPR_MONTHLY_BALANCE_SHEET('$startdate','$enddate','$route','')");
-        $result['bal'] =$query->result();
+        $result['bal'] = $query->result();
 
         // $query2 = $this->db->query("CALL SPR_DAILY_BALANCE_SHEET('$bal_date','$route','')");
         // $result['lastbal'] =$query2->result();
-        
+
         echo json_encode($result);
         die;
     }
 
-    public function getCashFloatByDate() {
-        $date     = ($_REQUEST['cash_date']);
+    public function getCashFloatByDate()
+    {
+        $date = ($_REQUEST['cash_date']);
         $location = ($_REQUEST['location']);
-        $user     = $_SESSION['user_id'];
-        $query    = $this->db->query("CALL SPR_CASH_BALANCE_SHEET('$date','$location','$user')");
-        $result   = $query->result_array();
+        $user = $_SESSION['user_id'];
+        $query = $this->db->query("CALL SPR_CASH_BALANCE_SHEET('$date','$location','$user')");
+        $result = $query->result_array();
 //        return $result;
-    
-            echo json_encode($result);
-            die;
+
+        echo json_encode($result);
+        die;
     }
 
-    public function loadjobsalebyproduct() {
+    public function loadjobsalebyproduct()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -1378,18 +1466,19 @@ class Report extends Admin_Controller {
         $dep = isset($_POST['department']) ? $_POST['department'] : NULL;
         $subdep = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
-        $result['pro'] = $this->Report_model->genjobreportbyproduct($startdate, $enddate, $route, $product,$routeAr,$dep,$subdep,$subcat);
-        $result['dis'] = $this->Report_model->genjobreporttotalDiscountbyproduct($startdate, $enddate, $route, $product,$routeAr,$dep,$subdep,$subcat);
+        $result['pro'] = $this->Report_model->genjobreportbyproduct($startdate, $enddate, $route, $product, $routeAr, $dep, $subdep, $subcat);
+        $result['dis'] = $this->Report_model->genjobreporttotalDiscountbyproduct($startdate, $enddate, $route, $product, $routeAr, $dep, $subdep, $subcat);
         // $result['expenses'] = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 1);
         // $result['earn'] = $this->Report_model->expensesbydate($routeAr,$startdate, $enddate, 0);
-        $result['dis'] =null;
-        $result['expenses'] =null;
-        $result['earn'] =null;
+        $result['dis'] = null;
+        $result['expenses'] = null;
+        $result['earn'] = null;
         echo json_encode($result);
         die;
     }
 
-    public function loadjobsalebyservice() {
+    public function loadjobsalebyservice()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -1399,16 +1488,17 @@ class Report extends Admin_Controller {
         $dep = isset($_POST['department']) ? $_POST['department'] : NULL;
         $subdep = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
-        $result['pro'] = $this->Report_model->genjobreportbyservices($startdate, $enddate, $route, $product,$routeAr,$dep,$subdep,$subcat);
-        
-        $result['dis'] =null;
-        $result['expenses'] =null;
-        $result['earn'] =null;
+        $result['pro'] = $this->Report_model->genjobreportbyservices($startdate, $enddate, $route, $product, $routeAr, $dep, $subdep, $subcat);
+
+        $result['dis'] = null;
+        $result['expenses'] = null;
+        $result['earn'] = null;
         echo json_encode($result);
         die;
     }
 
-    public function loadjobsalebymake() {
+    public function loadjobsalebymake()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -1418,16 +1508,17 @@ class Report extends Admin_Controller {
         $dep = isset($_POST['department']) ? $_POST['department'] : NULL;
         $subdep = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
-        $result['pro'] = $this->Report_model->genjobreportbymake($startdate, $enddate, $route, $product,$routeAr,$dep,$subdep,$subcat);
-        
-        $result['dis'] =null;
-        $result['expenses'] =null;
-        $result['earn'] =null;
+        $result['pro'] = $this->Report_model->genjobreportbymake($startdate, $enddate, $route, $product, $routeAr, $dep, $subdep, $subcat);
+
+        $result['dis'] = null;
+        $result['expenses'] = null;
+        $result['earn'] = null;
         echo json_encode($result);
         die;
     }
 
-    public function loadjobsalebyinvoice() {
+    public function loadjobsalebyinvoice()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -1437,16 +1528,17 @@ class Report extends Admin_Controller {
         $dep = isset($_POST['department']) ? $_POST['department'] : NULL;
         $subdep = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
-        $result['pro'] = $this->Report_model->genjobreportbyinvoices($startdate, $enddate, $route, $product,$routeAr,$dep,$subdep,$subcat);
-        
-        $result['dis'] =null;
-        $result['expenses'] =null;
-        $result['earn'] =null;
+        $result['pro'] = $this->Report_model->genjobreportbyinvoices($startdate, $enddate, $route, $product, $routeAr, $dep, $subdep, $subcat);
+
+        $result['dis'] = null;
+        $result['expenses'] = null;
+        $result['earn'] = null;
         echo json_encode($result);
         die;
     }
 
-    public function loadjobpaymentbyinvoice() {
+    public function loadjobpaymentbyinvoice()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -1456,58 +1548,71 @@ class Report extends Admin_Controller {
         $dep = isset($_POST['department']) ? $_POST['department'] : NULL;
         $subdep = isset($_POST['subdepartment']) ? $_POST['subdepartment'] : NULL;
         $subcat = isset($_POST['subcategory_ar']) ? json_decode($_POST['subcategory_ar']) : NULL;
-        $result['pro'] = $this->Report_model->genpaymentreportbyinvoices($startdate, $enddate, $route, $product,$routeAr,$dep,$subdep,$subcat);
-        
-        $result['dis'] =null;
-        $result['expenses'] =null;
-        $result['earn'] =null;
+        $result['pro'] = $this->Report_model->genpaymentreportbyinvoices($startdate, $enddate, $route, $product, $routeAr, $dep, $subdep, $subcat);
+
+        $result['dis'] = null;
+        $result['expenses'] = null;
+        $result['earn'] = null;
         echo json_encode($result);
         die;
     }
 
-    public function grnreportjson() {
+    public function grnreportjson()
+
+    {
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $from = isset($_POST['location_from']) ? $_POST['location_from'] : NULL;
         $pro = isset($_POST['productsearch']) ? $_POST['productsearch'] : NULL;
         $supplier = isset($_POST['supplier']) ? $_POST['supplier'] : NULL;
-        $isall = isset($_POST['isall']) ? 1 : 0;
+        $isall = isset($_POST['isall']) ? 0: 1;
 
         $this->db->select('goodsreceivenotedtl.*,product.Prd_Description,goodsreceivenotehed.GRN_IsComplete,goodsreceivenotehed.GRN_IsCancel,(goodsreceivenotehed.GRN_DateORG) AS TransDate,DATE(goodsreceivenotedtl.GRN_Date) As grndate,supplier.SupName');
         $this->db->from('goodsreceivenotedtl');
-        if (isset($enddate) && $enddate != '' ) {
+// Load data only if isall == 1
+        if (!empty($isall)) {
+//            echo json_encode([]); // return an empty array
+//            die;
+        if (!empty($enddate)) {
             $this->db->where('DATE(goodsreceivenotedtl.GRN_Date) <=', $enddate);
         }
-        if (isset($startdate) && $startdate != '' ) {
+        if (!empty($startdate)) {
             $this->db->where('DATE(goodsreceivenotedtl.GRN_Date) >=', $startdate);
         }
-        if (isset($from) && $from != '' ) {
-            $this->db->where('goodsreceivenotehed.GRN_Location',$from);
+        if (!empty($from)) {
+            $this->db->where('goodsreceivenotehed.GRN_Location', $from);
         }
-          
-        if (isset($isall) && $isall == 0 ) {
-            $this->db->where('goodsreceivenotehed.GRN_IsCancel',0);
+        if (!empty($pro)) {
+            $this->db->where('goodsreceivenotedtl.GRN_Product', $pro);
         }
-        if (isset($pro) && $pro != '' ) {
-            $this->db->where('goodsreceivenotedtl.GRN_Product',$pro);
+        if (!empty($supplier)) {
+            $this->db->where('goodsreceivenotehed.GRN_SupCode', $supplier);
         }
-        if (isset($supplier) && $supplier != '' ) {
-            $this->db->where('goodsreceivenotehed.GRN_SupCode',$supplier);
-        }
+    }
+
+        // }else{
+        //     $this->db->where('goodsreceivenotehed.GRN_IsCancel', 0);
+        // }
+
         $this->db->join('product', 'product.ProductCode=goodsreceivenotedtl.GRN_Product');
         $this->db->join('goodsreceivenotehed', 'goodsreceivenotehed.GRN_No=goodsreceivenotedtl.GRN_No');
         $this->db->join('supplier', 'supplier.SupCode=goodsreceivenotehed.GRN_SupCode');
+//        $this->db->where('goodsreceivenotehed.GRN_IsCancel', 0);
+
         $data = $this->db->get();
-        
+
         $list = array();
         foreach ($data->result() as $row) {
-            $list[$row->GRN_No." - ".$row->grndate." - ".$row->SupName][] = $row;
+            $list[$row->GRN_No . " - " . $row->grndate . " - " . $row->SupName][] = $row;
         }
-        echo json_encode($list);die;
+        echo json_encode($list);
+        die;
+
     }
 
-    public function suppliercredit() {
+    public function suppliercredit()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Credit', 'admin/report/customercredit');
         $this->page_title->push(('Supplier Outstanding'));
@@ -1516,10 +1621,10 @@ class Report extends Admin_Controller {
         $this->data['locations'] = $this->Report_model->loadroot();
         $this->data['products'] = $this->Report_model->loadproduct();
         $location = $_SESSION['location'];
-            $this->load->model('admin/Job_model');
-            $id3 = array('CompanyID' => $location);
-            $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
+        $this->load->model('admin/Job_model');
+        $id3 = array('CompanyID' => $location);
+        $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
+
         $people = array("0", "10", "14");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -1529,27 +1634,29 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function loadsuppliercredit() {
+    public function loadsuppliercredit()
+    {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $customer = isset($_POST['customer']) ? $_POST['customer'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-        if($isall==0){
+        if ($isall == 0) {
             $enddate = $_POST['enddate'];
             $startdate = $_POST['startdate'];
-        }else{
+        } else {
             $enddate = '';
             $startdate = '';
         }
 
-       $result['cr'] = $this->Report_model->suppliercredit($startdate, $enddate, $route,$isall,$customer);
-    
+        $result['cr'] = $this->Report_model->suppliercredit($startdate, $enddate, $route, $isall, $customer);
+
         echo json_encode($result);
         die;
-        
+
     }
 
-    public function customercredit() {
+    public function customercredit()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Credit', 'admin/report/customercredit');
         $this->page_title->push(('Customer Outstanding Detail'));
@@ -1561,7 +1668,7 @@ class Report extends Admin_Controller {
         $this->load->model('admin/Job_model');
         $id3 = array('CompanyID' => $location);
         $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
+
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -1569,12 +1676,11 @@ class Report extends Admin_Controller {
         } else {
             $this->template->admin_render('admin/report/customercredit', $this->data);
         }
-    } 
-    
-    
-    
-    
-    public function customerallreport() {
+    }
+
+
+    public function customerallreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Credit', 'admin/report/customercredit');
         $this->page_title->push(('Customer Outstanding'));
@@ -1586,7 +1692,7 @@ class Report extends Admin_Controller {
         $this->load->model('admin/Job_model');
         $id3 = array('CompanyID' => $location);
         $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
+
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -1595,29 +1701,31 @@ class Report extends Admin_Controller {
             $this->template->admin_render('admin/report/cusallreport', $this->data);
         }
     }
-    
 
-    public function loadcustomercredit() {
+
+    public function loadcustomercredit()
+    {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $customer = isset($_POST['customer']) ? $_POST['customer'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-        if($isall==0){
+        if ($isall == 0) {
             $enddate = $_POST['enddate'];
             $startdate = $_POST['startdate'];
-        }else{
+        } else {
             $enddate = '';
             $startdate = '';
         }
 
-       $result['cr'] = $this->Report_model->customercredit($startdate, $enddate, $route,$isall,$customer);
-    
+        $result['cr'] = $this->Report_model->customercredit($startdate, $enddate, $route, $isall, $customer);
+
         echo json_encode($result);
         die;
-        
+
     }
 
-    public function customerpayment() {
+    public function customerpayment()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Credit', 'admin/report/customerpayment');
         $this->page_title->push(('Customer Payment'));
@@ -1626,10 +1734,10 @@ class Report extends Admin_Controller {
         $this->data['locations'] = $this->Report_model->loadroot();
         $this->data['products'] = $this->Report_model->loadproduct();
         $location = $_SESSION['location'];
-            $this->load->model('admin/Job_model');
-            $id3 = array('CompanyID' => $location);
-            $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
+        $this->load->model('admin/Job_model');
+        $id3 = array('CompanyID' => $location);
+        $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
+
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -1639,27 +1747,29 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function loadcustomerpayment() {
+    public function loadcustomerpayment()
+    {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $customer = isset($_POST['customer']) ? $_POST['customer'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-        if($isall==0){
+        if ($isall == 0) {
             $enddate = $_POST['enddate'];
             $startdate = $_POST['startdate'];
-        }else{
+        } else {
             $enddate = '';
             $startdate = '';
         }
 
-       $result['cp'] = $this->Report_model->customerpayment($startdate, $enddate, $route,$isall,$customer);
-    
+        $result['cp'] = $this->Report_model->customerpayment($startdate, $enddate, $route, $isall, $customer);
+
         echo json_encode($result);
         die;
-        
+
     }
 
-    public function supplierpayment() {
+    public function supplierpayment()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Credit', 'admin/report/supplierpayment');
         $this->page_title->push(('Supplier Payment'));
@@ -1668,10 +1778,10 @@ class Report extends Admin_Controller {
         $this->data['locations'] = $this->Report_model->loadroot();
         $this->data['products'] = $this->Report_model->loadproduct();
         $location = $_SESSION['location'];
-            $this->load->model('admin/Job_model');
-            $id3 = array('CompanyID' => $location);
-            $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
+        $this->load->model('admin/Job_model');
+        $id3 = array('CompanyID' => $location);
+        $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
+
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -1681,17 +1791,18 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function loadsupplierpayment() {
+    public function loadsupplierpayment()
+    {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $customer = isset($_POST['customer']) ? $_POST['customer'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-        if($isall==0){
+        if ($isall == 0) {
             $enddate = $_POST['enddate'];
             $startdate = $_POST['startdate'];
         }
 
-       $this->db->select('supplier.SupName,
+        $this->db->select('supplier.SupName,
                         supplier.Address01,
                         supplier.Address02,
                         supplier.SupTitle,
@@ -1705,36 +1816,37 @@ class Report extends Admin_Controller {
                         DATE(supplierpaymentdtl.RecievedDate) AS RecievedDate,
                         supplierpaymentdtl.Reference,
                         title.TitleName');
-                $this->db->from('supplierpaymenthed');
-                $this->db->join('supplierpaymentdtl','supplierpaymentdtl.SupPayNo=supplierpaymenthed.SupPayNo');
-                $this->db->join('supplier','supplierpaymenthed.SupCode = supplier.SupCode');
-                $this->db->join('title','supplier.SupTitle = title.TitleId','left');
-                $this->db->join('bank','supplierpaymentdtl.BankNo = bank.BankCode','left');
+        $this->db->from('supplierpaymenthed');
+        $this->db->join('supplierpaymentdtl', 'supplierpaymentdtl.SupPayNo=supplierpaymenthed.SupPayNo');
+        $this->db->join('supplier', 'supplierpaymenthed.SupCode = supplier.SupCode');
+        $this->db->join('title', 'supplier.SupTitle = title.TitleId', 'left');
+        $this->db->join('bank', 'supplierpaymentdtl.BankNo = bank.BankCode', 'left');
 
-                 $this->db->where('supplierpaymenthed.IsCancel',0);
-            if (isset($isall) && $isall == 0 ) {
-                if (isset($enddate) && $enddate != '' ) {
+        $this->db->where('supplierpaymenthed.IsCancel', 0);
+        if (isset($isall) && $isall == 0) {
+            if (isset($enddate) && $enddate != '') {
                 $this->db->where('DATE(supplierpaymenthed.PayDate) <=', $enddate);
-                }
-                if (isset($startdate) && $startdate != '' ) {
-                $this->db->where('DATE(supplierpaymenthed.PayDate) >=', $startdate);
-                }
             }
-                 if (isset($route) && $route != '' ) {
-                $this->db->where('supplierpaymenthed.Location',$route);
-                 }
-                  if (isset($customer) && $customer != '' ) {
-                $this->db->where('supplierpaymenthed.SupCode',$customer);
-                  }
-                   
-               $result = $this->db->get()->result();
-    
+            if (isset($startdate) && $startdate != '') {
+                $this->db->where('DATE(supplierpaymenthed.PayDate) >=', $startdate);
+            }
+        }
+        if (isset($route) && $route != '') {
+            $this->db->where('supplierpaymenthed.Location', $route);
+        }
+        if (isset($customer) && $customer != '') {
+            $this->db->where('supplierpaymenthed.SupCode', $customer);
+        }
+
+        $result = $this->db->get()->result();
+
         echo json_encode($result);
         die;
-        
+
     }
 
-    public function vehiclesummery() {
+    public function vehiclesummery()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Credit', 'admin/report/supplierpayment');
         $this->page_title->push(('Job summary by vehicle'));
@@ -1743,10 +1855,10 @@ class Report extends Admin_Controller {
         $this->data['locations'] = $this->Report_model->loadroot();
         $this->data['products'] = $this->Report_model->loadproduct();
         $location = $_SESSION['location'];
-            $this->load->model('admin/Job_model');
-            $id3 = array('CompanyID' => $location);
-            $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
+        $this->load->model('admin/Job_model');
+        $id3 = array('CompanyID' => $location);
+        $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
+
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -1756,51 +1868,54 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function loadvehiclesummery() {
+    public function loadvehiclesummery()
+    {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $customer = isset($_POST['customer']) ? $_POST['customer'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-        if($isall==0){
+        if ($isall == 0) {
             $enddate = $_POST['enddate'];
             $startdate = $_POST['startdate'];
-        }else{
+        } else {
             $enddate = '';
             $startdate = '';
         }
 
-        $result['inv'] = $this->Report_model->invoicesbyvehicle($startdate, $enddate, $route,$isall,$customer);
-        $result['cp'] = $this->Report_model->customerpaymentbyvehicle($startdate, $enddate, $route,$isall,$customer);
-        $result['cr'] = $this->Report_model->customercreditbyvehicle($startdate, $enddate, $route,$isall,$customer);
-    
+        $result['inv'] = $this->Report_model->invoicesbyvehicle($startdate, $enddate, $route, $isall, $customer);
+        $result['cp'] = $this->Report_model->customerpaymentbyvehicle($startdate, $enddate, $route, $isall, $customer);
+        $result['cr'] = $this->Report_model->customercreditbyvehicle($startdate, $enddate, $route, $isall, $customer);
+
         echo json_encode($result);
         die;
-        
+
     }
 
-    public function loadjobdelivery() {
+    public function loadjobdelivery()
+    {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $customer = isset($_POST['customer']) ? $_POST['customer'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-        if($isall==0){
+        if ($isall == 0) {
             $enddate = $_POST['enddate'];
             $startdate = $_POST['startdate'];
-        }else{
+        } else {
             $enddate = '';
             $startdate = '';
         }
 
-       $result['cr'] = $this->Report_model->jobdelivery($startdate, $enddate, $route,$isall,$customer);
-    
+        $result['cr'] = $this->Report_model->jobdelivery($startdate, $enddate, $route, $isall, $customer);
+
         echo json_encode($result);
         die;
-        
+
     }
 
 
     //////////////////////2019-09-13////////////////////////////
-        public function customercreditsummary() {
+    public function customercreditsummary()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Credit', 'admin/report/customercreditsummary');
         $this->page_title->push(('Customer Outstanding Summary'));
@@ -1812,7 +1927,7 @@ class Report extends Admin_Controller {
         $this->load->model('admin/Job_model');
         $id3 = array('CompanyID' => $location);
         $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
+
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -1822,27 +1937,29 @@ class Report extends Admin_Controller {
         }
     }
 
-     public function loadcustomercreditsummary() {
+    public function loadcustomercreditsummary()
+    {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $customer = isset($_POST['customer']) ? $_POST['customer'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-        if($isall==0){
+        if ($isall == 0) {
             $enddate = $_POST['enddate'];
             $startdate = $_POST['startdate'];
-        }else{
+        } else {
             $enddate = '';
             $startdate = '';
         }
 
-       $result['cr'] = $this->Report_model->customercreditsummary($startdate, $enddate, $route,$isall,$customer);
-    
+        $result['cr'] = $this->Report_model->customercreditsummary($startdate, $enddate, $route, $isall, $customer);
+
         echo json_encode($result);
         die;
-        
+
     }
 
-    public function customercommission() {
+    public function customercommission()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Credit', 'admin/report/customercommission');
         $this->page_title->push(('Customer Commission'));
@@ -1854,7 +1971,7 @@ class Report extends Admin_Controller {
         $this->load->model('admin/Job_model');
         $id3 = array('CompanyID' => $location);
         $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
+
         $people = array("0", "10", "13");
 
         if (in_array($_SESSION['user_id'], $people)) {
@@ -1862,29 +1979,31 @@ class Report extends Admin_Controller {
         } else {
             $this->template->admin_render('admin/report/customercommission', $this->data);
         }
-    } 
+    }
 
-    public function loadcustomercommission() {
+    public function loadcustomercommission()
+    {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $customer = isset($_POST['customer']) ? $_POST['customer'] : NULL;
         $isall = isset($_POST['isall']) ? 1 : 0;
 
-        if($isall==0){
+        if ($isall == 0) {
             $enddate = $_POST['enddate'];
             $startdate = $_POST['startdate'];
-        }else{
+        } else {
             $enddate = '';
             $startdate = '';
         }
 
-       $result['cr'] = $this->Report_model->customersalecommission($startdate, $enddate, $route,$isall,$customer);
-       $result['cr2'] = $this->Report_model->customerjobcommission($startdate, $enddate, $route,$isall,$customer);
+        $result['cr'] = $this->Report_model->customersalecommission($startdate, $enddate, $route, $isall, $customer);
+        $result['cr2'] = $this->Report_model->customerjobcommission($startdate, $enddate, $route, $isall, $customer);
         echo json_encode($result);
         die;
-        
+
     }
 
-    public function issueNoteByDate() {
+    public function issueNoteByDate()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Job Sales', 'admin/report/issueNoteByDate');
         $this->page_title->push(('Issue Note By Date'));
@@ -1901,7 +2020,8 @@ class Report extends Admin_Controller {
         }
     }
 
-    public function loadreportissuenote() {
+    public function loadreportissuenote()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -1909,8 +2029,9 @@ class Report extends Admin_Controller {
         $route = isset($_POST['route']) ? $_POST['route'] : NULL;
         $salesperson = isset($_POST['salesperson']) ? $_POST['salesperson'] : 0;
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
-        $result = $this->Report_model->genIssuenoteByDate($startdate, $enddate, $route,$routeAr,$invtype,$salesperson);
-        echo json_encode($result);die;
+        $result = $this->Report_model->genIssuenoteByDate($startdate, $enddate, $route, $routeAr, $invtype, $salesperson);
+        echo json_encode($result);
+        die;
     }
 
     public function issueNoteByJob()
@@ -1930,8 +2051,9 @@ class Report extends Admin_Controller {
             $this->template->admin_render('admin/report/issueNoteByJob', $this->data);
         }
     }
-    
-    public function loadIssueNoteByJobs() {
+
+    public function loadIssueNoteByJobs()
+    {
         $this->output->set_content_type('application_json');
         $enddate = $_POST['enddate'];
         $startdate = $_POST['startdate'];
@@ -1940,15 +2062,16 @@ class Report extends Admin_Controller {
         $routeAr = isset($_POST['route_ar']) ? json_decode($_POST['route_ar']) : NULL;
         $result['pro'] = $this->Report_model->loadIssueNoteByJobs($startdate, $enddate, $route, $routeAr, $SalesPerson);
 
-        $result['dis'] =null;
-        $result['expenses'] =null;
-        $result['earn'] =null;
+        $result['dis'] = null;
+        $result['expenses'] = null;
+        $result['earn'] = null;
         echo json_encode($result);
         die;
     }
 
 
-    public function loadingreport() {
+    public function loadingreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Loading Report'));
@@ -1959,34 +2082,86 @@ class Report extends Admin_Controller {
         $this->template->admin_render('admin/report/loadingreport', $this->data);
     }
 
+//    public function loadloadingreport()
+//    {
+//        $this->output->set_content_type('application/json');
+//
+//        $startdate = $this->input->post('startdate');
+//        $enddate = $this->input->post('enddate');
+//        $salesperson = $this->input->post('newsalesperson');
+//        $route = $this->input->post('route');
+//
+//        if (empty($startdate) || empty($enddate)) {
+//            echo json_encode(['error' => 'Start date or end date is missing.']);
+//            return;
+//        }
+//
+//        $this->db->select('
+//        d.SalesProductCode,
+//        d.SalesProductName,
+//        SUM(d.SalesQty) AS TotalSalesQty,
+//        SUM(d.SalesFreeQty) AS TotalSalesFreeQty,
+//        p.Prd_CostPrice
+//    ');
+//        $this->db->from('salesinvoicehed h');
+//        $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
+//        $this->db->join('product p', 'd.SalesProductCode = p.ProductCode');
+//
+//        if (!empty($salesperson)) {
+//            $this->db->where('h.SalesPerson', $salesperson);
+//        }
+//
+//        if (!empty($route)) {
+//            $this->db->where('h.RouteId', $route);
+//        }
+//
+//        $this->db->where('h.SalesDate >=', $startdate);
+//        $this->db->where('h.SalesDate <=', $enddate);
+//        $this->db->group_by(['d.SalesProductCode', 'd.SalesProductName', 'p.Prd_CostPrice']);
+//
+//        $query = $this->db->get();
+//        $result = $query->result();
+//
+//        $response = [
+//            'startdate' => $startdate,
+//            'enddate' => $enddate,
+//            'salesperson' => $salesperson,
+//            'route' => $route,
+//            'data' => $result
+//        ];
+//
+//        echo json_encode($response);
+//    }
+
     public function loadloadingreport() {
         $this->output->set_content_type('application/json');
-    
-        $startdate = $this->input->post('startdate'); 
+
+        $startdate = $this->input->post('startdate');
         $enddate = $this->input->post('enddate');
-        $salesperson = $this->input->post('newsalesperson'); 
-        $route = $this->input->post('route'); 
+        $salesperson = $this->input->post('newsalesperson');
+        $route = $this->input->post('route');
         if (empty($startdate) || empty($enddate)) {
             echo json_encode(['error' => 'Start date or end date is missing.']);
             die;
         }
-    
-        $this->db->select('d.SalesProductCode,d.SalesProductName, SUM(d.SalesQty) AS TotalSalesQty, SUM(d.SalesFreeQty) AS TotalSalesFreeQty,p.Prd_CostPrice');
+
+        $this->db->select('d.SalesProductCode,d.SalesProductName, SUM(d.SalesQty) AS TotalSalesQty, SUM(d.SalesFreeQty) AS TotalSalesFreeQty,p.Prd_CostPrice,tempsalesinvoiceheddtl.SalesReturnQty');
         $this->db->from('salesinvoicehed h');
         $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
         $this->db->join('product p', 'd.SalesProductCode = p.ProductCode');
-        // $this->db->where('h.SalesPerson',$salesperson);
-        // $this->db->where('h.RouteId',$route);
-    
-        // $this->db->where('h.SalesDate >=', $startdate);
-        // $this->db->where('h.SalesDate <=', $enddate);
-        
+        $this->db->join('tempsalesinvoiceheddtl', 'p.ProductCode= tempsalesinvoiceheddtl.productCode');
+//         $this->db->where('h.SalesPerson',$salesperson);
+//         $this->db->where('h.RouteId',$route);
+//
+//         $this->db->where('h.SalesDate >=', $startdate);
+//         $this->db->where('h.SalesDate <=', $enddate);
+
         $this->db->group_by('d.SalesProductCode');
-    
+
         $query = $this->db->get();
-    
+
         $result = $query->result();
-    
+
         $response = [
             'startdate' => $startdate,
             'enddate' => $enddate,
@@ -1994,47 +2169,52 @@ class Report extends Admin_Controller {
             'route' =>$route,
             'data' => $result
         ];
-    
+
         echo json_encode($response);
-        die; 
+        die;
     }
-    public function routewisereport() {
+
+
+    public function routewisereport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Route Wise Report'));
         $this->data['pagetitle'] = $this->page_title->show();
         $this->data['breadcrumb'] = $this->breadcrumbs->show();
-        $this->data['routes'] = $this->Report_model->loadroute();
-        $this->template->admin_render('admin/report/routewisereport', $this->data);
+        $this->data['salespersons'] = $this->Report_model->loademployee();
+        $this->template->admin_render('admin/report/routewisereport_1', $this->data);
     }
 
-    public function loadroutewisereport() {
+    public function loadroutewisereport()
+    {
         $this->output->set_content_type('application/json');
-        
-        $route = $this->input->post('route'); 
+
+        $route = $this->input->post('route');
         $customer = $this->input->post('customer');
-        $startdate = $this->input->post('startdate'); 
+        $startdate = $this->input->post('startdate');
         $enddate = $this->input->post('enddate');
         $this->db->select('h.SalesInvNo,h.SalesCustomer,c.DisplayName,h.RouteId,d.SalesQty,d.SalesTotalAmount');
         $this->db->from('salesinvoicehed h');
         $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
         $this->db->join('customer c', 'h.SalesCustomer = c.CusCode');
-        $this->db->where('h.RouteId',$route);
-        $this->db->where('SalesCustomer',$customer);
+        $this->db->where('h.RouteId', $route);
+//        $this->db->where('SalesCustomer', $customer);
         $this->db->where('SalesDate >=', $startdate);
         $this->db->where('SalesDate <=', $enddate);
         $this->db->group_by('SalesProductCode');
         $query = $this->db->get();
         $result = $query->result();
-        $response = [  
+        $response = [
             'data' => $result
         ];
         echo json_encode($response);
-        die; 
-    
+        die;
+
     }
 
-    public function routewiseoutstandingreport() {
+    public function routewiseoutstandingreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Route Wise Outstanding Report'));
@@ -2044,12 +2224,49 @@ class Report extends Admin_Controller {
         $this->template->admin_render('admin/report/routewiseoutstandingreport', $this->data);
     }
 
-    public function loadroutewiseoutstandingreport() {
+
+
+    public function loadroutewiseoutstandingreport()
+    {
         $this->output->set_content_type('application/json');
-        $salesperson = $this->input->post('newsalesperson'); 
-        $route = $this->input->post('route'); 
+        $salesperson = $this->input->post('newsalesperson');
+        $route = $this->input->post('route');
         $customer = $this->input->post('customer');
-        $startdate = $this->input->post('startdate'); 
+        $startdate = $this->input->post('startdate');
+        $enddate = $this->input->post('enddate');
+        $this->db->select('sp.RepID,er.emp_id,er.route_id,cu.DisplayName,cu.CusCode,cu.HandelBy,cu.CusCode,
+                                DATE(cr.InvoiceDate) AS InvoiceDate,
+                                cr.InvoiceNo,
+                                cr.NetAmount,
+                                SUM(cr.CreditAmount) AS CreditAmount,
+                                cr.SettledAmount,
+                                SUM(cr.returnAmount) AS ReturnAmount');
+        $this->db->from('salespersons sp');
+        $this->db->join('employeeroutes er', 'sp.RepID = er.emp_id', 'left');
+        $this->db->join('customer cu', 'er.emp_id = cu.HandelBy', 'left');
+        $this->db->join('creditinvoicedetails cr', 'cu.CusCode = cr.CusCode');
+        $this->db->where('er.emp_id', $salesperson);
+        $this->db->where('er.route_id', $route);
+        $this->db->where('cu.CusCode', $customer);
+        $query = $this->db->get();
+        $result = $query->result();
+        $response = [
+            'salesperson' => $salesperson,
+            'route' => $route,
+            'customer' => $customer,
+            'data' => $result
+        ];
+        echo json_encode($response);
+        die;
+    }
+
+    public function loadroutewisereport_1()
+    {
+        $this->output->set_content_type('application/json');
+        $salesperson = $this->input->post('newsalesperson');
+        $route = $this->input->post('route');
+        $customer = $this->input->post('customer');
+        $startdate = $this->input->post('startdate');
         $enddate = $this->input->post('enddate');
         $this->db->select('sp.RepID,er.emp_id,er.route_id,cu.DisplayName,cu.CusCode,cu.HandelBy,cu.CusCode,
                                 DATE(cr.InvoiceDate) AS InvoiceDate,
@@ -2059,25 +2276,27 @@ class Report extends Admin_Controller {
                                 cr.SettledAmount,
                                 SUM(cr.returnAmount) AS ReturnAmount');
         $this->db->from('salespersons sp');
-        $this->db->join('employeeroutes er','sp.RepID = er.emp_id','left');
-        $this->db->join('customer cu','er.emp_id = cu.HandelBy','left');
-        $this->db->join('creditinvoicedetails cr','cu.CusCode = cr.CusCode');
-        $this->db->where('er.emp_id',$salesperson);
+        $this->db->join('employeeroutes er', 'sp.RepID = er.emp_id', 'left');
+        $this->db->join('customer cu', 'er.emp_id = cu.HandelBy', 'left');
+        $this->db->join('creditinvoicedetails cr', 'cu.CusCode = cr.CusCode');
+        $this->db->where('er.emp_id', $salesperson);
         $this->db->where('er.route_id', $route);
         $this->db->where('cu.CusCode', $customer);
         $query = $this->db->get();
         $result = $query->result();
-        $response = [  
-            'salesperson'=>$salesperson,
-            'route' =>$route,
-            'customer' =>$customer,
+        $response = [
+            'salesperson' => $salesperson,
+            'route' => $route,
+            'customer' => $customer,
             'data' => $result
         ];
         echo json_encode($response);
-        die; 
+        die;
     }
 
-    public function invoicesaleswiseitemreport() {
+
+    public function invoicesaleswiseitemreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Invoice Sales Wise Item Report'));
@@ -2087,12 +2306,13 @@ class Report extends Admin_Controller {
         $this->template->admin_render('admin/report/invoicesaleswiseitemreport', $this->data);
     }
 
-    public function loadinvoicesaleswiseitemreport() {
+    public function loadinvoicesaleswiseitemreport()
+    {
         $this->output->set_content_type('application/json');
-        $salesperson = $this->input->post('newsalesperson'); 
-        $route = $this->input->post('route'); 
+        $salesperson = $this->input->post('newsalesperson');
+        $route = $this->input->post('route');
         $customer = $this->input->post('customer');
-        $startdate = $this->input->post('startdate'); 
+        $startdate = $this->input->post('startdate');
         $enddate = $this->input->post('enddate');
         $this->db->select('h.SalesInvNo,h.SalesDate,c.CusCode,c.DisplayName,d.SalesProductCode,d.SalesProductName,d.SalesQty,
         d.SalesFreeQty,d.SalesCostPrice,d.SalesUnitPrice,d.SalesDisValue,d.SalesDisPercentage,d.SalesDisValue');
@@ -2106,17 +2326,18 @@ class Report extends Admin_Controller {
         $this->db->group_by('h.SalesInvNo');
         $query = $this->db->get();
         $result = $query->result();
-        $response = [  
-        'salesperson'=>$salesperson,
-        'route' =>$route,
-        'customer' =>$customer,
-        'data' => $result
+        $response = [
+            'salesperson' => $salesperson,
+            'route' => $route,
+            'customer' => $customer,
+            'data' => $result
         ];
         echo json_encode($response);
-        die; 
+        die;
     }
 
-    public function saleswisereport() {
+    public function saleswisereport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Total Sales Report'));
@@ -2126,12 +2347,13 @@ class Report extends Admin_Controller {
         $this->template->admin_render('admin/report/saleswisereport', $this->data);
     }
 
-    public function loadtotalsalesreport() {
+    public function loadtotalsalesreport()
+    {
         $this->output->set_content_type('application/json');
-        $salesperson = $this->input->post('newsalesperson'); 
-        $route = $this->input->post('route'); 
+        $salesperson = $this->input->post('newsalesperson');
+        $route = $this->input->post('route');
         $customer = $this->input->post('customer');
-        $startdate = $this->input->post('startdate'); 
+        $startdate = $this->input->post('startdate');
         $enddate = $this->input->post('enddate');
         $this->db->select('h.*,h.SalesInvNo,h.SalesDate,c.CusCode,c.DisplayName');
         $this->db->from('salesinvoicehed h');
@@ -2144,18 +2366,19 @@ class Report extends Admin_Controller {
         $this->db->group_by('h.SalesInvNo');
         $query = $this->db->get();
         $result = $query->result();
-        $response = [  
-        'salesperson'=>$salesperson,
-        'route' =>$route,
-        'customer' =>$customer,
-        'data' => $result
+        $response = [
+            'salesperson' => $salesperson,
+            'route' => $route,
+            'customer' => $customer,
+            'data' => $result
         ];
         echo json_encode($response);
-        die; 
+        die;
     }
 
 
-    public function returnreport() {
+    public function returnreport()
+    {
         $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
         $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
         $this->page_title->push(('Return Report'));
@@ -2165,34 +2388,183 @@ class Report extends Admin_Controller {
         $this->template->admin_render('admin/report/returnreport', $this->data);
     }
 
+    public function returnreport1()
+    {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/Vastage Report');
+        $this->page_title->push(('Order Return Report'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['salespersons'] = $this->Report_model->loademployee();
+        $this->template->admin_render('admin/report/returnreport2', $this->data);
+    }
+
     public function loadreturnreport() {
         $this->output->set_content_type('application/json');
-        $salesperson = $this->input->post('newsalesperson'); 
-        $route = $this->input->post('route'); 
-        $customer = $this->input->post('customer');
-        $startdate = $this->input->post('startdate'); 
-        $enddate = $this->input->post('enddate');
-        $this->db->select('h.*,h.InvoiceNo,h.ReturnDate,c.CusCode,c.DisplayName, d.*');
-        $this->db->from(' returninvoicehed h');
-        $this->db->join(' returninvoicedtl d', 'h.ReturnNo = d.ReturnNo');
-        $this->db->join('customer c', 'h.CustomerNo = c.CusCode');
-        // $this->db->where('h.RouteId',$route);
-        // $this->db->where('SalesCustomer',$customer);
-        // $this->db->where('SalesDate >=', $startdate);
-        // $this->db->where('SalesDate <=', $enddate);
-        $this->db->group_by('h.InvoiceNo');
-        $query = $this->db->get();
-        $result = $query->result();
-        $response = [  
-        'salesperson'=>$salesperson,
-        'route' =>$route,
-        'customer' =>$customer,
-        'data' => $result
-        ];
-        echo json_encode($response);
-        die; 
-    }
-        
-}
 
+        $salesperson = $this->input->post('newsalesperson');
+        $route = $this->input->post('route');
+        $customer = $this->input->post('customer');
+        $startdate = $this->input->post('startdate');
+        $enddate = $this->input->post('enddate');
+
+        $this->db->select('h.*, c.CusCode, c.DisplayName');
+        $this->db->from('returninvoicehed h');
+        $this->db->join('customer c', 'h.CustomerNo = c.CusCode');
+
+        // Apply filters only if values exist
+        if (!empty($route)) {
+            $this->db->where('h.RouteId', $route);
+        }
+        if (!empty($customer)) {
+            $this->db->where('h.CustomerNo', $customer);
+        }
+        if (!empty($salesperson)) {
+            $this->db->where('h.SalesPerson', $salesperson);
+        }
+        if (!empty($startdate)) {
+            $this->db->where('h.ReturnDate >=', $startdate);
+        }
+        if (!empty($enddate)) {
+            $this->db->where('h.ReturnDate <=', $enddate);
+        }
+
+        $this->db->order_by('h.ReturnDate', 'DESC');
+        $query = $this->db->get();
+        $return_headers = $query->result();
+
+        // Optionally: load details per invoice if needed
+        foreach ($return_headers as &$header) {
+            $this->db->select('*');
+            $this->db->from('returninvoicedtl');
+            $this->db->where('ReturnNo', $header->ReturnNo);
+            $header->details = $this->db->get()->result();
+        }
+
+        $response = [
+            'salesperson' => $salesperson,
+            'route' => $route,
+            'customer' => $customer,
+            'data' => $return_headers
+        ];
+
+        echo json_encode($response);
+        die;
+    }
+
+
+    public function loadreturnreport1() {
+        $this->output->set_content_type('application/json');
+
+        $salesperson = $this->input->post('newsalesperson');
+        $route = $this->input->post('route');
+        $customer = $this->input->post('customer');
+        $startdate = $this->input->post('startdate');
+        $enddate = $this->input->post('enddate');
+
+        $this->db->select('h.*, c.CusCode, c.DisplayName');
+        $this->db->from('returninvoicehed h');
+        $this->db->join('customer c', 'h.CustomerNo = c.CusCode');
+
+        // Apply filters only if values exist
+        if (!empty($route)) {
+            $this->db->where('h.RouteId', $route);
+        }
+        if (!empty($customer)) {
+            $this->db->where('h.CustomerNo', $customer);
+        }
+        if (!empty($salesperson)) {
+            $this->db->where('h.SalesPerson', $salesperson);
+        }
+        if (!empty($startdate)) {
+            $this->db->where('h.ReturnDate >=', $startdate);
+        }
+        if (!empty($enddate)) {
+            $this->db->where('h.ReturnDate <=', $enddate);
+        }
+
+        $this->db->order_by('h.ReturnDate', 'DESC');
+        $query = $this->db->get();
+        $return_headers = $query->result();
+
+        // Optionally: load details per invoice if needed
+        foreach ($return_headers as &$header) {
+            $this->db->select('*');
+            $this->db->from('returninvoicedtl');
+            $this->db->where('ReturnNo', $header->ReturnNo);
+            $header->details = $this->db->get()->result();
+        }
+
+        $response = [
+            'salesperson' => $salesperson,
+            'route' => $route,
+            'customer' => $customer,
+            'data' => $return_headers
+        ];
+
+        echo json_encode($response);
+        die;
+    }
+
+    public function receivedproductreport()
+    {
+        $this->breadcrumbs->unshift(1, 'Reports', 'admin/report');
+        $this->breadcrumbs->unshift(1, 'Stock', 'admin/report/receivedproductreport');
+        $this->page_title->push(('Received Product Report'));
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $this->data['locations'] = $this->Report_model->loadroot();
+        $this->data['products'] = $this->Report_model->loadproduct();
+
+        $this->template->admin_render('admin/report/receivedproductreport', $this->data);
+    }
+
+    public function recivedreturnreport1()
+    {
+        $startdate = $this->input->post('startdate');
+        $enddate = $this->input->post('enddate');
+
+        if (!$startdate || !$enddate) {
+            return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(400)
+                ->set_output(json_encode(['error' => 'Start and end dates are required']));
+        }
+
+        $this->db->select('
+        salesinvoicedtl.SalesProductCode, 
+        salesinvoicedtl.SalesProductName, 
+        SUM(salesinvoicedtl.SalesQty) AS TotalSoldQty,
+         SUM(received_invoices_items.Quantity) AS TotalReturnedQty
+    ');
+        $this->db->from('salesinvoicedtl');
+        $this->db->join('received_invoices_items', 'received_invoices_items.ProductCode = salesinvoicedtl.SalesProductCode', 'left');
+        $this->db->join('received_invoices', 'received_invoices.id = received_invoices_items.InvoiceID', 'left');
+
+        // Filter only returns in the selected date range
+        $this->db->where('received_invoices.ReceivedDate >=', $startdate);
+        $this->db->where('received_invoices.ReceivedDate <=', $enddate);
+
+        $this->db->group_by([
+            'salesinvoicedtl.SalesProductCode',
+            'salesinvoicedtl.SalesProductName'
+        ]);
+
+        $query = $this->db->get();
+
+        if (!$query) {
+            $error = $this->db->error();
+            log_message('error', 'DB Error: ' . print_r($error, true));
+            return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(500)
+                ->set_output(json_encode(['error' => 'Database query failed']));
+        }
+
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode($query->result()));
+    }
+
+}
 

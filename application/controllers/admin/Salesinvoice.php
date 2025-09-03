@@ -588,9 +588,6 @@ class Salesinvoice extends Admin_Controller {
         
     }
 
-
-
-
             public function view_sales_invoice_1($inv=null) {
 
             $this->load->model('admin/Salesinvoice_model');
@@ -894,10 +891,20 @@ class Salesinvoice extends Admin_Controller {
     }
 
     public function loadproductjson() {
+        
         $query = $_GET['q'];
         $sup= 0;$supCode= '';
+        $pl = $_GET['price_level'];
          $this->load->model('admin/Grn_model');
-        echo $this->Grn_model->loadproductjson($query,$sup,$supCode);
+        echo $this->Grn_model->loadproductjson($query,$sup,$supCode,$pl);
+        die;
+    }
+
+    public function loadreturnproductjson() {
+        $query = $_GET['q'];
+        $sup= 0;$supCode= '';
+        $this->load->model('admin/Grn_model');
+        echo $this->Grn_model->loadreturnproductjson($query,$sup,$supCode);
         die;
     }
 
@@ -1199,12 +1206,12 @@ $arr[] =null;
     }
 
     public function saveTempInvoices() {
-        // print_r($_POST);die;
-        $totalCost=0;
-        $location=$_SESSION['location'];
+        $totalCost = 0;
+        $location = $_SESSION['location'];
         $action = $_POST['action'];
         $data['JCompanyCode'] = '';
-        if($_POST['sup_no']=='' || $_POST['sup_no']==0){$supplimentNo=0;}else{$supplimentNo=$_POST['sup_no'];}
+
+        $supplimentNo = ($_POST['sup_no'] == '' || $_POST['sup_no'] == 0) ? 0 : $_POST['sup_no'];
         $data['JCustomer'] = $_POST['cusCode'];
         $data['JRegNo'] = $_POST['regNo'];
         $data['EstType'] = isset($_POST['estimate_type']) ? $_POST['estimate_type'] : 0;
@@ -1220,24 +1227,25 @@ $arr[] =null;
         $data['IsCompelte'] = 0;
         $data['IsCancel'] = 0;
         $data['IsEdit'] = 0;
-        $data['InvRemark'] =$_POST['remark'];
-        $data['JobTotalDiscount'] =$_POST['total_discount'];
-        $data['JobNetAmount'] =$_POST['totalNet'];
-        $data['JobVatAmount'] =$_POST['totalVat'];
-        $data['JobNbtAmount'] =$_POST['totalNbt'];
-        $data['JobIsVatTotal'] =$_POST['isTotalVat'];
-        $data['JobIsNbtTotal'] =$_POST['isTotalNbt'];
-        $data['JobNbtRatioTotal']=$_POST['nbtRatioRate'];
-        $data['JobInvUser']=$_SESSION['user_id'];
-        $data['InvoiceType']=$_POST['InvoiceType'];
+        $data['IsReturn'] = 0;
+        $data['InvRemark'] = $_POST['remark'];
+        $data['JobTotalDiscount'] = $_POST['total_discount'];
+        $data['JobNetAmount'] = $_POST['totalNet'];
+        $data['JobVatAmount'] = $_POST['totalVat'];
+        $data['JobNbtAmount'] = $_POST['totalNbt'];
+        $data['JobIsVatTotal'] = $_POST['isTotalVat'];
+        $data['JobIsNbtTotal'] = $_POST['isTotalNbt'];
+        $data['JobNbtRatioTotal'] = $_POST['nbtRatioRate'];
+        $data['JobInvUser'] = $_SESSION['user_id'];
+        $data['InvoiceType'] = $_POST['InvoiceType'];
         $data['mileageout'] = $_POST['mileageout'];
         $data['mileageoutUnit'] = $_POST['mileageoutUnit'];
 
+        // For odo out
+        $data1['OdoOut'] = $_POST['mileageout'];
+        $data1['OdoOutUnit'] = $_POST['mileageoutUnit'];
 
-            //////////////////////////////////////////////
-            $data1['OdoOut']=$_POST['mileageout'];
-            $data1['OdoOutUnit']=$_POST['mileageoutUnit'];
-             //////////////////////////////////////////////
+        // Decode product arrays
         $net_priceArr = json_decode($_POST['net_price']);
         $qtyArr = json_decode($_POST['qty']);
         $sell_priceArr = json_decode($_POST['sell_price']);
@@ -1260,39 +1268,32 @@ $arr[] =null;
         $estPriceArr = json_decode($_POST['estPrice']);
         $costPriceArr = json_decode($_POST['costPrice']);
         $estLineNoArr = json_decode($_POST['estLineNo']);
+        $returnQtyArr = json_decode($_POST['SalesReturnQty']);
+        $returnTypeArr = json_decode($_POST['ReturnType']);
 
-        $EstJobType=0;
-        if($_POST['estimateNo']!='' || $_POST['estimateNo']!=0){
-            $EstJobType = $this->db->select('EstJobType')->from('estimatehed')->where('EstCustomer', $_POST['cusCode'])->where('EstRegNo', $_POST['regNo'])->where('EstimateNo', $_POST['estimateNo'])->get()->row()->EstJobType;
+        $EstJobType = 0;
+        if ($_POST['estimateNo'] != '' || $_POST['estimateNo'] != 0) {
+            $row = $this->db->select('EstJobType')
+                ->from('estimatehed')
+                ->where('EstCustomer', $_POST['cusCode'])
+                ->where('EstRegNo', $_POST['regNo'])
+                ->where('EstimateNo', $_POST['estimateNo'])
+                ->get()->row();
+            $EstJobType = $row ? $row->EstJobType : 0;
         }
 
-        if($action==1){
-            if($EstJobType!=''){
-                //Insurance
-                $data['JobInvNo'] = $this->Job_model->get_max_code('TempJobInvoice'.$location);
-            }else{
-                //genaral
-                 $data['JobInvNo'] = $this->Job_model->get_max_code('TempJobInvoice'.$location);
-            }
-            // if($supplimentNo==0 || $supplimentNo==''){
-                // $data['JobInvNo'] = $this->Job_model->get_max_code('JobInvoice');
-            // }else{
-            //     $data['JobInvNo'] = $_POST['invoiceNo'];
-            //     $data['IsEdit'] = 1;
-            // }
+        if ($action == 1) {
+            $data['JobInvNo'] = $this->Job_model->get_max_code('TempJobInvoice' . $location);
+
             $this->db->trans_start();
-            $this->db->insert('tempjobinvoicehed',$data);
+            $this->db->insert('tempjobinvoicehed', $data);
             $estTimestmp = '';
+
             for ($i = 0; $i < count($work_idArr); $i++) {
-                $totalCost+=($qtyArr[$i]*$costPriceArr[$i]);
-                 
-                if($timestampArr[$i]!=''){
-                    $estTimestmp = $timestampArr[$i];
-                }else{
-                    $estTimestmp = date("Y-m-d H:i:s");
-                }
-                
-                 $jobDtl = array(
+                $totalCost += ($qtyArr[$i] * $costPriceArr[$i]);
+                $estTimestmp = $timestampArr[$i] != '' ? $timestampArr[$i] : date("Y-m-d H:i:s");
+
+                $jobDtl = array(
                     'JobInvNo' => $data['JobInvNo'],
                     'JobCardNo' => $data['JobCardNo'],
                     'JobOrder' => $job_orderArr[$i],
@@ -1310,50 +1311,38 @@ $arr[] =null;
                     'JobVatAmount' => $proVatArr[$i],
                     'JobNbtAmount' => $proNbtArr[$i],
                     'JobTotalAmount' => $totalPriceArr[$i],
-                    'JobTotalAmount' => $totalPriceArr[$i],
-                    'JobTotalAmount' => $totalPriceArr[$i],
                     'JobDiscount' => $proDiscountArr[$i],
                     'JobDisValue' => $proDiscountArr[$i],
-                    'JobDisPercentage' =>$disPrecentArr[$i],
+                    'JobDisPercentage' => $disPrecentArr[$i],
                     'JobDiscountType' => $discountTypeArr[$i],
                     'JobNetAmount' => $net_priceArr[$i],
-                    'JobinvoiceTimestamp' => $estTimestmp
-                    );
-                 $this->db->insert('tempjobinvoicedtl',$jobDtl);
+                    'JobinvoiceTimestamp' => $estTimestmp,
+                    'SalesReturnQty' => $returnQtyArr[$i],
+                    'ReturnType' => $returnTypeArr[$i]
+                );
+                $this->db->insert('tempjobinvoicedtl', $jobDtl);
             }
 
-            //odoout update
-            $this->db->update('jobcardhed',$data1,array('JobCardNo' => $data['JobCardNo']));
-
-            $this->Job_model->bincard($data['JobInvNo'],3,'Created');//update bincard
-            $this->Job_model->update_max_code('TempJobInvoice'.$location);
+            $this->db->update('jobcardhed', $data1, array('JobCardNo' => $data['JobCardNo']));
+            $this->Job_model->bincard($data['JobInvNo'], 3, 'Created');
+            $this->Job_model->update_max_code('TempJobInvoice' . $location);
             $this->db->trans_complete();
-            $res2= $this->db->trans_status();
+            $res2 = $this->db->trans_status();
 
-    }elseif ($action==2) {
-        // update goes here
-        $data['JobInvNo'] = $_POST['invoiceNo'];
-        $this->db->trans_start();
-            $this->db->update('tempjobinvoicehed',$data,array('JobInvNo' => $data['JobInvNo']));
+        } elseif ($action == 2) {
+            $data['JobInvNo'] = $_POST['invoiceNo'];
+            $this->db->trans_start();
+            $this->db->update('tempjobinvoicehed', $data, array('JobInvNo' => $data['JobInvNo']));
+            $this->db->delete('tempjobinvoicedtl', array('JobInvNo' => $data['JobInvNo']));
             $estTimestmp = '';
-            $estLineNo =0;
-            $this->db->delete('tempjobinvoicedtl',array('JobInvNo' => $data['JobInvNo']));
+            $estLineNo = 0;
+
             for ($i = 0; $i < count($work_idArr); $i++) {
-                $totalCost+=($qtyArr[$i]*$costPriceArr[$i]);
+                $totalCost += ($qtyArr[$i] * $costPriceArr[$i]);
+                $estTimestmp = $timestampArr[$i] != '' ? $timestampArr[$i] : date("Y-m-d H:i:s");
+                $estLineNo = ($estLineNoArr[$i] != '0') ? $estLineNoArr[$i] : $this->db->select('MAX(EstLineNo) AS EstLineNo')->from('tempjobinvoicedtl')->where('JobInvNo', $data['JobInvNo'])->get()->row()->EstLineNo + 1;
 
-                if($timestampArr[$i]!=''){
-                    $estTimestmp = $timestampArr[$i];
-                }else{
-                    $estTimestmp = date("Y-m-d H:i:s");
-                }
-
-                if($estLineNoArr[$i]!='0'){
-                    $estLineNo=$estLineNoArr[$i];
-                }else{
-                    $estLineNo=$this->db->select('MAX(EstLineNo) AS EstLineNo')->from('tempjobinvoicedtl')->where('JobInvNo',$data['JobInvNo'])->get()->row()->EstLineNo;
-                    $estLineNo++;
-                }
-                 $jobDtl = array(
+                $jobDtl = array(
                     'JobInvNo' => $data['JobInvNo'],
                     'JobCardNo' => $data['JobCardNo'],
                     'JobOrder' => $job_orderArr[$i],
@@ -1365,7 +1354,6 @@ $arr[] =null;
                     'JobQty' => $qtyArr[$i],
                     'JobPrice' => $sell_priceArr[$i],
                     'JobCost' => $costPriceArr[$i],
-                    'JobQty' => $qtyArr[$i],
                     'JobIsVat' => $isVatArr[$i],
                     'JobIsNbt' => $isNbtArr[$i],
                     'JobNbtRatio' => $nbtRatioArr[$i],
@@ -1374,24 +1362,28 @@ $arr[] =null;
                     'JobTotalAmount' => $totalPriceArr[$i],
                     'JobDiscount' => $proDiscountArr[$i],
                     'JobDisValue' => $proDiscountArr[$i],
-                    'JobDisPercentage' =>$disPrecentArr[$i],
+                    'JobDisPercentage' => $disPrecentArr[$i],
                     'JobDiscountType' => $discountTypeArr[$i],
                     'JobNetAmount' => $net_priceArr[$i],
-                    'JobinvoiceTimestamp' => $estTimestmp
-                    );
-                 $this->db->insert('tempjobinvoicedtl',$jobDtl);
+                    'JobinvoiceTimestamp' => $estTimestmp,
+                    'SalesReturnQty' => $returnQtyArr[$i],
+                    'ReturnType' => $returnTypeArr[$i]
+                );
+                $this->db->insert('tempjobinvoicedtl', $jobDtl);
             }
-            $this->db->update('jobcardhed',$data1,array('JobCardNo' => $data['JobCardNo']));
-            $this->Job_model->bincard($data['JobInvNo'],3,'Updated');//update bincard
-            $this->db->trans_complete();
-            $res2= $this->db->trans_status();
-    }
 
-        $return = array('JobInvNo' => $data['JobInvNo'],'SupplimentryNo'=>$supplimentNo);
+            $this->db->update('jobcardhed', $data1, array('JobCardNo' => $data['JobCardNo']));
+            $this->Job_model->bincard($data['JobInvNo'], 3, 'Updated');
+            $this->db->trans_complete();
+            $res2 = $this->db->trans_status();
+        }
+
+        $return = array('JobInvNo' => $data['JobInvNo'], 'SupplimentryNo' => $supplimentNo);
         $return['fb'] = $res2;
         echo json_encode($return);
         die;
     }
+
 
    //estimate types
     public function saveInvoices() {
@@ -2512,14 +2504,23 @@ $arr[] =null;
         $query = $_GET['q'];
         $customer = $_GET['cusCode'];
         $location = $_SESSION['location'];
-        $q = $this->db->select('return_payment.ReturnNo AS id, CONCAT(return_payment.ReturnNo," ",ReturnAmount," ",Remark) AS text')
-            ->from('return_payment')
-            ->where('return_payment.ReturnLocation',$location)
-            ->where('return_payment.CustomerNo',$customer)
-            ->where('return_payment.IsComplete',0)
-            ->like('return_payment.ReturnNo', $query)
-            ->order_by('return_payment.ReturnNo','DESC')->get()->result();
+        $q = $this->db->select('returninvoicehed.ReturnNo AS id, CONCAT(returninvoicehed.ReturnNo," ",ReturnAmount," ",Remark) AS text,returninvoicehed.ReturnAmount AS ReturnAmount ')
+            ->from('returninvoicehed')
+            ->where('returninvoicehed.ReturnLocation',$location)
+            ->where('returninvoicehed.CustomerNo',$customer)
+             ->where('returninvoicehed.IsComplete',0)
+            ->like('returninvoicehed.ReturnNo', $query)
+            ->order_by('returninvoicehed.ReturnNo','DESC')->get()->result();
 
+        // $q = $this->db->select('return_payment.ReturnNo AS id,CONCAT(return_payment.ReturnNo," ",ReturnAmount," ",Remark) AS text')
+        // ->from('return_payment')
+        //     ->where('return_payment.ReturnLocation',$location)
+        //     ->where('return_payment.CustomerNo',$customer)
+        //     ->where('return_payment.IsComplete',0)
+        //     // ->where('return_payment.IsOverReturn',0)
+        //     ->like('return_payment.ReturnNo', $query)
+        //     ->order_by('return_payment.ReturnNo','DESC')->get()->result();
+    
         echo json_encode($q);die;
     }
 
@@ -2718,14 +2719,14 @@ $arr[] =null;
         }
     }
 
-      public function addSalesInvoice($customerOder=null) {
+    public function addSalesInvoice($customerOder=null) {
         $id = isset($_GET['id'])?$_GET['id']:NULL;
         $type = isset($_GET['type'])?$_GET['type']:NULL;
         $sup = isset($_GET['sup'])?$_GET['sup']:0;
         $cus = isset($_GET['cus'])?$_GET['cus']:NULL;
         $regno = isset($_GET['regno'])?$_GET['regno']:NULL;
         $action = isset($_GET['action'])?$_GET['action']:1;
-        $this->load->helper('url'); 
+        $this->load->helper('url');
         $this->page_title->push(('Add Sales Invoice'));
         $this->breadcrumbs->unshift(1, 'Sales Invoice', 'admin/addSalesInvoice');
         $this->data['pagetitle'] = $this->page_title->show();
@@ -2746,65 +2747,151 @@ $arr[] =null;
         $this->data['bank'] = $this->db->select()->from('bank')->get()->result();
         $this->data['sup'] = $this->db->select('SupCode AS id,SupName AS text')->from('supplier')->get()->result();
         $this->data['vehicle_company'] = $this->db->select()->from('vehicle_company')->where('VComCategory', 3)->get()->result();
-        
-          $date = date("Y-m-d");
-          $user = $_SESSION['user_id'];
-          $isend = $this->db->select('ID')->from('cashierbalancesheet')->where('DATE(BalanceDate)' ,$date)->where('SystemUser' ,$user)->get()->num_rows();
+        $this->data['return_types'] = $this->db->select()->from('return_types')->get()->result();
+        $date = date("Y-m-d");
+        $user = $_SESSION['user_id'];
+        $isend = $this->db->select('ID')->from('cashierbalancesheet')->where('DATE(BalanceDate)' ,$date)->where('SystemUser' ,$user)->get()->num_rows();
 
 
-          $inv = base64_decode($id); 
-          $this->data['selectedRoute'] = null;
-          $selectedRoute = $this->db->select('RouteId')->from('salesinvoicehed')->where('SalesInvNo', $inv)->get()->row();
+        $inv = base64_decode($id);
+        $this->data['selectedRoute'] = null;
+        $selectedRoute = $this->db->select('id')->from('customer_routes')->get()->row();
 
-          if ($selectedRoute) {
-            $this->data['selectedRoute'] = $selectedRoute->RouteId;
+        if ($selectedRoute) {
+            $this->data['selectedRoute'] = $selectedRoute->id;
         }
 
         $invoiceData = $this->db->select('SalesPerson, RouteId')
-                         ->from('salesinvoicehed')
-                         ->where('SalesInvNo', $inv)
-                         ->get()
-                         ->row();
+            ->from('salesinvoicehed')
+            ->where('SalesInvNo', $inv)
+            ->get()
+            ->row();
 
-                         if ($invoiceData) {
-                            $selectedSalespersonID = $invoiceData->SalesPerson; 
-                            $this->data['selectedRoute'] = $invoiceData->RouteId; 
-                        } else {
-                            $selectedSalespersonID = null; 
-                            $this->data['selectedRoute'] = null; 
-                        }
-                        
-    
-                        if ($selectedSalespersonID) {
-                            $this->data['routes'] = $this->db->select('cr.id, cr.name')
-                                ->from('employeeroutes er')
-                                ->join('customer_routes cr', 'er.route_id = cr.id')
-                                ->where('er.emp_id', $selectedSalespersonID)
-                                ->get()
-                                ->result();
-                        } else {
-                            $this->data['routes'] = []; 
-                        }   
-                        $this->data['customers'] = $this->db->select('c.CusCode, c.DisplayName')
-                                    ->from('customer c')
-                                    ->where('c.HandelBy', $selectedSalespersonID)
-                                    ->where('c.RouteId',$invoiceData->RouteId)
-                                    ->get()
-                                    ->result();     
-            $action = isset($_GET['action']) ? $_GET['action'] : 1; 
-            $this->data['isEditMode'] = ($action == 2);
-            // echo json_encode( $this->data['customers']);
-            // die();
-          if ($isend > 0){
-              $this->template->admin_render('admin/sales/add-sales-invoice', $this->data);
-          } else {
-              redirect('admin/cash/cash_float_balance');
-          }
+        if ($invoiceData) {
+            $selectedSalespersonID = $invoiceData->SalesPerson;
+            $this->data['selectedRoute'] = $invoiceData->RouteId;
+        } else {
+            $selectedSalespersonID = null;
+            $this->data['selectedRoute'] = null;
+        }
+
+
+        if ($selectedSalespersonID) {
+            $this->data['routes'] = $this->db->select('customer_routes.id, customer_routes.name')
+                ->from('employeeroutes')
+                ->join('customer_routes', 'employeeroutes.route_id = customer_routes.id')
+                ->where('employeeroutes.emp_id', $selectedSalespersonID)
+                ->get()
+                ->result();
+        } else {
+            $this->data['routes'] = [];
+        }
+        $this->data['customers'] = $this->db->select('c.CusCode, c.DisplayName')
+            ->from('customer c')
+            ->where('c.HandelBy', $selectedSalespersonID)
+            ->where('c.RouteId',$invoiceData->RouteId)
+            ->get()
+            ->result();
+        $action = isset($_GET['action']) ? $_GET['action'] : 1;
+        $this->data['isEditMode'] = ($action == 2);
+        // echo json_encode( $this->data['customers']);
+        // die();
+        if ($isend > 0){
+            $this->template->admin_render('admin/sales/add-sales-invoice', $this->data);
+        } else {
+            redirect('admin/cash/cash_float_balance');
+        }
 
 
     }
+    public function addPreSalesInvoice($customerOder=null) {
+        $id = isset($_GET['id'])?$_GET['id']:NULL;
+        $type = isset($_GET['type'])?$_GET['type']:NULL;
+        $sup = isset($_GET['sup'])?$_GET['sup']:0;
+        $cus = isset($_GET['cus'])?$_GET['cus']:NULL;
+        $regno = isset($_GET['regno'])?$_GET['regno']:NULL;
+        $action = isset($_GET['action'])?$_GET['action']:1;
+        $this->load->helper('url');
+        $this->page_title->push(('Add Sales Invoice'));
+        $this->breadcrumbs->unshift(1, 'Sales Invoice', 'admin/addSalesInvoice');
+        $this->data['pagetitle'] = $this->page_title->show();
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $location = $_SESSION['location'];
+        $id3 = array('CompanyID' => $location);
+        $this->data['inv'] =base64_decode($id);
+        $this->data['customerOder'] =base64_decode($customerOder);
+        $this->data['customer'] = $cus;
+        $this->data['regno']    = $regno;
+        $this->data['action']   = $action;
+        $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
+        $this->data['plv'] = $this->Job_model->loadpricelevel();
+        $this->data['location'] = $this->db->select()->from('location')->get()->result();
+        $this->data['warrantytype'] = $this->db->select()->from('warranty_typs')->get()->result();
+        $this->data['salesperson'] = $this->db->select()->from('salespersons')->where('RepType',6)->get()->result();
+        $this->data['bank_acc']=$this->db->select('bank_account.*,bank.BankName')->from('bank_account')->join('bank','BankCode=acc_bank')->get()->result();
+        $this->data['bank'] = $this->db->select()->from('bank')->get()->result();
+        $this->data['sup'] = $this->db->select('SupCode AS id,SupName AS text')->from('supplier')->get()->result();
+        $this->data['vehicle_company'] = $this->db->select()->from('vehicle_company')->where('VComCategory', 3)->get()->result();
+        $this->data['return_types'] = $this->db->select()->from('return_types')->get()->result();
+        //$this->data['IsCompleted'] = $this->db->select('IsComplete')->from('salesinvoicehed')->where('SalesPONumber',base64_decode($customerOder))->get()->row();
+       
+        $date = date("Y-m-d");
+        $user = $_SESSION['user_id'];
+        $isend = $this->db->select('ID')->from('cashierbalancesheet')->where('DATE(BalanceDate)' ,$date)->where('SystemUser' ,$user)->get()->num_rows();
+
+
+        $inv = base64_decode($id);
+        $this->data['selectedRoute'] = null;
+        $selectedRoute = $this->db->select('id')->from('customer_routes')->get()->row();
+
+        if ($selectedRoute) {
+            $this->data['selectedRoute'] = $selectedRoute->id;
+        }
+
+        $invoiceData = $this->db->select('SalesPerson, RouteId')
+            ->from('salesinvoicehed')
+            ->where('SalesInvNo', $inv)
+            ->get()
+            ->row();
+
+        if ($invoiceData) {
+            $selectedSalespersonID = $invoiceData->SalesPerson;
+            $this->data['selectedRoute'] = $invoiceData->RouteId;
+        } else {
+            $selectedSalespersonID = null;
+            $this->data['selectedRoute'] = null;
+        }
+
+
+        if ($selectedSalespersonID) {
+            $this->data['routes'] = $this->db->select('customer_routes.id, customer_routes.name')
+                ->from('employeeroutes')
+                ->join('customer_routes', 'employeeroutes.route_id = customer_routes.id')
+                ->where('employeeroutes.emp_id', $selectedSalespersonID)
+                ->get()
+                ->result();
+        } else {
+            $this->data['routes'] = [];
+        }
+        $this->data['customers'] = $this->db->select('c.CusCode, c.DisplayName')
+            ->from('customer c')
+            ->where('c.HandelBy', $selectedSalespersonID)
+            ->where('c.RouteId',$invoiceData->RouteId)
+            ->get()
+            ->result();
+        $action = isset($_GET['action']) ? $_GET['action'] : 1;
+        $this->data['isEditMode'] = ($action == 2);
+        // echo json_encode( $this->data['customers']);
+        // die();
+        if ($isend > 0){
+            $this->template->admin_render('admin/sales/add-pre-order-invoice', $this->data);
+        } else {
+            redirect('admin/cash/cash_float_balance');
+        }
+    }
 
     public function saveNewSalesInvoice() {
+
         $location=$_SESSION['location'];
         $this->load->model('admin/Salesinvoice_model');
 
@@ -2812,10 +2899,11 @@ $arr[] =null;
         if($creditAmount>0){
             $SalesInvType=3;
         }else{
-            $SalesInvType=$_POST['invType'];
+            // $SalesInvType=$_POST['invType'];
+            $SalesInvType=1;
         }
         
-
+        
         if($_POST['action']==1 && $SalesInvType==1){
             $grnNo = $this->Salesinvoice_model->get_max_code('SalesInvoiceNo'.$location);
         }elseif($_POST['action']==1 && $SalesInvType==2){
@@ -2823,7 +2911,7 @@ $arr[] =null;
         }elseif($_POST['action']==1 && $SalesInvType==3){
             $grnNo = $this->Salesinvoice_model->get_max_code('CreditInvoiceNo'.$location);
         }elseif ($_POST['action']==2) {
-           $grnNo = $_POST['grn_no'];
+            $grnNo = $_POST['grn_no'];
         }
 
         $vehicleno = isset($_POST['regNo'])?$_POST['regNo']:'';
@@ -2880,17 +2968,56 @@ $arr[] =null;
         }else{
             $isComplete = 0;
         }
+
+        // echo var_dump($salesorder);die;
         //add to here
         $grnHed = array(
-            'AppNo' => '1','SalesInvNo' => $grnNo,'SalesOrderNo'=>'','SalesVehicle'=>$vehicleno,'SalesInsCompany'=>$SalesInsCompany,'SalesLocation' => $location,'SalesOrgDate' => $grnDattime,
-            'SalesDate' => $invDate,'SalesCustomer' => $customer,'SalesInvType' => $SalesInvType,'SalesInvAmount' => $total_amount,'SalesNetAmount' => $total_net_amount,
-            'SalesCashAmount'=>$cashAmount,'SalesShippingLabel'=>$shipping_label,'SalesShipping'=>$shipping,'SalesBankAcc'=>$bank_account,'SalesBankAmount'=>$bankAmount,
-            'SalesCCardAmount'=>$cardAmount,'SalesCreditAmount'=>$creditAmount,'SalesChequeAmount'=>$chequeAmount,'SalesCustomerPayment'=>$customerPayment,
-            'SalesAdvancePayment'=>$advanceAmount,'AdvancePayNo'=>$advancePayNo,'SalesReturnPayment'=>$returnAmount,'SalesDisAmount' => $total_discount,
-            'SalesDisPercentage' => $totalDisPerent,'SalesInvUser' => $invUser,'IsComplete' => $isComplete,'InvIsCancel'=>0,'SalesIsNbt'=>$isTotalNbt,'SalesIsVat'=>$isTotalVat,
-            'SalesNbtRatio'=>$nbtRatioRate,'SalesNbtAmount'=>$totalNbt,'SalesVatAmount'=>$totalVat,'SalesPONumber'=>$po_number,'SalesPerson'=>$newsalesperson,'RouteId'=>$route,
-            'SalesReceiver'=>$receiver_name,'SalesRecNic'=>$receiver_nic,'SalesCommsion'=>$com_amount,'SalesComCus'=>$compayto,'salesInvRemark'=>$remark,'refferNo'=>$refferNo
+            'AppNo' => '1',
+            'SalesInvNo' => $grnNo,
+            'SalesOrderNo' => isset($salesorder) ? $salesorder : '',
+            'SalesVehicle' => isset($vehicleno) ? $vehicleno : '',
+            'SalesInsCompany' => isset($SalesInsCompany) ? $SalesInsCompany : '',
+            'SalesLocation' => isset($location) ? $location : '',
+            'SalesOrgDate' => $grnDattime,
+            'SalesDate' => $invDate,
+            'SalesCustomer' => isset($customer) ? $customer : '',
+            'SalesInvType' => (int) $SalesInvType,
+            'SalesInvAmount' => (float) $total_amount,
+            'SalesNetAmount' => (float) $total_net_amount,
+            'SalesCashAmount' => (float) $cashAmount,
+            'SalesShippingLabel' => isset($shipping_label) ? $shipping_label : '',
+            'SalesShipping' => isset($shipping) ? (float) $shipping : 0,
+            'SalesBankAcc' => isset($bank_account) ? $bank_account : '',
+            'SalesBankAmount' => (float) $bankAmount,
+            'SalesCCardAmount' => (float) $cardAmount,
+            'SalesCreditAmount' => (float) $creditAmount,
+            'SalesChequeAmount' => (float) $chequeAmount,
+            'SalesCustomerPayment' => (float) $customerPayment,
+            'SalesAdvancePayment' => (float) $advanceAmount,
+            'AdvancePayNo' => isset($advancePayNo) ? $advancePayNo : '',
+            'SalesReturnPayment' => (float) $returnAmount,
+            'SalesDisAmount' => (float) $total_discount,
+            'SalesDisPercentage' => (float) $totalDisPerent,
+            'SalesInvUser' => (int) $invUser,
+            'IsComplete' => (int) $isComplete,
+            'InvIsCancel' => 0,
+            'SalesIsNbt' => (int) $isTotalNbt,
+            'SalesIsVat' => (int) $isTotalVat,
+            'SalesNbtRatio' => (float) $nbtRatioRate,
+            'SalesNbtAmount' => (float) $totalNbt,
+            'SalesVatAmount' => (float) $totalVat,
+            'SalesPONumber' => isset($po_number) ? $po_number : '',
+            'SalesPerson' => isset($newsalesperson) ? $newsalesperson : '',
+            'RouteId' => isset($route) ? $route : '',
+            'SalesReceiver' => isset($receiver_name) ? $receiver_name : '',
+            'SalesRecNic' => isset($receiver_nic) ? $receiver_nic : '',
+            'SalesCommsion' => (float) $com_amount,
+            'SalesComCus' => isset($compayto) ? $compayto : '',
+            'salesInvRemark' => isset($remark) ? $remark : '',
+            'refferNo' => isset($refferNo) ? $refferNo : ''
         );
+        
+        
 
         $id3 = array('CompanyID' => $location);
         $this->data['company'] = $this->Salesinvoice_model->get_data_by_where('company',$id3);
@@ -2899,26 +3026,73 @@ $arr[] =null;
         if($_POST['action']==1){
             $res2= $this->Salesinvoice_model->saveSalesInvoice($grnHed,$_POST,$grnNo,$totalDisPerent);
         }elseif ($_POST['action']==2) {
-            $grnHed = array(
-            'AppNo' => '1','SalesInvNo' => $grnNo,'SalesOrderNo'=>'','SalesVehicle'=>$vehicleno,'SalesInsCompany'=>$SalesInsCompany,'SalesLocation' => $location,
-                'SalesOrgDate' => $grnDattime,'SalesCustomer' => $customer,'SalesInvType' => $SalesInvType,'SalesInvAmount' => $total_amount,
-                'SalesNetAmount' => $total_net_amount,'SalesCashAmount'=>$cashAmount,'SalesShippingLabel'=>$shipping_label,'SalesShipping'=>$shipping,
-                'SalesBankAcc'=>$bank_account,'SalesBankAmount'=>$bankAmount,'SalesCCardAmount'=>$cardAmount,'SalesCreditAmount'=>$creditAmount,
-                'SalesChequeAmount'=>$chequeAmount,'SalesCustomerPayment'=>$customerPayment,'SalesAdvancePayment'=>$advanceAmount,'AdvancePayNo'=>$advancePayNo,
-                'SalesReturnPayment'=>$returnAmount,'SalesDisAmount' => $total_discount,'SalesDisPercentage' => $totalDisPerent,'SalesInvUser' => $invUser,
-                'IsComplete' => $isComplete,'InvIsCancel'=>0,'SalesIsNbt'=>$isTotalNbt,'SalesIsVat'=>$isTotalVat,'SalesNbtRatio'=>$nbtRatioRate,'SalesNbtAmount'=>$totalNbt,
-                'SalesVatAmount'=>$totalVat,'SalesPONumber'=>$po_number,'SalesPerson'=>$newsalesperson,'RouteId'=>$route,'SalesReceiver'=>$receiver_name,'SalesRecNic'=>$receiver_nic,
-                'SalesCommsion'=>$com_amount,'SalesComCus'=>$compayto,'salesInvRemark'=>$remark,'refferNo'=>$refferNo
+        //     $grnHed = array(
+        //     'AppNo' => '1','SalesInvNo' => $grnNo,'SalesOrderNo'=>'','SalesVehicle'=>$vehicleno,'SalesInsCompany'=>$SalesInsCompany,'SalesLocation' => $location,
+        //         'SalesOrgDate' => $grnDattime,'SalesCustomer' => $customer,'SalesInvType' => $SalesInvType,'SalesInvAmount' => $total_amount,
+        //         'SalesNetAmount' => $total_net_amount,'SalesCashAmount'=>$cashAmount,'SalesShippingLabel'=>$shipping_label,'SalesShipping'=>$shipping,
+        //         'SalesBankAcc'=>$bank_account,'SalesBankAmount'=>$bankAmount,'SalesCCardAmount'=>$cardAmount,'SalesCreditAmount'=>$creditAmount,
+        //         'SalesChequeAmount'=>$chequeAmount,'SalesCustomerPayment'=>$customerPayment,'SalesAdvancePayment'=>$advanceAmount,'AdvancePayNo'=>$advancePayNo,
+        //         'SalesReturnPayment'=>$returnAmount,'SalesDisAmount' => $total_discount,'SalesDisPercentage' => $totalDisPerent,'SalesInvUser' => $invUser,
+        //         'IsComplete' => $isComplete,'InvIsCancel'=>0,'SalesIsNbt'=>$isTotalNbt,'SalesIsVat'=>$isTotalVat,'SalesNbtRatio'=>$nbtRatioRate,'SalesNbtAmount'=>$totalNbt,
+        //         'SalesVatAmount'=>$totalVat,'SalesPONumber'=>$po_number,'SalesPerson'=>$newsalesperson,'RouteId'=>$route,'SalesReceiver'=>$receiver_name,'SalesRecNic'=>$receiver_nic,
+        //         'SalesCommsion'=>$com_amount,'SalesComCus'=>$compayto,'salesInvRemark'=>$remark,'refferNo'=>$refferNo
+        // );
+        $grnHed = array(
+            'AppNo' => '1',
+            'SalesInvNo' => $grnNo,
+            'SalesOrderNo' => isset($salesorder) ? $salesorder : '',
+            'SalesVehicle' => isset($vehicleno) ? $vehicleno : '',
+            'SalesInsCompany' => isset($SalesInsCompany) ? $SalesInsCompany : '',
+            'SalesLocation' => isset($location) ? $location : '',
+            'SalesOrgDate' => $grnDattime,
+            'SalesDate' => $invDate,
+            'SalesCustomer' => isset($customer) ? $customer : '',
+            'SalesInvType' => (int) $SalesInvType,
+            'SalesInvAmount' => (float) $total_amount,
+            'SalesNetAmount' => (float) $total_net_amount,
+            'SalesCashAmount' => (float) $cashAmount,
+            'SalesShippingLabel' => isset($shipping_label) ? $shipping_label : '',
+            'SalesShipping' => isset($shipping) ? (float) $shipping : 0,
+            'SalesBankAcc' => isset($bank_account) ? $bank_account : '',
+            'SalesBankAmount' => (float) $bankAmount,
+            'SalesCCardAmount' => (float) $cardAmount,
+            'SalesCreditAmount' => (float) $creditAmount,
+            'SalesChequeAmount' => (float) $chequeAmount,
+            'SalesCustomerPayment' => (float) $customerPayment,
+            'SalesAdvancePayment' => (float) $advanceAmount,
+            'AdvancePayNo' => isset($advancePayNo) ? $advancePayNo : '',
+            'SalesReturnPayment' => (float) $returnAmount,
+            'SalesDisAmount' => (float) $total_discount,
+            'SalesDisPercentage' => (float) $totalDisPerent,
+            'SalesInvUser' => (int) $invUser,
+            'IsComplete' => (int) $isComplete,
+            'InvIsCancel' => 0,
+            'SalesIsNbt' => (int) $isTotalNbt,
+            'SalesIsVat' => (int) $isTotalVat,
+            'SalesNbtRatio' => (float) $nbtRatioRate,
+            'SalesNbtAmount' => (float) $totalNbt,
+            'SalesVatAmount' => (float) $totalVat,
+            'SalesPONumber' => isset($po_number) ? $po_number : '',
+            'SalesPerson' => isset($newsalesperson) ? $newsalesperson : '',
+            'RouteId' => isset($route) ? $route : '',
+            'SalesReceiver' => isset($receiver_name) ? $receiver_name : '',
+            'SalesRecNic' => isset($receiver_nic) ? $receiver_nic : '',
+            'SalesCommsion' => (float) $com_amount,
+            'SalesComCus' => isset($compayto) ? $compayto : '',
+            'salesInvRemark' => isset($remark) ? $remark : '',
+            'refferNo' => isset($refferNo) ? $refferNo : ''
         );
            $res2= $this->Salesinvoice_model->updateSalesInvoice($grnHed,$_POST,$grnNo,$totalDisPerent);
         }
-        
+
         $return = array(
             'InvNo' => $grnNo,
             'InvDate' => $invDate
         );
         
         $return['fb'] = $res2;
+
+
         echo json_encode($return);
         die;
     }
@@ -2975,7 +3149,9 @@ $arr[] =null;
         ->where('SalesInvNo', $soNo)->get()->row();
 
         $arr['si_dtl'] = $this->db->select('salesinvoicedtl.*,product.*')->from('salesinvoicedtl')
-        ->join('product', 'product.ProductCode = salesinvoicedtl.SalesProductCode','left')->where('salesinvoicedtl.SalesInvNo', $soNo)->order_by('salesinvoicedtl.SalesInvLineNo')->get()->result();
+        ->join('product', 'product.ProductCode = salesinvoicedtl.SalesProductCode','left')
+        ->where('salesinvoicedtl.SalesInvNo', $soNo)->order_by('salesinvoicedtl.SalesInvLineNo')->get()->result();
+        // echo json_encode($arr['si_dtl']);die;
         $arr['si_dtl_arr'] = $this->Salesinvoice_model->getSalesInvoiceDtlbyid($soNo);
 
         echo json_encode($arr);
@@ -4161,4 +4337,167 @@ public function all_delivery_note() {
         echo json_encode($arr);
         die;
     }
+
+
+
+    public function all_pre_orders() {
+
+        /* Title Page */
+
+        $this->page_title->push('Sales Pre Orders');
+        $this->data['pagetitle'] = 'All Pre Orders';
+        /* Breadcrumbs */
+        $this->breadcrumbs->unshift(1, 'Job Card', 'admin/job/view_job');
+        $this->breadcrumbs->unshift(1, 'Create Job Card', 'admin/Job/index');
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+
+        $location = $_SESSION['location'];
+
+
+        $this->template->admin_render('admin/sales/all-pre-orders', $this->data);
+    }
+
+    public function all_free_Qty() {
+
+        /* Title Page */
+
+        $this->page_title->push('Sales Free Qty');
+        $this->data['pagetitle'] = 'Sales Free Qty';
+        /* Breadcrumbs */
+        $this->breadcrumbs->unshift(1, 'Job Card', 'admin/job/view_job');
+        $this->breadcrumbs->unshift(1, 'Create Job Card', 'admin/Job/index');
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+
+        $location = $_SESSION['location'];
+
+
+        $this->template->admin_render('admin/sales/all-free-qty', $this->data);
+    }
+
+    public function loadallpreorders() {
+        $this->load->library('Datatables');
+
+        $this->datatables->select('tempsalesinvoicehed.*, salespersons.RepName, customer_routes.name');
+        $this->datatables->from('tempsalesinvoicehed');
+        $this->datatables->join('customer', 'customer.CusCode = tempsalesinvoicehed.customerId');
+        $this->datatables->join('customer_routes', 'customer_routes.id = customer.RouteId');
+        $this->datatables->join('salespersons', 'salespersons.RepID = customer.HandelBy');
+
+        echo $this->datatables->generate();
+        die();
+    }
+
+    public function loadallfreeorders() {
+        $this->load->library('Datatables');
+        //    $this->datatables->select('tempsalesinvoicehed.*,customer.CusName,customer.MobileNo');
+        //    $this->datatables->from('tempsalesinvoicehed')->join('customer','customer.CusCode=tempsalesinvoicehed.customerId');
+
+        $this->datatables->select('tempsalesfreeitem.*');
+        $this->datatables->from('tempsalesfreeitem');
+
+        echo $this->datatables->generate();
+        die();
+    }
+   public function view_sales_pre_orders($inv=null) {
+
+        $this->load->model('admin/Salesinvoice_model');
+        $invNo=base64_decode($inv);
+        /* Title Page */
+
+
+        $this->page_title->push('Sales Invoice');
+        $this->data['pagetitle'] = 'Sales Invoice-'.$invNo;
+
+        /* Breadcrumbs */
+        $this->breadcrumbs->unshift(1, 'Sales', 'admin/sales/');
+        $this->breadcrumbs->unshift(1, 'Sales Invoice', 'admin/sales/view_sales_invoice');
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+
+        $location = $this->db->select('location')->from('tempsalesinvoicehed')->where('tempInvNo', $invNo)->get()->row()->location;
+
+        $id3 = array('CompanyID' => $location);
+        $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
+
+        $this->data['orderHead'] = $this->db->select('tempsalesinvoicehed.*,customer.DisplayName,customer.MobileNo,customer.LanLineNo')->from('tempsalesinvoicehed')
+                ->join('customer','customer.CusCode=tempsalesinvoicehed.customerId')
+                ->where('tempInvNo', $invNo)
+                ->get()->row();
+        
+        $this->data['orderDtls'] = $this->db->select('tempsalesinvoiceheddtl.*')->from('tempsalesinvoiceheddtl')
+            ->where('tempInvoiceNo', $invNo)
+            ->get()->result();
+        
+        $this->template->admin_render('admin/sales/view-sales-pre-orders', $this->data);
+
+    }
+
+    public function view_sales_Free_qty($inv = null) {
+
+        $this->load->model('admin/Salesinvoice_model');
+        $invNo = base64_decode($inv);
+
+        $this->page_title->push('Free Qty');
+        $this->data['pagetitle'] = 'Sales Invoice - ' . $invNo;
+
+        /* Breadcrumbs */
+        $this->breadcrumbs->unshift(1, 'Sales', 'admin/sales/');
+        $this->breadcrumbs->unshift(1, 'Sales Invoice', 'admin/sales/view_sales_invoice');
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
+
+        //Get invoice header
+        $this->data['orderHead'] = $this->db->select('tempsalesinvoicehed.*, customer.DisplayName, customer.MobileNo, customer.LanLineNo')
+            ->from('tempsalesinvoicehed')
+            ->join('customer', 'customer.CusCode = tempsalesinvoicehed.customerId')
+            ->where('tempInvNo', $invNo)
+            ->get()->row();
+
+        // Get invoice detail lines
+        $this->data['orderDtls'] = $this->db->select('tempsalesinvoiceheddtl.*')
+            ->from('tempsalesinvoiceheddtl')
+            ->where('tempInvoiceNo', $invNo)
+            ->get()->result();
+
+        //Get free item rows
+        $this->data['freeItems'] = $this->db->select('tempsalesfreeitem.*')
+            ->from('tempsalesfreeitem')
+            ->where('tempInvNo', $invNo)
+            ->get()
+            ->result();
+
+        //Optional: Get company by location (only if $location is defined)
+        // $location = ...; // You must define this first if you use it
+        // $this->data['company'] = $this->Job_model->get_data_by_where('company', ['CompanyID' => $location]);
+
+        $this->template->admin_render('admin/sales/view-sales-free_qty', $this->data);
+    }
+
+
+    public function getPreOrdersTempNo() {
+        header('Content-Type: application/json'); // Ensure JSON response
+
+        $orderNo = $this->input->post('customerOderNo');
+
+        $arr['orderHed'] = $this->db->select('tempsalesinvoicehed.*,customer.CusCode,customer.DisplayName,customer.MobileNo,customer.LanLineNo')
+                            ->from('tempsalesinvoicehed')
+                            ->join('customer', 'customer.CusCode = tempsalesinvoicehed.customerId')
+                            ->where('tempInvNo', $orderNo)
+                            ->get()
+                            ->row();
+
+        $arr['orderDetls'] = $this->db->select('tempsalesinvoiceheddtl.*')
+                            ->from('tempsalesinvoiceheddtl')
+                            ->where('tempInvoiceNo', $orderNo)
+                            ->get()
+                            ->result();
+
+        echo json_encode($arr);
+        exit;
+    }
+
+
+
+
+
+
+
 }

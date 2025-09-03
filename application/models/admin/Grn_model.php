@@ -13,25 +13,31 @@ class Grn_model extends CI_Model {
     }
 
     public function loadsupplierjson($query) {
-        $q = $this->db->select('SupCode AS id,SupName AS text')->from('supplier')->like('SupName', $query, 'after')->get()->result();
+        $q = $this->db->select('SupCode AS id,SupName AS text')->from('supplier')->like('SupName', $query, 'after')->where('IsActive',1)->get()->result();
         return json_encode($q);
     }
 
-    public function loadproductjson($query,$sup,$supCode) {
+    public function loadproductjsonGrn($query,$sup,$supCode) {
         if($sup!=0){
-            $query1 =$this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice')
+            $query1 =$this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice,productprice.PL_No,productcondition.DiscountLimit')
                     ->from('product')
                     ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                    ->join('productcondition', 'productcondition.ProductCode = product.ProductCode', 'INNER')
                     ->where('product.Prd_Supplier', $supCode)
+                    ->where('productprice.PL_No', 1)
+                    ->where('product.Prd_IsActive',1)
                     ->like("CONCAT(' ',product.ProductCode,product.Prd_Description,product.BarCode)", $query ,'left')
-                    ->limit(50)->get();
+                    ->get();
      
         }else{
-            $query1 =$this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice')
+            $query1 =$this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice,productprice.PL_No,productcondition.DiscountLimit')
                     ->from('product')
                     ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                    ->join('productcondition', 'productcondition.ProductCode = product.ProductCode', 'INNER')
+                    ->where('productprice.PL_No', 1)
+                    ->where('product.Prd_IsActive',1)
                     ->like("CONCAT(' ',product.ProductCode,product.Prd_Description,product.BarCode)", $query ,'left')
-                    ->limit(50)->get();
+                    ->get();
         }
 
         if ($query1->num_rows() > 0) {
@@ -44,7 +50,76 @@ class Grn_model extends CI_Model {
         }
        
     }
-    public function loadpricelevel() {
+
+
+     public function loadproductjson($query,$sup,$supCode,$pLevel) {
+            if($sup!=0){
+                $query1 =$this->db->select('product.ProductCode,product.Prd_Description,pricestock.Price,pricestock.Stock')
+                        ->from('product')
+                        //->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                        ->join(' pricestock', 'pricestock.PSCode = product.ProductCode', 'INNER')
+                        ->where('product.Prd_Supplier', $supCode)
+                        ->where('pricestock.PSPriceLevel', $pLevel)
+                        ->like("CONCAT(' ',product.ProductCode,product.Prd_Description,product.BarCode)", $query ,'left')
+                        ->where('pricestock.Stock !=', 0)
+                        ->limit(50)->get();
+        
+            }else{
+                $query1 =$this->db->select('product.ProductCode,product.Prd_Description,pricestock.Price,pricestock.Stock')
+                ->from('product')
+                //->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                ->join(' pricestock', 'pricestock.PSCode = product.ProductCode', 'INNER')
+                ->where('pricestock.PSPriceLevel', $pLevel)
+                ->like("CONCAT(' ',product.ProductCode,product.Prd_Description,product.BarCode)", $query ,'left')
+                ->where('pricestock.Stock !=', 0)
+                ->limit(50)->get();
+                
+            }
+
+            if ($query1->num_rows() > 0) {
+                foreach ($query1->result_array() as $row) {
+                    $new_row['label'] = htmlentities(stripslashes($row['Prd_Description']." = Rs.".$row['Price']));
+                    $new_row['value'] = htmlentities(stripslashes($row['ProductCode']));
+                    $new_row['price'] = htmlentities(stripslashes($row['Price']));
+                    $row_set[] = $new_row; //build an array
+                }
+                echo json_encode($row_set); //format the array into json data
+            }
+        
+        }
+
+        
+
+                public function loadreturnproductjson($query, $sup, $supCode) {
+                    if ($sup != 0) {
+                        $query1 = $this->db->select('product.ProductCode, product.Prd_Description, productprice.ProductPrice')
+                            ->from('product')
+                            ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                            ->where('product.Prd_Supplier', $supCode)
+                            ->where('product.Prd_IsActive', 1)
+                            ->like("CONCAT(' ', product.ProductCode, product.Prd_Description, product.BarCode)", $query, 'left')
+                            ->get();
+                    } else {
+                        $query1 = $this->db->select('product.ProductCode, product.Prd_Description, productprice.ProductPrice')
+                            ->from('product')
+                            ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
+                            ->where('product.Prd_IsActive', 1)
+                            ->like("CONCAT(' ', product.ProductCode, product.Prd_Description, product.BarCode)", $query, 'left')
+                            ->get();
+                    }
+
+                    if ($query1->num_rows() > 0) {
+                        foreach ($query1->result_array() as $row) {
+                            $new_row['label'] = htmlentities(stripslashes($row['Prd_Description'] . " = Rs." . $row['ProductPrice']));
+                            $new_row['value'] = htmlentities(stripslashes($row['ProductCode']));
+                            $new_row['is_return'] = 1; // set dynamically if needed
+                            $row_set[] = $new_row;
+                        }
+                        echo json_encode($row_set);
+                    }
+                }
+
+                public function loadpricelevel() {
         return $this->db->select()->from('pricelevel')->where('IsActive', 1)->get()->result();
     }
     public function loadlocations() {
@@ -67,41 +142,44 @@ class Grn_model extends CI_Model {
         $price_levelArr = json_decode($post['price_level']);
         $totalAmountArr = json_decode($post['pro_total']);
         $isSerialArr = json_decode($post['isSerial']);
+        $wholesalesPriceArr = json_decode($post['wholesales_price']);
         $location = $post['location'];
         $isRawMat =0;
 //        $this->db->trans_begin();
-        $this->db->trans_start();
-        for ($i = 0; $i < count($product_codeArr); $i++) {
-            $totalGrnQty = ($qtyArr[$i]+$freeQtyArr[$i]);
-            $qtyPrice = $total_netArr[$i]/$qtyArr[$i];
-            $grnDtl = array(
-                'AppNo' => '1',
-                'GRN_No' => $grnNo,
-                'GRN_PONo' => '',
-                'GRN_Date' => $post['grnDate'],
-                'GRN_LineNo' => $i,
-                'GRN_Product' => $product_codeArr[$i],
-                'GRN_UPC' => $upcArr[$i],
-                'GRN_UPCType' => $unitArr[$i],
-                'GRN_Qty' => $qtyArr[$i],
-                'GRN_TotalQty' => $totalGrnQty,
-                'GRN_FreeQty' => $freeQtyArr[$i],
-                'GRN_OrderQty' => 0,
-                'GRN_BalanceQty' => 0,
-                'GRN_ReturnQty' => 0,
-                'GRN_CaseCost' => $caseCostArr[$i],
-                'GRN_UnitCost' => $cost_priceArr[$i],
-                'GRN_QtyPrice' => $qtyPrice,
-                'GRN_PriceLevel' => $price_levelArr[$i],
-                'GRN_Selling' => $sell_priceArr[$i],
-                'GRN_DisAmount' => $pro_discountArr[$i],
-                'GRN_DisPersantage' => $pro_discount_precentArr[$i],
-                'GRN_Amount' => $totalAmountArr[$i],
-                'GRN_NetAmount' => $total_netArr[$i],
-                'IsSerial' => $isSerialArr[$i],
-                'SerialNo' => $serial_noArr[$i],
-                'CostCode' => $sell_priceArr[$i]);
-            $this->db->insert('goodsreceivenotedtl', $grnDtl);
+$this->db->trans_start();
+for ($i = 0; $i < count($product_codeArr); $i++) {
+    $totalGrnQty = ($qtyArr[$i]+$freeQtyArr[$i]);
+    $qtyPrice = $total_netArr[$i]/$qtyArr[$i];
+    $grnDtl = array(
+        'AppNo' => '1',
+        'GRN_No' => $grnNo,
+        'GRN_PONo' => '',
+        'GRN_Date' => $post['grnDate'],
+        'GRN_LineNo' => $i,
+        'GRN_Product' => $product_codeArr[$i],
+        'GRN_UPC' => $upcArr[$i],
+        'GRN_UPCType' => $unitArr[$i],
+        'GRN_Qty' => $qtyArr[$i],
+        'GRN_TotalQty' => $totalGrnQty,
+        'GRN_FreeQty' => $freeQtyArr[$i],
+        'GRN_OrderQty' => 0,
+        'GRN_BalanceQty' => 0,
+        'GRN_ReturnQty' => 0,
+        'GRN_CaseCost' => $caseCostArr[$i],
+        'GRN_UnitCost' => $cost_priceArr[$i],
+        'GRN_QtyPrice' => $qtyPrice,
+        'GRN_PriceLevel' => $price_levelArr[$i],
+        'GRN_Selling' => $sell_priceArr[$i],
+        'GRN_DisAmount' => $pro_discountArr[$i],
+        'GRN_DisPersantage' => $pro_discount_precentArr[$i],
+        'GRN_Amount' => $totalAmountArr[$i],
+        'GRN_NetAmount' => $total_netArr[$i],
+        'IsSerial' => $isSerialArr[$i],
+        'SerialNo' => $serial_noArr[$i],
+        'CostCode' => $sell_priceArr[$i],
+        'WholeSalesPrice' => $wholesalesPriceArr[$i]);
+        $this->db->insert('goodsreceivenotedtl', $grnDtl);
+        
 
              $isRawMat = $this->db->select('isRawMaterial')->from('productcondition')->where(array('ProductCode'=> $product_codeArr[$i]))->get()->row()->isRawMaterial;
             //update serial stock
@@ -124,8 +202,16 @@ class Grn_model extends CI_Model {
             $pp = $this->db->select('ProductCode')->from('productprice')->where(array('ProductCode'=> $product_codeArr[$i],'PL_No'=>$price_levelArr[$i]))->get();
             if($pp->num_rows()>0){
                 $this->db->update('productprice',array('ProductPrice'=>$sell_priceArr[$i]),array('ProductCode'=> $product_codeArr[$i],'PL_No'=>$price_levelArr[$i]));
+                 
             }else{
                 $this->db->insert('productprice', array('ProductCode'=> $product_codeArr[$i],'PL_No'=> $price_levelArr[$i],'ProductPrice'=>$sell_priceArr[$i]));
+            }
+
+            //update wholesales price
+
+            if($wholesalesPriceArr[$i] !==0){
+                 $this->db->update('productprice',array('ProductPrice'=>$wholesalesPriceArr[$i]),array('ProductCode'=> $product_codeArr[$i],'PL_No'=>2));
+                   $this->db->update('pricestock',array('WholesalesPrice'=>$wholesalesPriceArr[$i]),array('PSCode'=> $product_codeArr[$i],'PSPriceLevel'=>1,'Price'=> $sell_priceArr[$i]));
             }
             
             //update product cost
@@ -144,9 +230,11 @@ class Grn_model extends CI_Model {
                 }
             }
             if( $isRawMat==0){
+
             //update price stock
             $this->db->query("CALL SPT_UPDATE_PRICE_STOCK('$product_codeArr[$i]','$totalGrnQty','$price_levelArr[$i]','$cost_priceArr[$i]','$sell_priceArr[$i]','$location')");
-            
+            $this->db->update('pricestock',array('WholesalesPrice'=>$wholesalesPriceArr[$i]),array('PSCode'=> $product_codeArr[$i],'PSPriceLevel'=>1,'Price'=> $sell_priceArr[$i]));
+
              //update product stock
             $this->db->query("CALL SPT_UPDATE_PRO_STOCK('$product_codeArr[$i]','$totalGrnQty',0,'$location')");
         }

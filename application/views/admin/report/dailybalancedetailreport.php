@@ -51,7 +51,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <tr>
                                     <td>Date</td>
                                     <td>Invoice No</td>
-                                    <td>Vehicle No</td>
+
                                     <td>Job Description</td>
                                     <td>Amount</td>
                                     <td>Cash</td>
@@ -69,7 +69,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <tfoot>
                                 <tr>
                                     <th></th>
-                                    <th></th>
+
                                     <th></th>
                                     <th></th>
                                     <th id="totalpsale" style="text-align: right;color: #00aaf1;"></th>
@@ -385,6 +385,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     var endFloat=0;
     var cashSale=0;
     function drawTable(data) {
+        console.log('data',data);
         startBalance = 0;
         endBalance=0;
         totalCashIn=0;
@@ -687,7 +688,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         
         row.append($("<td>" + rowData.InvDate + "</td>"));
         row.append($("<td>" + rowData.SalesInvNo + "</td>"));
-        row.append($("<td>" + rowData.SalesVehicle + "</td>"));
+
         row.append($("<td align='left'>" + rowData.AppearName + "</td>"));
        row.append($("<td class='net' align='right'>" + accounting.formatMoney(rowData.NetAmount) + "</td>"));
         row.append($("<td class='cash' align='right'>" + accounting.formatMoney(rowData.SalesCashAmount) + "</td>"));
@@ -785,7 +786,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     function printdiv() {
         var datebalance = $("#enddate").val();
         $("#printReport").print({
-            prepend:"<h3 style='text-align:center'>THILAKA FURNITURE <br>Daily Cash Balance Report - "+datebalance+"</h3><hr/>",
+            prepend:"<h3 style='text-align:center'>SATHUTU LANKA (PVT) LTD <BR>L39. Saddathissapura, Ampara.<br>+94 77 846 3849 <br>Daily Cash Balance Report - "+datebalance+"</h3><hr/>",
             title:'Daily Cash Balance Report '+datebalance
         });
     }

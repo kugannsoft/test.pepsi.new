@@ -83,6 +83,7 @@ class Payment extends Admin_Controller {
     public function cus_payment() {
         // Get the customer code from the URL parameter
         $cus = isset($_GET['cus']) ? $_GET['cus'] : NULL;
+        $this->data['customer'] = $cus;
     
         // Set page title and breadcrumbs
         $this->page_title->push(('Customer Payment'));
@@ -206,7 +207,6 @@ class Payment extends Admin_Controller {
         $id3 = array('CompanyID' => $location);
         $this->data['company'] = $this->Pos_model->get_data_by_where('company', $id3);
         $this->data['salesperson'] = $this->db->select()->from('salespersons')->get()->result();
-    
         // Load the view with the prepared data
         $this->template->admin_render('admin/payment/customer-payment', $this->data);
     }
@@ -246,21 +246,22 @@ class Payment extends Admin_Controller {
     }
 
     public function loadcustomersroutewise() {
-        $routeID = $this->input->post('routeID'); 
+        $routeID = $this->input->post('routeID');
         $newsalesperson = $this->input->post('newsalesperson');
         $this->load->database();
-    
-    
+
+
         $customers = $this->db->select('customer.CusCode,customer.DisplayName')
-        ->from('customer')
-        ->where('RouteId', $routeID)
-        ->where('HandelBy',$newsalesperson)
-        ->get()
-        ->result();
-    
-        echo json_encode($customers); 
-        die; 
+            ->from('customer')
+            ->where('RouteId', $routeID)
+            ->where('HandelBy',$newsalesperson)
+            ->get()
+            ->result();
+
+        echo json_encode($customers);
+        die;
     }
+
 
     /*=========Supplier payment===========================================*/
     public function sup_payment() {
@@ -552,12 +553,15 @@ class Payment extends Admin_Controller {
 
     public function loadcustomersjson() {
         $query = $_GET['q'];
-        echo $this->Payment_model->loadcustomersjson($query);
+        $routeID = $_REQUEST['RouteId'];
+        $salespersonID = $_REQUEST['HandelBy'];
+        echo $this->Payment_model->loadcustomersjson($query,$salespersonID, $routeID);
         die;
     }
 
     public function getCustomersDataById() {
         $cusCode = $_POST['cusCode'];
+
         $arr['cus_data'] = $this->Payment_model->getCustomersDataById($cusCode);
         $arr['credit_data'] = $this->Payment_model->getCustomersCreditDataById($cusCode);
         $arr['return_data'] = $this->Payment_model->getCustomersReturnDataById($cusCode);
@@ -572,6 +576,7 @@ class Payment extends Admin_Controller {
         echo json_encode($arr);
         die;
     }
+
 
     public function customerPayment() {
         $paymentNo = $this->Payment_model->get_max_code('Customer Payment');
@@ -1233,7 +1238,10 @@ class Payment extends Admin_Controller {
                         ->get()->row();
         $arr['credit_data'] =$this->db->select('*')->from('creditgrndetails')
                         ->where('creditgrndetails.SupCode', $supCode)
-                        ->where('creditgrndetails.IsCloseGRN', 0)->get()->result();
+                        ->where('creditgrndetails.IsCloseGRN', 0)
+                        ->where('creditgrndetails.IsCancel', 0)
+                        ->get()->result();
+       
         echo json_encode($arr);
         die;
     }
@@ -1324,6 +1332,9 @@ class Payment extends Admin_Controller {
         echo json_encode($return);
         die;
     }
+
+
+   
 
 
     public function cancelSupPayment() {

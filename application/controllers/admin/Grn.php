@@ -101,8 +101,19 @@ class Grn extends Admin_Controller {
         echo $this->Grn_model->loadproductjson($query,$sup,$supCode);
         die;
     }
+
+     public function loadproductjsonGrn() {
+        $query = $_GET['q'];
+        $sup= $_REQUEST['sup'];
+        $supCode= $_REQUEST['supcode'];
+        // $pLevel = $_GET['price_level'];
+       
+        echo $this->Grn_model->loadproductjsonGrn($query,$sup,$supCode);
+        die;
+    }
     
     public function saveGrn() {
+        
         $barcode = 1;
         $serialAutoGen=$_POST['serialAutoGen'];
         $maxSerialQty=$_POST['maxSerialQty'];
@@ -142,6 +153,7 @@ class Grn extends Admin_Controller {
         $price_levelArr = json_decode($_POST['price_level']);
         $totalAmountArr = json_decode($_POST['pro_total']);
         $pro_nameArr = json_decode($_POST['proName']);
+        $wholesale_priceArr = json_decode($_POST['wholesales_price']);
         
         $grnHed = array(
             'AppNo' => '1','GRN_No' => $grnNo,'GRN_PONo'=>'','GRN_Location' => $location,'GRN_Date' => $invDate,'GRN_DateORG' => $grnDattime,
@@ -326,7 +338,8 @@ class Grn extends Admin_Controller {
         die;
     }
 
-     public function cancelGRN() {
+
+    public function cancelGRN() {
         $cancelNo = $this->Grn_model->get_max_code('CancelGRN');
         
         $location=$_POST['location'];

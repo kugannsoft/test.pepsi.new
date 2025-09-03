@@ -43,13 +43,16 @@ class Payment_model extends CI_Model {
         $q = $this->db->select('BankCode AS id,BankName AS text')->from('bank')->like('BankName', $query, 'after')->get()->result();
         return json_encode($q);
     }
-    
+
     public function loadcustomersjson($query) {
-     
+
         // $query1 =$this->db->select('CusCode,CusName')->like("CONCAT(' ',customer.CusCode,customer.CusName,customer.MobileNo)", $query ,'left')->limit(50)->get('customer');
 
-        $query1 =$this->db->select('customer.CusCode,customer.CusName,customer.LastName')->from('customer')->like("CONCAT(' ',customer.CusCode,customer.CusName,' ',customer.MobileNo)", $query ,'left')->where('IsActive',1)->limit(50)->get();
-       
+        $query1 =$this->db->select('customer.CusCode,customer.CusName,customer.LastName')->from('customer')
+            ->like("CONCAT(' ',customer.CusCode,customer.CusName,' ',customer.MobileNo)", $query ,'left')
+            ->where('IsActive',1)
+            ->limit(50)->get();
+
         if ($query1->num_rows() > 0) {
             foreach ($query1->result_array() as $row) {
                 // $new_row['label'] = htmlentities(stripslashes($row['CusName']));
@@ -61,14 +64,17 @@ class Payment_model extends CI_Model {
             echo json_encode($row_set); //format the array into json data
         }
     }
-    
+
+
     public function getCustomersDataById($cusCode) {
         return $this->db->select('customer.*,customeroutstanding.*')->from('customer')
-                        ->where('customer.CusCode', $cusCode)
-                        ->join('customeroutstanding', 'customer.CusCode = customeroutstanding.CusCode')
-                        ->get()->row();
+            ->where('customer.CusCode', $cusCode)
+            ->join('customeroutstanding', 'customer.CusCode = customeroutstanding.CusCode')
+            ->get()->row();
     }
-    
+
+
+
     public function getCustomersCreditDataById($cusCode) {
 //        $q= $this->db->query("SELECT C.AppNo,C.Type,C.InvoiceDate,C.InvoiceNo,C.Location,C.CusCode,C.NetAmount,C.CreditAmount,C.SettledAmount,C.IsCloseInvoice,C.IsCancel,IFNULL(R.ReturnAmount,0) As ReturnAmount FROM `creditinvoicedetails` C 
 // LEFT JOIN 
@@ -115,7 +121,7 @@ class Payment_model extends CI_Model {
         $payAmount =$_POST['payAmount'];
         
         $this->db->trans_start();         
-         //update customer payment
+        //update customer payment
         $this->db->insert('customerpaymenthed', $cpHed);
         //update customer payment
         $this->db->insert('customerpaymentdtl', $cpDtl);
@@ -129,12 +135,13 @@ class Payment_model extends CI_Model {
         }
         //advance release
         if ($post['payType'] == 5){
-         $this->db->update('customerpaymentdtl',array('IsRelease'=>1),array('CusPayNo'=>$_POST['advance_payment_no']));
+            $this->db->update('customerpaymentdtl',array('IsRelease'=>1),array('CusPayNo'=>$_POST['advance_payment_no']));
         }
         //return release
         if ($post['payType'] == 4){
+           
             $completeDate = date("Y-m-d H:i:s");
-            $this->db->update('return_payment',array('IsComplete'=>1, 'Compete_date'=>$completeDate),array('ReturnNo'=>$_POST['return_payment_no']));
+            $this->db->update('returninvoicehed',array('IsComplete'=>1, 'Compete_date'=>$completeDate),array('ReturnNo'=>$_POST['return_payment_no']));
         }
         
         for ($i = 0; $i < count($credit_invoiceArr); $i++) {
@@ -213,11 +220,13 @@ class Payment_model extends CI_Model {
         $query = $this->db->get_where($table, $data)->row_array();
         return $query;
     }
-    
-   public function getActiveCusPayment($table, $q,$location,$cusCode) {
+
+
+
+    public function getActiveCusPayment($table, $q,$location,$cusCode) {
         $this->db->select('CusPayNo');
         $this->db->like('CusPayNo', $q)->where('IsCancel', 0)->where('CusCode', $cusCode)->where('Location', $location)->order_by('CusPayNo', 'DESC');
-        
+
         $query = $this->db->get($table);
         if ($query->num_rows() > 0) {
             foreach ($query->result_array() as $row) {
@@ -228,6 +237,7 @@ class Payment_model extends CI_Model {
             echo json_encode($row_set); //format the array into json data
         }
     }
+
     public function getActiveSupPayment($table, $q,$location,$cusCode) {
         $this->db->select('SupPayNo');
         $this->db->like('SupPayNo', $q)->where('IsCancel', 0)->where('SupCode', $cusCode)->where('Location', $location)->order_by('SupPayNo', 'DESC');
@@ -254,7 +264,7 @@ class Payment_model extends CI_Model {
 
     public function loadsuppliersjson($query) {
      
-        $query1 =$this->db->select('SupCode,SupName')->like("CONCAT(' ',supplier.SupCode,supplier.SupName,supplier.MobileNo)", $query ,'left')->limit(50)->get('supplier');
+        $query1 =$this->db->select('SupCode,SupName')->like("CONCAT(' ',supplier.SupCode,supplier.SupName,supplier.MobileNo)", $query ,'left')->where('IsActive',1)->get('supplier');
        
         if ($query1->num_rows() > 0) {
             foreach ($query1->result_array() as $row) {
@@ -268,10 +278,10 @@ class Payment_model extends CI_Model {
 
     public function loadSupPaymentById($inv) {
         return $this->db->select('supplierpaymentdtl.*,bank.BankName,supplierpaymenthed.AvailableOustanding,supplierpaymenthed.TotalPayment AS totalAmount')->from('supplierpaymentdtl')
-                        ->where('supplierpaymentdtl.SupPayNo', $inv)
-                        ->join('supplierpaymenthed', 'supplierpaymenthed.SupPayNo = supplierpaymentdtl.SupPayNo')
-                        ->join('bank', 'bank.BankCode = supplierpaymentdtl.BankNo','left')
-                        ->get()->result();
+            ->where('supplierpaymentdtl.SupPayNo', $inv)
+            ->join('supplierpaymenthed', 'supplierpaymenthed.SupPayNo = supplierpaymentdtl.SupPayNo')
+            ->join('bank', 'bank.BankCode = supplierpaymentdtl.BankNo','left')
+            ->get()->result();
     }
 
     public function supplierPayment($cpHed,$cpDtl,$post,$paymentNo,$chqDtl) {
@@ -322,6 +332,9 @@ class Payment_model extends CI_Model {
         $this->db->trans_complete();
        return $this->db->trans_status();
     }
+
+
+    
     
 
     public function cancelSupPayment($cancelNo,$location,$canDate,$paymentNo,$remark,$user,$customer) {

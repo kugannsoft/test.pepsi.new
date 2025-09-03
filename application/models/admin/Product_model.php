@@ -86,7 +86,6 @@ class Product_model extends CI_Model {
     public function loadproductbyid($product) {
         return $this->db->select('product.*,productcondition.*')->from('product')
                         ->where('product.ProductCode', $product)
-                        ->where('product.Prd_IsActive', 1)
                         ->join('productcondition', 'productcondition.ProductCode = product.ProductCode')
                         ->get()->row();
     }
@@ -340,7 +339,7 @@ class Product_model extends CI_Model {
     }
 
     public function loadsuppliers() {
-        return $this->db->select('SupCode,SupName')->from('supplier')->get()->result();
+        return $this->db->select('SupCode,SupName')->from('supplier')->where('IsActive',1)->get()->result();
     }
 
     public function loadpricelevel() {
@@ -380,4 +379,42 @@ class Product_model extends CI_Model {
      public function loadSystemOptionById($id){
        return $this->db->select('Value')->from('systemoptions')->where('ID', $id)->get()->row()->Value;
     }
+
+       public function loadpricestockbyid($product,$location,$price,$pl)
+    {
+       
+            return $this->db->select('Stock,Price,UnitCost')
+            ->from('pricestock')
+            ->where('PSCode', $product)
+            ->where('PSLocation', $location)
+            ->where('Price', $price)
+            ->where('PSPriceLevel', $pl)
+            ->get()->row();
+        
+        
+    }
+
+      public function loadproductbypcodegrn($product, $pl) {
+        return $this->db->select('product.*,productcondition.*,
+                        productprice.ProductPrice')
+                        ->from('product')
+                        ->where('product.ProductCode', $product)
+                        // ->where('productprice.PL_No', $pl)
+                        ->join('productcondition', 'productcondition.ProductCode = product.ProductCode')
+                        ->join('productprice', 'productprice.ProductCode = product.ProductCode')
+                       
+                        ->get()->row();
+    }
+
+     public function loadproductbypcodegrnWhole($product, $pl) {
+        return $this->db->select('productprice.ProductPrice')
+                        ->from('product')
+                        ->where('product.ProductCode', $product)
+                         ->where('productprice.PL_No', 2)
+                        ->join('productcondition', 'productcondition.ProductCode = product.ProductCode')
+                        ->join('productprice', 'productprice.ProductCode = product.ProductCode')
+                        ->get()->row();
+    }
+
+    
 }

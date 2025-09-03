@@ -74,11 +74,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <label class="col-sm-4 control-label">Price Level</label>  
                                         <div class="col-sm-6">
                                             <select tabindex="7" class="form-control" id="priceLevel"> 
-                                             <?php foreach ($plv as $pl) { ?>
-                                            <option value="<?php echo $pl->PL_No; ?>" <?php if ($pl->PL_No == 1) {echo 'selected';}?>><?php echo $pl->PriceLevel; ?></option>
-                                            <?php } ?></select>
+                                                <?php foreach ($plv as $pl) {
+                                                    if ($pl->PL_No == 1) { ?>
+                                                        <option value="<?php echo $pl->PL_No; ?>" selected><?php echo $pl->PriceLevel; ?></option>
+                                                <?php } } ?>
+                                            </select>
                                         </div>
-                                    </div>
+                                </div>
                             </form>
                         </div>
                         <div  class="col-md-3">
@@ -195,6 +197,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 <input type="hidden" class="form-control" required="required"  name="isSerial" id="isSerial">
                                             </div>
                                         </div>
+
+                                        <div class="form-group">
+                                            <label for="sellingPrice"class="col-sm-4 control-label">Wholesale Price <span class="required">*</span></label>
+                                            <div class="col-sm-6">
+                                                <input type="number"  tabindex="13"  min="0" step="1" class="form-control" name="wholesalesPrice" id="wholesalesPrice" placeholder="Enter Wholesales Price">
+                                                
+                                            </div>
+                                        </div>
                                         <div class="form-group" id="dv_SN">
                                             <label for="product" class="col-sm-4 control-label">Serial No <span class="required">*</span></label>
                                             <div class="col-sm-6">
@@ -244,12 +254,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <th>#</th>
                                             <th>Product Code</th>
                                             <th>Product Name</th>
-                                            <th>Unit Cost</th>
+                                            <th>Unit/Case</th>
                                             <th>Quantity</th>
+                                            <th>Free Quantity</th>
                                             <th>Unit Price</th>
                                             <th>Discount (%)</th>
                                             <th>Total Net Amount</th>
-                                            <th>Serial</th>
+                                            <th>Wholesale Price</th>
                                             <th></th>
                                         </tr>
                                     </thead>

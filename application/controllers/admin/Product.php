@@ -200,9 +200,24 @@ class Product extends Admin_Controller {
         $pl = $_POST['prlevel'];
         $location = $_POST['location'];
         $locationS = $_SESSION['location'];
+         $price = $_POST['price'];
         $arr['product'] = $this->Product_model->loadproductbypcode($dep, $pl);
         $arr['productstock']  = $this->Product_model->loadproductstockbyid($dep,$locationS);
         $arr['serial'] = $this->Product_model->loadproductbyserialArrayByCode($dep, $pl,$location);
+        $arr['price_stock']  = $this->Product_model->loadpricestockbyid($dep,$locationS,$price, $pl);
+        echo json_encode($arr);
+        die;
+    }
+
+       public function getProductByIdforGrnnew() {
+        $dep = $_POST['proCode'];
+        $pl = $_POST['prlevel'];
+        $location = $_POST['location'];
+        $price = $_POST['price'];
+        $arr['product'] = $this->Product_model->loadproductbypcodegrn($dep);
+        $arr['productwhole'] = $this->Product_model->loadproductbypcodegrnWhole($dep);
+       // $arr['serial'] = $this->Product_model->loadproductbyserialArray($dep, $pl,$location);
+        // $arr['price_stock']  = $this->Product_model->loadpricestockbyid($dep,$location,$price,$pl);
         echo json_encode($arr);
         die;
     }

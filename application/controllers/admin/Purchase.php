@@ -190,7 +190,8 @@ class Purchase extends Admin_Controller {
     
     public function loadproductjson() {
         $query = $_GET['q'];
-        $sup= $_REQUEST['sup'];$supCode= $_REQUEST['supcode'];
+        $sup= $_REQUEST['sup'];
+        $supCode= $_REQUEST['supcode'];
         $isGrn = $_REQUEST['isGrn'];
         
         if($isGrn==1){

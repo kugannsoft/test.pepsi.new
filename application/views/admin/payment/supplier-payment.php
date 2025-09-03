@@ -70,6 +70,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <input type="text" class="form-control" required="required"  name="payAmount" id="payAmount" value="0">
                                     </div>
                                 </div>
+                                 <div class="form-group">
+                                    <label for="selectedAmount" class="col-sm-5 control-label">Selected Amount<span class="required">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" readonly="readonly" class="form-control" required="required"  name="selectedAmount" id="selectedAmount" value="0">
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <table>
@@ -115,7 +121,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <!--                                             <b> Cash Payment : <span id="cashPayment"></span> </b><br>
                                   <b> Cheque Payment : <span id="chequePayment"></span> </b>-->
 
-                                <span class="thumbnail"> &nbsp; &nbsp; Automatically &nbsp;<input type="radio"  class="prd_icheck" checked="checked" name="payAuto" id="payAuto" value="1">  &nbsp; &nbsp; Manual &nbsp; <input type="radio" class="prd_icheck" name="payAuto" id="payAuto2" value="2"> </span>
+                                <span class="thumbnail" style="width:15%;"> 
+                                    <!-- &nbsp; &nbsp; Automatically &nbsp;
+                                    <input type="radio"  class="prd_icheck" checked="checked" name="payAuto" id="payAuto" value="1">   -->
+                                    &nbsp; &nbsp; Manual &nbsp; 
+                                    <input type="radio" class="prd_icheck" name="payAuto" id="payAuto2" value="2"> 
+                                </span>
                             </div>
                             
                         </div>

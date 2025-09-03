@@ -35,6 +35,7 @@ class Purchase_model extends CI_Model {
 
     public function loadproductjson($query,$sup,$supCode) {
         if($sup!=0){
+            
             $query1 =$this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice')
                     ->from('product')
                     ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
@@ -42,6 +43,7 @@ class Purchase_model extends CI_Model {
                     ->like("CONCAT(' ',product.ProductCode,product.Prd_Description,product.BarCode)", $query ,'left')
                     ->limit(50)->get();
         }else{
+           
             $query1 =$this->db->select('product.ProductCode,product.Prd_Description,productprice.ProductPrice')
                     ->from('product')
                     ->join('productprice', 'productprice.ProductCode = product.ProductCode', 'INNER')
