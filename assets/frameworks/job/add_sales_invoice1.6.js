@@ -1902,6 +1902,7 @@ $(document).ready(function() {
         });
 
         var sendProduct_code = JSON.stringify(product_code);
+        
         var sendPro_name = JSON.stringify(pro_name);
         var sendSerial_no = JSON.stringify(serial_no);
         var sendQty = JSON.stringify(qty);
@@ -3298,10 +3299,11 @@ $(document).ready(function() {
         console.log('resultdata',resultData)
         var orderDetails = resultData.orderDetls;
         // total_amount2 = resultData.orderHed.grossAmount;
-        total_discount= resultData.orderHed.discountAmount;
+        total_discount= parseFloat(resultData.orderHed.discountAmount);
         var tbody = $("#tbl_item tbody"); // Select table body
         tbody.empty(); // Clear existing rows before adding new ones
         var total_amount2 = 0;
+      
         if (orderDetails.length === 0) {
             tbody.append("<tr><td colspan='12' class='text-center'>No records found</td></tr>");
             return;
@@ -3333,10 +3335,10 @@ $(document).ready(function() {
             var row = `<tr serial_batch='0' ri="${index + 1}" id="${index + 1}" 
                 proCode="${item.productCode}" uc="${item.unitOrCase}" proname="${item.productName}"
                 qty="${item.saleQuantity}" unit_price="${item.unitPrice}" netamount="${item.totalAmount}" 
-                netAmount="${item.totalNetAmount}" discount_precent="${item.disPresantage}" 
-                pro_discount="${item.disAmount}" cprice="${item.salesCostPrice}" 
+                netAmount="${item.totalNetAmount}" discount_percent="${item.disPresantage}" 
+                proDiscount="${item.disAmount}" cprice="${item.salesCostPrice}" 
                 org_unit_price="${item.unitPrice}" is_return="${item.IsReturn}" return_type="${item.ReturnType}" 
-                pL="${item.PriceLevel}" fQ="${item.SalesFreeQty}">
+                pL="${item.PriceLevel}" fQ="${item.SalesFreeQty} total_discount="${total_discount}">
                 
                     <td class='text-center'>${index + 1}</td>
                     <td class='text-left'>${item.productCode}</td>
