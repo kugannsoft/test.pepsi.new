@@ -122,12 +122,12 @@ $('.prd_icheck').iCheck({
                         $("#tbl_payment tbody").append("<tr id='" + z + "'>" +
                             "<td>" + z + "&nbsp;&nbsp;<input rowid='"+z+"' type='checkbox' name='rownum' class='prd_icheck rowcheck '></td>" +
                             "<td  class='invoiceNo'>" + paymentNo + "</td>" +
-                            "<td  class=''>" + invNo + "</td>" +
-                            "<td>" + invDate + "</td><td class='text-right'>" + accounting.formatMoney(totalNetAmount) + "</td>" +
-                            "<td class='text-right returnAmount' invPay='0'>" + accounting.formatMoney(ReturnAmount) + "</td>" +
-                            "<td class='text-right creditAmount'>" + accounting.formatMoney(creditAmount) + "</td>" +
-                            "<td class='text-right settleAmount' invPay='0'>" + accounting.formatMoney(settleAmount) + "</td>" +
-                            "<td class='text-right dueAmount' isColse='0'>" + accounting.formatMoney(creditAmount - settleAmount) + "</td>" +
+                            
+                            "<td>" + invDate + "</td><td>" + accounting.formatMoney(totalNetAmount) + "</td>" +
+                          
+                            "<td class='creditAmount'>" + accounting.formatMoney(creditAmount) + "</td>" +
+                            "<td class='settleAmount' invPay='0'>" + accounting.formatMoney(settleAmount) + "</td>" +
+                            "<td class='dueAmount' isColse='0'>" + accounting.formatMoney(creditAmount - settleAmount) + "</td>" +
                             
                             "<td></td></tr>");
 
@@ -509,13 +509,13 @@ $("input[name='disablePrint']").on('ifChanged', function() {
             return false;
         } else {
 
-            if (selectedAmount < pay_amount) {
+            if (selectedAmount > pay_amount) {
 
                 var final_due_amount = Array.from($("#tbl_payment tbody tr")).map(function(row){
                     return parseFloat($(row).find('.dueAmount').html().replace(',',''));
                 }).reduce(function(acc,it){return acc+it});
                     console.log(final_due_amount);
-                if (final_due_amount >  pay_amount) {
+                if (final_due_amount =  pay_amount) {
 
                     $.notify("Pay amount is more than selected amount. Please select next row", "danger");
                     return false;
@@ -628,8 +628,8 @@ $("input[name='disablePrint']").on('ifChanged', function() {
                 console.log('row',rowCounts);
 
                 for (var k = 1; k <= rowCounts; k++) {
-                    credit_invoice.push($("#" + k + " .invoiceNo").html());  //pushing all the product_code listed in the table
-                    cus_settle_amount.push(accounting.unformat($("#" + k + " .settleAmount").html()));   //pushing all the qty listed in the table
+                    credit_invoice.push($("#" + k + " .invoiceNo").html());  
+                    cus_settle_amount.push(accounting.unformat($("#" + k + " .settleAmount").html()));   
                     cus_credit_amount.push(accounting.unformat($("#" + k + " .creditAmount").html()));
                     cus_inv_payment.push(accounting.unformat($("#" + k + " .settleAmount").attr('invPay')));
                 }

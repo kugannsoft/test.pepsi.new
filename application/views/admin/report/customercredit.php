@@ -106,8 +106,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <td>Invoice No</td>
                                     <!--                                    <td>Register No</td>-->
                                     <!--                                    <td>Job Card No</td>-->
-                                    <td>Handle By</td>
-                                    <!-- <td>Cost Price</td> -->
+                                    <td>Rep Name</td>
+                                    
                                     <td>Credit Amount</td>
                                     <td>Settled Amount</td>
                                     <td>Return Amount</td>
@@ -242,9 +242,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 if(data){
                     var res=JSON.parse(data);
                     drawTable(res.cr);
-                    $('#cusName').html(res.cr[0].CusName);
-                    $('#address1').html(res.cr[0].Address01);
-                    $('#address2').html(res.cr[0].Address02);
+                    
+                
                     $('#totalcred').html(accounting.formatMoney(sumcolumn('costamount')));
                     $('#totalset').html(accounting.formatMoney(sumcolumn('totalamount')));
                     $('#totalret').html(accounting.formatMoney(sumcolumn('totalreturn')));
@@ -264,7 +263,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         var row = $("<tr/>");
         $("#saletable").append(row);
         row.append($("<td>" + rowData.InvoiceDate + "</td>"));
-        row.append($("<td><a href='<?php echo base_url() ?>admin/payment/view_customer/" + (rowData.CusCode) +"' >" + " "+rowData.CusName+ "</a></td>"));
+        row.append($("<td><a href='<?php echo base_url() ?>admin/payment/view_customer/" + (rowData.CusCode) +"' >" + " "+rowData.DisplayName+ "</a></td>"));
         row.append($("<td>" + rowData.MobileNo + "</td>"));
         if (rowData.Type==1) {
             row.append($("<td><a href='<?php echo base_url() ?>admin/Salesinvoice/view_sales_invoice/"+Base64.encode(rowData.InvoiceNo)+"' >" + rowData.InvoiceNo + "</a></td>"));

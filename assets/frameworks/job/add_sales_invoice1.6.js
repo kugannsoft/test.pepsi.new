@@ -1583,6 +1583,7 @@ $(document).ready(function() {
         // var jobdesc = $(this).parent().parent().attr('job');
         var qty = parseFloat($(this).parent().parent().attr('qty'));
         var freeqty = parseFloat($(this).parent().parent().attr('fQ'));
+        
         var selprice = parseFloat($(this).parent().parent().attr('unit_price'));
         var costprice = parseFloat($(this).parent().parent().attr('cPrice'));
         var netprice = parseFloat($(this).parent().parent().attr('netAmount'));
@@ -1608,6 +1609,7 @@ $(document).ready(function() {
         }else{
              $("#returnsection").hide();
         }
+
         
         var returnType = $(this).parent().parent().attr('return_type');
         
@@ -1642,8 +1644,13 @@ $(document).ready(function() {
                         $("#priceStock").html('0');
                     }
                      
-
-                
+                if(resultData.product.IsFreeIssue == "1"){
+                   
+                    $("#dv_FreeQty").show();
+                }else{
+                   
+                    $("#dv_FreeQty").hide();
+                }
 
                     
                 },

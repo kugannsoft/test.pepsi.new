@@ -2159,21 +2159,20 @@ public function loadreport1() {
             die;
         }
 
-        $this->db->select('d.SalesProductCode,d.SalesProductName, SUM(d.SalesQty) AS TotalSalesQty, SUM(d.SalesFreeQty) AS TotalSalesFreeQty,p.Prd_CostPrice,
-        IFNULL(MAX(tempsalesinvoiceheddtl.SalesReturnQty), 0) AS SalesReturnQty,h.RouteId,h.SalesDate,Prd_UPC,h.SalesPerson');
+        $this->db->select('d.SalesProductCode, d.SalesProductName,
+                   SUM(d.SalesQty) AS TotalSalesQty,
+                   SUM(d.SalesFreeQty) AS TotalSalesFreeQty,
+                   SUM(d.SalesReturnQty) AS SalesReturnQty,
+                   p.Prd_CostPrice, p.Prd_UPC');
         $this->db->from('salesinvoicehed h');
         $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
         $this->db->join('product p', 'd.SalesProductCode = p.ProductCode');
-        $this->db->join('tempsalesinvoiceheddtl', 'p.ProductCode= tempsalesinvoiceheddtl.productCode');
         $this->db->where('h.SalesPerson',$salesperson);
         if (!empty($routeAr)) {
             $this->db->where_in('h.RouteId', $routeAr);
         }
-//         $this->db->where('h.RouteId',$route);
-//
-        $this->db->where('DATE(h.SalesDate) >=', $startdate);
-        $this->db->where('DATE(h.SalesDate) <=', $enddate);
-
+        $this->db->where('DATE(d.SalesInvDate) >=', $startdate);
+        $this->db->where('DATE(d.SalesInvDate) <=', $enddate);
         $this->db->group_by('d.SalesProductCode');
 
         $query = $this->db->get();
@@ -2191,7 +2190,6 @@ public function loadreport1() {
         echo json_encode($response);
         die;
     }
-
 
     public function routewisereport()
     {

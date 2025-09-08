@@ -195,10 +195,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <th>#</th>
                                         <th>GRN No</th>
                                         <th>Date</th>
-                                        <th class="text-right">GRN Amount</th>
-                                        <th class="text-right">Credit Amount</th>
-                                        <th class="text-right">Settle Amount</th>
-                                        <th class="text-right">Due Amount</th>
+                                        <th>GRN Amount</th>
+                                        <th>Credit Amount</th>
+                                        <th>Settle Amount</th>
+                                        <th>Due Amount</th>
                                         <th></th>
                                     </tr>
                                 </thead>
