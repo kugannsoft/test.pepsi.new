@@ -4537,13 +4537,16 @@ public function all_delivery_note() {
                             ->join('customer', 'customer.CusCode = tempsalesinvoicehed.customerId')
                             ->join('salespersons', 'salespersons.RepId = customer.HandelBy')
                             ->join('customer_routes', 'customer_routes.id = customer.RouteId')
-                            ->where('tempInvNo', $orderNo)
+                            ->where('tempsalesinvoicehed.tempInvNo', $orderNo)
+                            ->where('tempsalesinvoicehed.isActive',1)
                             ->get()
                             ->row();
 
-        $arr['orderDetls'] = $this->db->select('tempsalesinvoiceheddtl.*')
+        $arr['orderDetls'] = $this->db->select('tempsalesinvoiceheddtl.*,tempsalesinvoicehed.tempInvNo,tempsalesinvoicehed.isActive')
                             ->from('tempsalesinvoiceheddtl')
-                            ->where('tempInvoiceNo', $orderNo)
+                             ->join('tempsalesinvoicehed', 'tempsalesinvoicehed.tempInvNo = tempsalesinvoiceheddtl.tempInvoiceNo','left')
+                            ->where('tempsalesinvoiceheddtl.tempInvoiceNo', $orderNo)
+                            ->where('tempsalesinvoicehed.isActive',1)
                             ->get()
                             ->result();
 
