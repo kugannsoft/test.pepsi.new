@@ -90,19 +90,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <div class="row">
             <div class="col-md-12">
                 <div class="box" id="report">
-                    <div class="row">
-                        <div class="col-md-1">&nbsp;</div>
-                        <div class="col-md-10">To:<span class="pull-right" id="a">DATE :
-                                <?php echo date('Y-m-d');?></span><br>
-                            <span id="cusName"></span><br>
-                            <span id="address1"></span>
-                            <span id="address2"></span>
-                        </div>
-                        <!-- <div class="col-md-5">DATE : <?php echo date('Y-m-d');?></div> -->
-                        <div class="col-md-1">&nbsp;</div>
-                        <!-- <div class="col-md-5">DATE : <?php echo date('Y-m-d');?></div> -->
-                        <div class="col-md-1">&nbsp;</div>
-                    </div>
+                  
                     <div class="row">
                         <div class="box-body table-responsive">
                             <table id="saletable" class="table table-bordered">

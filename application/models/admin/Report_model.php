@@ -146,6 +146,8 @@ class Report_model extends CI_Model {
                 $this->db->where_in('salesinvoicehed.RouteId', $routeAr);
             }
 
+            
+
             if (isset($customer) && $customer != '') {
                 $this->db->where('salesinvoicehed.SalesCustomer', $customer);
             }
@@ -2281,17 +2283,16 @@ foreach($row as $country => $cities) {
                             creditinvoicedetails.CreditAmount,
                             creditinvoicedetails.SettledAmount,
                             SUM(creditinvoicedetails.returnAmount) AS ReturnAmount,
-                            customer.CusName,
+                            customer.DisplayName,
                             customer.RouteId,
                             customer.Address01,
                             salespersons.RepName,
                             salespersons.RepID,
                             customer.Address02,
-                            jobinvoicehed.JobCardNo,
-                            jobinvoicehed.JRegNo');
+                           ');
                 $this->db->from('creditinvoicedetails');
-                $this->db->join('jobinvoicehed','creditinvoicedetails.InvoiceNo=jobinvoicehed.JobInvNo','left');
-                $this->db->join('customer','creditinvoicedetails.CusCode = customer.CusCode');
+                // $this->db->join('jobinvoicehed','creditinvoicedetails.InvoiceNo=jobinvoicehed.JobInvNo','left');
+                $this->db->join('customer','creditinvoicedetails.CusCode = customer.CusCode','left');
                 $this->db->join('salespersons','salespersons.RepID = customer.HandelBy','left');
                 // $this->db->where('creditinvoicedetails.CreditAmount > creditinvoicedetails.SettledAmount');
                  $this->db->where('creditinvoicedetails.IsCancel',0);
@@ -2306,9 +2307,18 @@ foreach($row as $country => $cities) {
                 if (isset($salesperson) && $salesperson != '' ) {
                 $this->db->where('salespersons.RepID',$salesperson);
                  }
-                 if (isset($route) && $route != '' ) {
-                $this->db->where_in('customer.RouteId',$route);
-                 }
+                if (!empty($route)) {
+    
+                if (!is_array($route)) {
+                        $decoded = json_decode($route, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $route = $decoded;
+                        } else {
+                            $route = [$route];
+                        }
+                    }
+                    $this->db->where_in('customer.RouteId', $route);
+                }
                   if (isset($customer) && $customer != '' ) {
                 $this->db->where('creditinvoicedetails.CusCode',$customer);
                   }
@@ -2397,9 +2407,20 @@ foreach($row as $country => $cities) {
                 $this->db->where('DATE(customerpaymenthed.PayDate) >=', $startdate);
                 }
             }
-                 if (isset($route) && $route != '' ) {
-                $this->db->where_in(' customer.RouteId',$route);
-                 }
+                
+
+                 if (!empty($route)) {
+    
+                if (!is_array($route)) {
+                        $decoded = json_decode($route, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $route = $decoded;
+                        } else {
+                            $route = [$route];
+                        }
+                    }
+                    $this->db->where_in('customer.RouteId', $route);
+                }
                   if (isset($customer) && $customer != '' ) {
                 $this->db->where('customerpaymenthed.CusCode',$customer);
                   }
@@ -2616,9 +2637,18 @@ foreach($row as $country => $cities) {
                     $this->db->where('salespersons.RepID',$newsalesperson);
                  }
 
-                 if (isset($route) && $route != '' ) {
-                    $this->db->where_in(' customer.RouteId',$route);
-                 }
+                 if (!empty($route)) {
+    
+                if (!is_array($route)) {
+                        $decoded = json_decode($route, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $route = $decoded;
+                        } else {
+                            $route = [$route];
+                        }
+                    }
+                    $this->db->where_in('customer.RouteId', $route);
+                }
                 if (isset($customer) && $customer != '' ) {
                     $this->db->where('creditinvoicedetails.CusCode',$customer);
                 } 
