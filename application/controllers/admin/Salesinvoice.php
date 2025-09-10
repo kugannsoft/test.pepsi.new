@@ -426,85 +426,118 @@ class Salesinvoice extends Admin_Controller {
     }
 
     public function view_sales_invoice($inv=null) {
+        $this->load->model('admin/Salesinvoice_model');
+        $invNo=base64_decode($inv);
+        /* Title Page */
 
-            $this->load->model('admin/Salesinvoice_model');
-            $invNo=base64_decode($inv);
-            /* Title Page */
+        $id = isset($_GET['id'])?$_GET['id']:NULL;
+        $type = isset($_GET['type'])?$_GET['type']:NULL;
+        $sup = isset($_GET['sup'])?$_GET['sup']:0;
 
-            $id = isset($_GET['id'])?$_GET['id']:NULL;
-            $type = isset($_GET['type'])?$_GET['type']:NULL;
-            $sup = isset($_GET['sup'])?$_GET['sup']:0;
+        $this->page_title->push('Sales Invoice');
+        $this->data['pagetitle'] = 'Sales Invoice-'.$invNo;
 
-            $this->page_title->push('Sales Invoice');
-            $this->data['pagetitle'] = 'Sales Invoice-'.$invNo;
+        /* Breadcrumbs */
+        $this->breadcrumbs->unshift(1, 'Sales', 'admin/sales/');
+        $this->breadcrumbs->unshift(1, 'Sales Invoice', 'admin/sales/view_sales_invoice');
+        $this->data['breadcrumb'] = $this->breadcrumbs->show();
 
-            /* Breadcrumbs */
-            $this->breadcrumbs->unshift(1, 'Sales', 'admin/sales/');
-            $this->breadcrumbs->unshift(1, 'Sales Invoice', 'admin/sales/view_sales_invoice');
-            $this->data['breadcrumb'] = $this->breadcrumbs->show();
+        $location = $this->db->select('SalesLocation')->from('salesinvoicehed')->where('SalesInvNo', $invNo)->get()->row()->SalesLocation;
+        $id3 = array('CompanyID' => $location);
+        $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
+        
+        $this->data['jobtypes'] = $this->db->select()->from('jobtype')->order_by("jobtype_order", "asc")->get()->result();
+        $this->data['id'] = $id;
+        $this->data['type'] = $type;
+        $this->data['sup'] = $sup;
+        $this->data['invNo'] = $invNo;
 
-            $location = $this->db->select('SalesLocation')->from('salesinvoicehed')->where('SalesInvNo', $invNo)->get()->row()->SalesLocation;
-            $id3 = array('CompanyID' => $location);
-            $this->data['company'] = $this->Job_model->get_data_by_where('company', $id3);
-            
-            $this->data['jobtypes'] = $this->db->select()->from('jobtype')->order_by("jobtype_order", "asc")->get()->result();
-            $this->data['id'] = $id;
-            $this->data['type'] = $type;
-            $this->data['sup'] = $sup;
-            $this->data['invNo'] = $invNo;
+        $this->data['title'] = 'Invoice';
+        $this->data['titleno'] = $invNo;
+        $this->data['balancetxt'] = 'TOTAL PAYABLE';
+        $balance=$this->db->select('SalesCreditAmount')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row()->SalesCreditAmount;
+        $this->data['balance'] = "Rs. ".number_format($balance,2);
+        
 
-            $this->data['title'] = 'Invoice';
-            $this->data['titleno'] = $invNo;
-            $this->data['balancetxt'] = 'TOTAL PAYABLE';
-            $balance=$this->db->select('SalesCreditAmount')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row()->SalesCreditAmount;
-            $this->data['balance'] = "Rs. ".number_format($balance,2);
-            
+        $this->data['invType']= $this->db->select('SalesInvType')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row();
+        $this->data['SalesPerson']= $this->db->select('salesinvoicehed.SalesPerson,salespersons.RepName,customer_routes.name')
+        ->from('salesinvoicehed')
+        ->join('salespersons','salespersons.RepId = salesinvoicehed.SalesPerson','left')
+        ->join('customer_routes','customer_routes.id = salesinvoicehed.RouteId','left')
+        ->where('SalesInvNo',$invNo)->get()->row();
+        
+  
 
-            $this->data['invType']= $this->db->select('SalesInvType')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row();
+         $this->data['itemCount'] = $this->db
+        ->where('SalesInvNo', $invNo)
+        ->count_all_results('salesinvoicedtl');
 
-            $this->data['invHed']= $this->db->select('salesinvoicehed.*,users.first_name,users.last_name,users.last_name ,vehicle_company.VComName')
-                ->from('salesinvoicehed')->join('users','salesinvoicehed.SalesInvUser=users.id','left')->join('vehicle_company','vehicle_company.VComId=salesinvoicehed.SalesInsCompany','left')
-                ->where('SalesInvNo',$invNo)->get()->row();
-            $IsPayment =  $this->db->select('InvNo')->from('invoicesettlementdetails')->where('InvNo',$invNo)->get()->num_rows();
-            if($IsPayment>0){
-                 $this->data['ispayment']=$IsPayment;
-            }else{
-                $this->data['ispayment']=0;
-            }
-            $cusCode =  $this->db->select('SalesCustomer')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row()->SalesCustomer;
-            $regNo =  $this->db->select('SalesVehicle')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row()->SalesVehicle;
-                
-            $this->data['invCus']= $this->db->select('customer.*')->from('customer')->where('customer.CusCode',$cusCode)->get()->row();
-            $this->data['invVehi']= $this->db->select('vehicledetail.ChassisNo,vehicledetail.contactName,make.make,model.model')->from('vehicledetail')->join('make','make.make_id=vehicledetail.Make','left')->join('model','model.model_id=vehicledetail.Model','left')->where('CusCode',$cusCode)->where('vehicledetail.RegNo',$regNo)->get()->row();
+        $this->data['invHed']= $this->db->select('salesinvoicehed.*,users.first_name,users.last_name,users.last_name ,vehicle_company.VComName')
+            ->from('salesinvoicehed')
+            ->join('users','salesinvoicehed.SalesInvUser=users.id','left')
+            ->join('vehicle_company','vehicle_company.VComId=salesinvoicehed.SalesInsCompany','left')
+            ->where('SalesInvNo',$invNo)->get()->row();
 
-            $this->data['invSales']= $this->db->select('salespersons.RepName')
-                ->from('salesinvoicedtl')->join('salespersons', 'salesinvoicedtl.SalesPerson = salespersons.RepID', 'left')->where('salesinvoicedtl.SalesInvNo',$invNo)->get()->row();   
+        $IsPayment =  $this->db->select('InvNo')->from('invoicesettlementdetails')->where('InvNo',$invNo)->get()->num_rows();
+        if($IsPayment>0){
+             $this->data['ispayment']=$IsPayment;
+        }else{
+            $this->data['ispayment']=0;
+        }
+        $cusCode =  $this->db->select('SalesCustomer')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row()->SalesCustomer;
+        $regNo =  $this->db->select('SalesVehicle')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->row()->SalesVehicle;
+        
+        $this->data['creditInvoiceList'] = $this->db->select('*')
+        ->from('creditinvoicedetails')
+        ->where('CusCode', $cusCode)
+        ->where('IsCancel', 0)
+        ->where('creditinvoicedetails.InvoiceNo <', $invNo) 
+        ->order_by('InvoiceDate', 'DESC')
+        ->get()
+        ->result();
 
-             $this->data['invDtl']=$this->db->select('salesinvoicedtl.*,product.*,warranty_typs.*')
-                 ->from('salesinvoicedtl')
-                 ->join('product', 'salesinvoicedtl.SalesProductCode = product.ProductCode', 'LEFT')
-                 ->join('warranty_typs', 'salesinvoicedtl.WarrantyMonthNew = warranty_typs.id', 'LEFT')
-                 ->where('salesinvoicedtl.SalesInvNo', $invNo)
-                 ->order_by('salesinvoicedtl.SalesInvLineNo','ASC')
-                 ->get()->result();
-            
-             //invoice cancel
-             $this->data['invCancel']=$this->db->select('cancelsalesinvoice.*,users.first_name,users.last_name')->from('cancelsalesinvoice')->join('users', 'cancelsalesinvoice.CancelUser = users.id', 'INNER')->where('cancelsalesinvoice.SalesInvoiceNo', $invNo)->order_by('CancelDate','DESC')->get()->row();
-
-             //invoice updates
-             $this->data['invUpdate']=$this->db->select('editinvoices.*,users.first_name,users.last_name')->from('editinvoices')->join('users', 'editinvoices.UpdateUser = users.id', 'INNER')->where('editinvoices.InvoiceNo', $invNo)->where('editinvoices.EditType', 1)->order_by('UpdateDate','DESC')->get()->result();
-
-            $this->data['invDtlArr']=$this->Salesinvoice_model->getSalesInvoiceDtlbyid($invNo);
-            $this->data['returnDtlArr']=$this->Salesinvoice_model->getSalesReturnDtlbyid($invNo);
-
-             $this->data['sale']=$this->db->select('salesinvoicehed.*,salesinvoicepaydtl.*')->from('salesinvoicehed')->join('salesinvoicepaydtl','salesinvoicepaydtl.SalesInvNo=salesinvoicehed.SalesInvNo')->where('salesinvoicehed.SalesCustomer',$cusCode)->where('salesinvoicehed.InvIsCancel',0)->get()->result();
-            //20-01-06
+    
+    $this->data['cusOutstanding'] = $this->db->select('*')
+        ->from('customeroutstanding')
+        ->where('CusCode', $cusCode)
+        ->get()
+        ->row();
 
 
-           // $this->data['invType']= $this->db->select('SalesInvType')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->result();
-            
-            $this->data['term'] = $this->db->select()->from('invoice_condition')->where('InvType', 1)->get()->result();      
-            $this->template->admin_render('admin/sales/view-sales-invoice_1', $this->data);
+        $this->data['invCus']= $this->db->select('customer.*')->from('customer')->where('customer.CusCode',$cusCode)->get()->row();
+        $this->data['invVehi']= $this->db->select('vehicledetail.ChassisNo,vehicledetail.contactName,make.make,model.model')->from('vehicledetail')->join('make','make.make_id=vehicledetail.Make','left')->join('model','model.model_id=vehicledetail.Model','left')->where('CusCode',$cusCode)->where('vehicledetail.RegNo',$regNo)->get()->row();
+
+        $this->data['invSales']= $this->db->select('salespersons.RepName')
+            ->from('salesinvoicedtl')->join('salespersons', 'salesinvoicedtl.SalesPerson = salespersons.RepID', 'left')
+            ->where('salesinvoicedtl.SalesInvNo',$invNo)->get()->row();
+
+            $this->data['invDtl']=$this->db->select('salesinvoicedtl.*,product.*,warranty_typs.*')
+                ->from('salesinvoicedtl')
+                ->join('product', 'salesinvoicedtl.SalesProductCode = product.ProductCode', 'LEFT')
+                ->join('warranty_typs', 'salesinvoicedtl.WarrantyMonthNew = warranty_typs.id', 'LEFT')
+                ->where('salesinvoicedtl.SalesInvNo', $invNo)
+                ->order_by('salesinvoicedtl.SalesInvLineNo','ASC')
+                ->get()->result();
+               
+         //invoice cancel
+         $this->data['invCancel']=$this->db->select('cancelsalesinvoice.*,users.first_name,users.last_name')->from('cancelsalesinvoice')->join('users', 'cancelsalesinvoice.CancelUser = users.id', 'INNER')->where('cancelsalesinvoice.SalesInvoiceNo', $invNo)->order_by('CancelDate','DESC')->get()->row();
+
+         //invoice updates
+         $this->data['invUpdate']=$this->db->select('editinvoices.*,users.first_name,users.last_name')->from('editinvoices')->join('users', 'editinvoices.UpdateUser = users.id', 'INNER')->where('editinvoices.InvoiceNo', $invNo)->where('editinvoices.EditType', 1)->order_by('UpdateDate','DESC')->get()->result();
+
+        $this->data['invDtlArr']=$this->Salesinvoice_model->getSalesInvoiceDtlbyid($invNo);
+        $this->data['returnDtlArr']=$this->Salesinvoice_model->getSalesReturnDtlbyid($invNo);
+
+         $this->data['sale']=$this->db->select('salesinvoicehed.*,salesinvoicepaydtl.*')
+         ->from('salesinvoicehed')
+         ->join('salesinvoicepaydtl','salesinvoicepaydtl.SalesInvNo=salesinvoicehed.SalesInvNo')
+         ->where('salesinvoicehed.SalesCustomer',$cusCode)->where('salesinvoicehed.InvIsCancel',0)->get()->result();
+// print_r($this->data['returnDtlArr']);die;
+       // $this->data['invType']= $this->db->select('SalesInvType')->from('salesinvoicehed')->where('SalesInvNo',$invNo)->get()->result();
+        
+        $this->data['term'] = $this->db->select()->from('invoice_condition')->where('InvType', 1)->get()->result();      
+        $this->template->admin_render('admin/sales/view-sales-invoice_1', $this->data);
+    
 
     }
 
