@@ -540,6 +540,8 @@ class Salesinvoice extends Admin_Controller {
             $this->template->admin_render('admin/sales/view-sales-invoice_1', $this->data);
         
     }
+
+
             public function view_sales_invoice_new($inv=null) {
 
             $this->load->model('admin/Salesinvoice_model');
