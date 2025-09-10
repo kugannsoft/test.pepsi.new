@@ -710,8 +710,10 @@ function loadAdvanceData(pay_no){
         var over_pay_amount = 0;
         var over_pay_inv = '';
         var selectedAmount =  $("#selectedAmount").val();
+      
         receiptType = $("#receiptType option:selected").val();
         var payAmount = $("#payAmount").val();
+        
         //shalika
         var advanceno=$("#advanceno").val();
         var returnInvoice=$("#returnInvoice").val();
@@ -749,8 +751,8 @@ function loadAdvanceData(pay_no){
                     return false;
                 } else {
 
-                    if(payAmount>selectedAmount){
-                        $("#errPayment").html('You Cant pay Over SettleAmount.').addClass('alert alert-danger alert-dismissible alert-sm').delay(1500).fadeOut(600);
+                    if(parseFloat(payAmount)>parseFloat(selectedAmount)){
+                        $("#errPayment").html('You Cant pay Over SettleAmount.').addClass('alert alert-danger alert-dismissible alert-sm').fadeOut(600);
                         return false;
                     }else{
                         var r = confirm('Do you want to pay manually?');
