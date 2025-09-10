@@ -2160,10 +2160,12 @@ public function loadreport1() {
         }
 
         $this->db->select('d.SalesProductCode, d.SalesProductName,
-                   SUM(d.SalesQty) AS TotalSalesQty,
+                  
                    SUM(d.SalesFreeQty) AS TotalSalesFreeQty,
-                   SUM(d.SalesReturnQty) AS SalesReturnQty,
-                   p.Prd_CostPrice, p.Prd_UPC');
+                   
+                   p.Prd_CostPrice, p.Prd_UPC,
+                   SUM(CASE WHEN d.ReturnType = 0 THEN d.SalesQty ELSE 0 END) AS TotalSalesQty,
+                    SUM(CASE WHEN d.ReturnType IN (1,2,3) THEN d.SalesQty ELSE 0 END) AS SalesReturnQty');
         $this->db->from('salesinvoicehed h');
         $this->db->join('salesinvoicedtl d', 'h.SalesInvNo = d.SalesInvNo');
         $this->db->join('product p', 'd.SalesProductCode = p.ProductCode');
